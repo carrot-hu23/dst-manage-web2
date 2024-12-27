@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  </head>
+  <script>
+    // 检测用户的语言
+    const userLang = navigator.language || navigator.userLanguage;
+
+    // 设置标题内容
+    if (userLang.startsWith("zh")) {
+      document.title = "饥荒管理控制台";
+    } else {
+      document.title = "Don't Starve Management Console";
+    }
+  </script>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
