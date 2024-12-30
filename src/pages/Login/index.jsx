@@ -1,32 +1,45 @@
 import {LockOutlined, UserOutlined} from '@ant-design/icons';
-import {Button, Form, Input, message, Space, Tooltip, Typography} from 'antd';
+import {Button, Checkbox, Form, Input, message, Space, Tooltip, Typography} from 'antd';
 
-import {useNavigate} from "react-router-dom"
+import {Navigate, useNavigate} from "react-router-dom"
 import {http} from '../../utils/http';
 
 import './index.css';
 import {useTranslation} from "react-i18next";
-import {useEffect} from "react";
+import {useEffect, useState} from "react";
 import {useTheme} from "../../hooks/useTheme/index.jsx";
-import {ProCard, ProConfigProvider, ProFormCheckbox} from "@ant-design/pro-components";
+import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
 import ToggleTheme from "../../layout/ToggleTheme";
+import {isFirstApi} from "../../api/InitApi.jsx";
 
 const {Title} = Typography;
 
 const StyledContent = {
-    maxWidth: 400,
+    maxWidth: 380,
     margin: 'auto',
     height: '100vh',
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    textAlign: 'center',
+    // textAlign: 'center',
     alignItems: 'center'
 }
 
 const Login = () => {
     const {t} = useTranslation()
     const navigate = useNavigate()
+
+    const [isFirstTime, setIsFirstTime] = useState(false);
+    useEffect(() => {
+        isFirstApi().then(data => {
+            if (data.code === 200) {
+                setIsFirstTime(true)
+            } else {
+                setIsFirstTime(false)
+            }
+        })
+        setIsFirstTime(false)
+    }, [])
 
     const onFinish = async (values) => {
         // 2.登录
@@ -73,9 +86,8 @@ const Login = () => {
                 <ProCard>
                     <Title level={3}>{t('loginTitle')}</Title>
                     <br/>
-                    <br/>
                     <Form
-                        name="normal_login"
+                        // name="normal_login"
                         onFinish={onFinish}
                     >
                         <Form.Item
@@ -104,7 +116,13 @@ const Login = () => {
                                 placeholder="Password"
                             />
                         </Form.Item>
-
+                        {/*
+                        <Form.Item name="remember" valuePropName="checked" label={null}>
+                            <Tooltip title={'七天内免登录'}>
+                                <Checkbox>{t('login.remember.me')}</Checkbox>
+                            </Tooltip>
+                        </Form.Item>
+                        */}
                         <Form.Item>
                             <div
                                 style={{
@@ -116,7 +134,7 @@ const Login = () => {
                                         忘记密码
                                     </a>
                                 </Tooltip>
-                                <Space wrap={32} style={{float: 'right',}}>
+                                <Space wrap style={{float: 'right',}}>
                                     <ToggleTheme/>
                                 </Space>
                             </div>
@@ -133,16 +151,20 @@ const Login = () => {
 
     return (
         <>
-            {theme === 'dark' && (
-                <ProConfigProvider hashed={false} dark={theme === 'dark'}>
-                    <Content/>
-                </ProConfigProvider>
-            )}
-            {theme !== 'dark' && (
-                <ProConfigProvider hashed={false} dark={false}>
-                    <Content/>
-                </ProConfigProvider>
-            )}
+            {!isFirstTime ?(
+                <>
+                    {theme === 'dark' && (
+                        <ProConfigProvider dark={theme === 'dark'}>
+                            <Content/>
+                        </ProConfigProvider>
+                    )}
+                    {theme !== 'dark' && (
+                        <ProConfigProvider dark={false}>
+                            <Content/>
+                        </ProConfigProvider>
+                    )}
+                </>
+            ) : <Navigate to="/init"/>}
         </>
 
     );

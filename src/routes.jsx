@@ -7,7 +7,6 @@ import Setting from './pages/System/index.jsx';
 import Github from './pages/Github/index.jsx';
 import Panel from './pages/Panel/index.jsx';
 import Begin from './pages/Begin/index.jsx';
-import UserProfile from "./pages/User/UserProfile.jsx";
 import Link from "./pages/WebLink/index.jsx";
 
 import Help from "./pages/Help/index.jsx";
@@ -26,6 +25,7 @@ import DstMapData from "./pages/DstData/DstMapData";
 import Adminlist from "./pages/Home/Adminlist.jsx";
 import Whitelist from "./pages/Home/Whitelist.jsx";
 import Blacklist from "./pages/Home/Blacklist.jsx";
+import UserProfile from "./layout/UserProfile.jsx";
 
 export default function Routes() {
     return useRoutes([
@@ -56,13 +56,12 @@ export default function Routes() {
                         {path: 'genMap', element: <DstMapData/>},
                     ]
                 },
-
                 {path: 'backup', element: <Backup/>},
                 {path: 'setting', element: <Setting/>},
                 {path: 'github', element: <Github/>},
                 {path: 'help', element: <Help/>},
                 {path: 'lobby', element: <DstServerList/>},
-                {path: 'user/Profile', element: <UserProfile/>},
+                {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},
                 {path: '404', element: <Page404/>},
             ],

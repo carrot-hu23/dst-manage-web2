@@ -1,6 +1,6 @@
 import {
     GithubFilled,
-    LogoutOutlined,
+    LogoutOutlined, UserOutlined,
 } from '@ant-design/icons';
 import type {ProSettings} from '@ant-design/pro-components';
 import {
@@ -84,7 +84,7 @@ export default () => {
                 overflow: 'auto',
             }}
         >
-            <ProConfigProvider hashed={false} dark={theme == 'dark'}>
+            <ProConfigProvider dark={theme == 'dark'}>
                 <ConfigProvider
                     getTargetContainer={() => {
                         return document.getElementById('test-pro-layout') || document.body;
@@ -130,8 +130,14 @@ export default () => {
                                                 {
                                                     key: 'logout',
                                                     icon: <LogoutOutlined/>,
-                                                    label: '退出登录',
+                                                    label: t('header.logout'),
                                                     onClick: () => logout(),
+                                                },
+                                                {
+                                                    key: 'userProfile',
+                                                    icon: <UserOutlined />,
+                                                    label: t('header.userProfile'),
+                                                    onClick: () => navigate('/userProfile'),
                                                 },
                                             ],
                                         }}

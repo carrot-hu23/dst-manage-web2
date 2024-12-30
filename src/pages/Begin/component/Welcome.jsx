@@ -1,16 +1,15 @@
 import {useTranslation} from "react-i18next";
+import {Typography} from "antd";
+const { Title } = Typography;
 
 const Welcome = () => {
     const { t } = useTranslation()
     return(
         <>
-            <h3>{t('Welcome to dst-admin-web management platform')}</h3>
+            <Title level={2}>欢迎使用饥荒管理面板</Title>
+            <Title level={2}>Welcome to dst-admin-web management platform</Title>
             <div>
-                {/* <Image
-                    width={200}
-                    src="/assets/pig.fig"
-                /> */}
-                <img src="/assets/illustrations/illustration_login3.png" alt="login" />
+                <img src="/assets/pig.gif" alt="login" />
             </div>
         </>
     )

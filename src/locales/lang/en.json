@@ -2,6 +2,18 @@
   "loginTitle": "Dont Starve Together Management Panel",
   "web.title": "Dont Starve Together",
   "web.login": "Login",
+  "login.remember.me": "Remember Me",
+
+  "init.previous": "Previous",
+  "init.next": "Next",
+  "init.go": "Go",
+  "init.username": "Username",
+  "init.password": "Password",
+  "init.displayName": "DisplayName",
+  "init.photoURL": "PhotoURL",
+
+  "header.userProfile": "UserProfile",
+  "header.logout": "Logout",
 
   "playerActiveOfThisWeek": "This week's player activity",
   "activePlayer": "active player",

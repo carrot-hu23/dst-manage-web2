@@ -2,6 +2,18 @@
   "loginTitle": "饥荒联机版管理面板",
   "web.title": "饥荒联机版控制台",
   "web.login": "登录",
+  "login.remember.me": "自动登录",
+
+  "init.previous": "上一步",
+  "init.next": "下一步",
+  "init.go": "完成",
+  "init.username": "用户",
+  "init.password": "密码",
+  "init.displayName": "名称",
+  "init.photoURL": "头像",
+
+  "header.userProfile": "个人信息",
+  "header.logout": "退出登录",
 
   "playerActiveOfThisWeek": "本周玩家活跃情况",
   "activePlayer": "活跃玩家",
@@ -10,7 +22,7 @@
   "top10PlayerRankingsOfThisWeek": "本周前十玩家排名",
   "lastRegenerateLine": "重置时间线",
   "dashboard.today.player": "今日在线人数",
-  "dashboard.month.player": "本日在线人数",
+  "dashboard.month.player": "本月在线人数",
 
   "time.this.week": "本周",
   "time.last.week": "上周",

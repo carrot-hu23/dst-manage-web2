@@ -2,6 +2,18 @@
   "loginTitle": "굶지마 투게더 관리 패널",
   "web.title": "굶지마 투게더",
   "web.login": "로그인",
+  "login.remember.me": "Remember Me",
+
+  "init.previous": "Previous",
+  "init.next": "Next",
+  "init.go": "Go",
+  "init.username": "Username",
+  "init.password": "Password",
+  "init.displayName": "DisplayName",
+  "init.photoURL": "PhotoURL",
+
+  "header.userProfile": "UserProfile",
+  "header.logout": "Logout",
 
   "playerActiveOfThisWeek": "이번 주 플레이어 활동",
   "activePlayer": "활동 중인 플레이어",

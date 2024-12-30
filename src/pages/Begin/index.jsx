@@ -1,19 +1,20 @@
 /* eslint-disable no-unused-vars */
-import { Button, Form, message } from 'antd';
+import {Button, Form, message} from 'antd';
 
-import { useState } from 'react';
-import { useNavigate } from "react-router-dom"
+import {useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom"
 import {useTranslation} from "react-i18next";
 
 import Welcome from './component/Welcome.jsx';
 import Register from './component/Register.jsx';
 import End from './component/End.jsx';
 
-import { http } from '../../utils/http';
+import {http} from '../../utils/http';
+import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
+import {useTheme} from "../../hooks/useTheme/index.jsx";
 
 const mainCss = {
     textAlign: 'center',
-    backgroundColor: '#fff',
     borderRadius: '20px',
     width: '400px',
     height: '600px',
@@ -25,7 +26,8 @@ const mainCss = {
 
 // eslint-disable-next-line no-unused-vars
 const Begin = (props) => {
-    const { t } = useTranslation()
+    const {t} = useTranslation()
+    const {theme} = useTheme()
 
     const [form] = Form.useForm();
     const [current, setCurrent] = useState(0);
@@ -91,28 +93,23 @@ const Begin = (props) => {
         navigate('/')
     }
 
-    return (
-        <>
+    useEffect(() => {
+        document.body.style.backgroundColor = theme === 'dark' ? 'black' : '#F9FAFB'
+    }, [theme])
+
+    const Content = ()=>{
+        return (
             <div style={mainCss}>
                 {current < 1 && (
-                    <Welcome />
+                    <Welcome/>
                 )}
-
-                {/* {current === 1 && (
-                    <Environment />
-                )} */}
                 {current === 1 && (
-                    <Register form={form} />
+                    <Register form={form}/>
                 )}
-                {/* current === 2 && (
-                    <Setting form={form} />
-                    // <Index />
-                ) */}
-
                 {current === 2 && (
-                    <End form={form} />
+                    <End form={form}/>
                 )}
-                <br />
+                <br/>
                 {current > 0 && (
                     <Button
                         style={{
@@ -120,21 +117,35 @@ const Begin = (props) => {
                         }}
                         onClick={() => prev()}
                     >
-                        {t('Previous')}
+                        {t('init.previous')}
                     </Button>
                 )}
                 {current >= 0 && current < 2 && (
                     <Button type="primary" onClick={() => next()}>
-                        {t('Next')}
+                        {t('init.next')}
                     </Button>
                 )}
-
                 {current === 2 && (
                     <Button type="primary" onClick={goIndex}>
-                        {t('Go')}
+                        {t('init.go')}
                     </Button>
                 )}
             </div>
+        )
+    }
+
+    return (
+        <>
+            {theme === 'dark' && (
+                <ProConfigProvider dark={theme === 'dark'}>
+                    <Content/>
+                </ProConfigProvider>
+            )}
+            {theme != 'dark' && (
+                <ProConfigProvider>
+                    <Content/>
+                </ProConfigProvider>
+            )}
         </>
     )
 }

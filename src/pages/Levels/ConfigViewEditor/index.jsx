@@ -21,8 +21,8 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
 
     const { t } = useTranslation()
     const { i18n } = useTranslation()
-    const [lang, setLang] = useState( 'zh')
-
+    const [lang, setLang] = useState(i18n.language)
+    console.log(i18n.language)
     useEffect(() => {
         const handleLanguageChange = (lng) => {
             setLang(lng)
@@ -42,10 +42,10 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
     const [leveldataoverrideObject, setLeveldataoverrideObject] = useState(levelObject.overrides)
 
     // 获取世界默认值
-    const forestWorldGenGroup = lang ==='zh'? dstWorldSetting.zh.forest.WORLDGEN_GROUP : dstWorldSetting.en.forest.WORLDGEN_GROUP
-    const forestWorldSettingsGroup =  lang ==='zh'? dstWorldSetting.zh.forest.WORLDSETTINGS_GROUP : dstWorldSetting.en.forest.WORLDSETTINGS_GROUP
-    const cavesWorldGenGroup = lang ==='zh'? dstWorldSetting.zh.cave.WORLDGEN_GROUP : dstWorldSetting.en.cave.WORLDGEN_GROUP
-    const cavesWorldSettingsGroup = lang ==='zh'? dstWorldSetting.zh.cave.WORLDSETTINGS_GROUP : dstWorldSetting.en.cave.WORLDSETTINGS_GROUP
+    const forestWorldGenGroup = lang.includes('zh')? dstWorldSetting.zh.forest.WORLDGEN_GROUP : dstWorldSetting.en.forest.WORLDGEN_GROUP
+    const forestWorldSettingsGroup =  lang.includes('zh')? dstWorldSetting.zh.forest.WORLDSETTINGS_GROUP : dstWorldSetting.en.forest.WORLDSETTINGS_GROUP
+    const cavesWorldGenGroup = lang.includes('zh')? dstWorldSetting.zh.cave.WORLDGEN_GROUP : dstWorldSetting.en.cave.WORLDGEN_GROUP
+    const cavesWorldSettingsGroup = lang.includes('zh')? dstWorldSetting.zh.cave.WORLDSETTINGS_GROUP : dstWorldSetting.en.cave.WORLDSETTINGS_GROUP
 
     useEffect(()=>{
         const levelObject = getLevelObject(valueRef.current)
