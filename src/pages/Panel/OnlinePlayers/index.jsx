@@ -7,11 +7,12 @@ import {useTranslation} from "react-i18next";
 import {Image, Skeleton, Col, Row, Button, Divider, Space, message, Spin, Select, List, Tag} from 'antd';
 
 import {dstRoles} from '../../../utils/dst';
-import {getAllOnlinePlayersApi, getOnlinePlayersApi, sendCommandApi} from "../../../api/8level.jsx";
+import {sendCommandApi} from "../../../api/level.jsx";
 import style from "../../DstServerList/index.module.css";
 import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
-import {usePlayerListStore} from "../../../store/usePlayerListStore.jsx";
+import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
+import {getAllOnlinePlayersApi, getOnlinePlayersApi} from "../../../api/onlinPlayerApi";
 
 
 const Online = () => {

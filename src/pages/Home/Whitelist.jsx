@@ -1,6 +1,6 @@
 import NameList from "./NameList/index.jsx";
 import {useTranslation} from "react-i18next";
-import {getWhitelistApi, saveWhitelistApi} from "../../api/8level.jsx";
+import {getWhitelistApi, saveWhitelistApi} from "../../api/level.jsx";
 
 export default () => {
 

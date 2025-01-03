@@ -17,7 +17,7 @@ import {
 import {useTranslation} from "react-i18next";
 
 import {dstGameMod} from "../../../utils/dst";
-import {getClusterIniApi, saveClusterIniApi} from "../../../api/8level.jsx";
+import {getClusterIniApi, saveClusterIniApi} from "../../../api/level.jsx";
 
 import style from '../../DstServerList/index.module.css'
 import {FooterToolbar, ProCard} from "@ant-design/pro-components";

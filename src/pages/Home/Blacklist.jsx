@@ -1,6 +1,6 @@
 import NameList from "./NameList/index.jsx";
 import {useTranslation} from "react-i18next";
-import {getBlacklistApi, saveBlacklistApi} from "../../api/8level.jsx";
+import {getBlacklistApi, saveBlacklistApi} from "../../api/level.jsx";
 
 export default () => {
 

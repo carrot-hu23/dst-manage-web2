@@ -6,7 +6,7 @@ import {ClearOutlined} from '@ant-design/icons';
 
 import {parse} from "lua-json";
 
-import {cleanAllLevelApi, cleanLevelApi, getLevelStatusApi, startAllLevelApi, startLevelApi} from "../../../api/8level.jsx";
+import {cleanAllLevelApi, cleanLevelApi, getLevelStatusApi, startAllLevelApi, startLevelApi} from "../../../api/level.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
 
 

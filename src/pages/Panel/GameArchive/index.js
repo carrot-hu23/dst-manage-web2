@@ -36,7 +36,7 @@ var gameApi_1 = require("../../../api/gameApi");
 var index_module_css_1 = __importDefault(require("../../DstServerList/index.module.css"));
 var HiddenText_1 = __importDefault(require("../../Home/HiddenText/HiddenText"));
 var dst_1 = require("../../../utils/dst");
-var usePlayerListStore_1 = require("../../../store/usePlayerListStore");
+var usePlayerListStore_1 = require("../../../store/usePlayerListStore.js");
 var pro_components_1 = require("@ant-design/pro-components");
 exports.default = (function () {
     var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v, _w, _x, _y, _z, _0, _1, _2, _3, _4, _5, _6, _7;

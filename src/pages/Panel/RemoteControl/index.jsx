@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
 import {Button, Input, Select, Space, message, Spin, Divider, Tag} from 'antd';
-import {sendCommandApi} from "../../../api/8level.jsx";
+import {sendCommandApi} from "../../../api/level.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
 import {ProCard} from "@ant-design/pro-components";
 

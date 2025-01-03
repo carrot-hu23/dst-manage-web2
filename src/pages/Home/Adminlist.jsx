@@ -1,5 +1,5 @@
 import NameList from "./NameList/index.jsx";
-import {getAdminlistApi, saveAdminlistApi} from "../../api/8level.jsx";
+import {getAdminlistApi, saveAdminlistApi} from "../../api/level.jsx";
 import {useTranslation} from "react-i18next";
 
 export default ()=>{

@@ -2,11 +2,11 @@ import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Skeleton, Tabs} from 'antd';
 import {useLevelsStore} from "../../store/useLevelsStore.jsx";
-import {getLevelStatusApi} from "../../api/8level.jsx";
+import {getLevelStatusApi} from "../../api/level.jsx";
 import GameOperator from "./GameOperator/index.jsx";
 import RemoteControl from "./RemoteControl/index.jsx";
-
-
+import TooManyItemsPlus from "../TooManyItemsPlus/index";
+import OtherIOrder from "../TooManyItemsPlus/OtherIOrder";
 
 const Panel = () => {
 
@@ -50,6 +50,16 @@ const Panel = () => {
             key: '2',
             label: t('panel.remote'),
             children: <RemoteControl/>,
+        },
+        {
+            key: '3',
+            label: 'TooManyItemsPlus',
+            children: <TooManyItemsPlus />,
+        },
+        {
+            key: '4',
+            label: '其他指令',
+            children: <OtherIOrder />,
         },
     ];
 

@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import {Alert, Button, Image, message, Popconfirm, Select, Skeleton, Space, Spin, Table, Tag} from "antd";
 
 import {deleteUgcModAcfFileApi, getUgcModAcfApi} from "../../../api/modApi.jsx";
-import {getLevelStatusApi} from "../../../api/8level.jsx";
+import {getLevelStatusApi} from "../../../api/level.jsx";
 import {formatTimestamp} from "../../../utils/dateUitls";
 
 

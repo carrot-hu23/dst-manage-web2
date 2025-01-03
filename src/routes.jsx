@@ -26,6 +26,7 @@ import Adminlist from "./pages/Home/Adminlist.jsx";
 import Whitelist from "./pages/Home/Whitelist.jsx";
 import Blacklist from "./pages/Home/Blacklist.jsx";
 import UserProfile from "./layout/UserProfile.jsx";
+import TooManyItemsPlus from "./pages/TooManyItemsPlus";
 
 export default function Routes() {
     return useRoutes([
@@ -63,6 +64,7 @@ export default function Routes() {
                 {path: 'lobby', element: <DstServerList/>},
                 {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},
+                {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
                 {path: '404', element: <Page404/>},
             ],
         },

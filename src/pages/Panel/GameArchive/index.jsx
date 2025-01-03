@@ -1,4 +1,4 @@
-import {Alert, Form, Space, Tooltip} from 'antd';
+import {Alert, Space, Tooltip} from 'antd';
 
 import {QuestionCircleOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
@@ -10,7 +10,7 @@ import {archiveApi} from '../../../api/gameApi.jsx';
 import style from "../../DstServerList/index.module.css";
 import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
 import {dstSeason, dstSegs, getDstMod} from "../../../utils/dst.js";
-import {usePlayerListStore} from "../../../store/usePlayerListStore.jsx";
+import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {ProDescriptions} from "@ant-design/pro-components";
 import OpBtnGroup from "../OpBtnGroup/index.jsx";
 

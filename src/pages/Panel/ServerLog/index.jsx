@@ -4,9 +4,8 @@ import React, {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
-import {readLevelServerLogApi} from "../../../api/level.jsx";
 import {MonacoEditor} from "../../NewEditor/index.jsx";
-import {sendCommandApi} from "../../../api/8level.jsx";
+import {readLevelServerLogApi, sendCommandApi} from "../../../api/level.jsx";
 import {useTheme} from "../../../hooks/useTheme/index.jsx";
 import style from "../../DstServerList/index.module.css";
 import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
@@ -29,7 +28,7 @@ export default () => {
 
     const onchange = (e) => {
         console.log("e", e)
-        setCommand(e);
+        setCommand(e.target.value);
     };
     function escapeString(str) {
         return str.replace(/\\/g, '\\\\')

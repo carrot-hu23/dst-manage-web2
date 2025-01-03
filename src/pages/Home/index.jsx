@@ -10,7 +10,7 @@ import {
     saveAdminlistApi,
     saveBlacklistApi,
     saveWhitelistApi
-} from "../../api/8level";
+} from "../../api/level.jsx";
 
 export default () => {
     const { t } = useTranslation()
