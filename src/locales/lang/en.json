@@ -85,6 +85,7 @@
   "panel.season": "season",
   "panel.password": "password",
   "panel.version": "version",
+  "panel.beta": "Beta",
 
   "panel.start.all": "Start",
   "panel.stop.all": "Stop",

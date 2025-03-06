@@ -27,6 +27,7 @@ import Whitelist from "./pages/Home/Whitelist.jsx";
 import Blacklist from "./pages/Home/Blacklist.jsx";
 import UserProfile from "./layout/UserProfile.jsx";
 import TooManyItemsPlus from "./pages/TooManyItemsPlus";
+import AddMod from "./pages/Mod/AddMod/index.jsx";
 
 export default function Routes() {
     return useRoutes([
@@ -39,6 +40,7 @@ export default function Routes() {
                 {path: 'playerLog', element: <PlayerLog/>},
                 {path: 'mod', element: <Mod/>},
                 {path: 'panel', element: <Panel/>},
+                { path: 'mod/add/:modId', element: <AddMod /> },
                 {
                     path: 'home',
                     children: [
