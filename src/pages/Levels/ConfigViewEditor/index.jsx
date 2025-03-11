@@ -59,7 +59,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
                 <Group
                     valueRef={valueRef}
                     data={porklandSetting?.WORLDSETTINGS_GROUP}
-                    url={"./misc/customization_porkland.webp"}
+                    url={"/api/dst-static/customization_porkland.webp"}
                     leveldataoverrideObject={leveldataoverrideObject}
                     onStateChange={(name, newValue) => {
                         setLeveldataoverrideObject(current=> {
@@ -79,7 +79,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
                 <Group
                     valueRef={valueRef}
                     data={porklandSetting?.WORLDGEN_GROUP}
-                    url={"./misc/customization_porkland.webp"}
+                    url={"/api/dst-static/customization_porkland.webp"}
                     leveldataoverrideObject={leveldataoverrideObject}
                     onStateChange={(name, newValue) => {
                         setLeveldataoverrideObject(current=> {
@@ -103,7 +103,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
                 <Group
                     valueRef={valueRef}
                     data={forestWorldSettingsGroup}
-                    url={"./misc/worldsettings_customization.webp"}
+                    url={"/api/dst-static/worldsettings_customization.webp"}
                     leveldataoverrideObject={leveldataoverrideObject}
                     onStateChange={(name, newValue) => {
                         setLeveldataoverrideObject(current=> {
@@ -122,7 +122,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
                 <Group
                     valueRef={valueRef}
                     data={forestWorldGenGroup}
-                    url={"./misc/worldgen_customization.webp"}
+                    url={"/api/dst-static/worldgen_customization.webp"}
                     leveldataoverrideObject={leveldataoverrideObject}
                     onStateChange={(name, newValue) => {
                         setLeveldataoverrideObject(current=> {
@@ -144,7 +144,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
                 <Group
                     valueRef={valueRef}
                     data={cavesWorldSettingsGroup}
-                    url={"./misc/worldsettings_customization.webp"}
+                    url={"/api/dst-static/worldsettings_customization.webp"}
                     leveldataoverrideObject={leveldataoverrideObject}
                     onStateChange={(name, newValue) => {
                         setLeveldataoverrideObject(current=> {
@@ -163,7 +163,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
                 <Group
                     valueRef={valueRef}
                     data={cavesWorldGenGroup}
-                    url={"./misc/worldgen_customization.webp"}
+                    url={"/api/dst-static/worldgen_customization.webp"}
                     leveldataoverrideObject={leveldataoverrideObject}
                     onStateChange={(name, newValue) => {
                         setLeveldataoverrideObject(current=> {

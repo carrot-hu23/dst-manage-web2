@@ -23,7 +23,11 @@ import {useTheme} from "../../hooks/useTheme/index.jsx";
 import {useParams} from "react-router-dom";
 import ConfigViewEditor from "./ConfigViewEditor/index.jsx";
 import {cave, forest, porkland} from "../../utils/dst";
+import axios from "axios";
 
+function base64ToUtf8(base64) {
+    return new TextDecoder().decode(Uint8Array.from(atob(base64), c => c.charCodeAt(0)));
+}
 
 const Leveldataoverride = ({editorRef, dstWorldSetting, levelName, level, changeValue}) => {
 
@@ -89,8 +93,10 @@ const Leveldataoverride = ({editorRef, dstWorldSetting, levelName, level, change
             if (getLevelObject(ref.current).location === 'porkland') {
                 setLoading(true)
                 // 获取 哈姆雷特的配置项
-                fetch('./misc/porkland_setting.json')
-                    .then(response => response.json())
+                axios.get('/api/dst-static/porkland_setting.json')
+                    .then(response => {
+                        return JSON.parse(base64ToUtf8(response.data))
+                    })
                     .then(data => {
                         setPorklandSetting(data)
                     })
@@ -502,8 +508,10 @@ const App = () => {
 
     useEffect(() => {
         setLoading(true)
-        fetch('misc/dst_world_setting.json')
-            .then(response => response.json())
+        axios.get('/api/dst-static/dst_world_setting.json')
+            .then(response => {
+                return JSON.parse(base64ToUtf8(response.data))
+            })
             .then(data => {
                 setDstWorldSetting(data)
                 getLevelListApi()
