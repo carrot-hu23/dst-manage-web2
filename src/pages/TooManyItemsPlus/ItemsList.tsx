@@ -12,9 +12,9 @@ export default function ItemList(itemListProps: ItemListProps) {
     const {cluster} = useParams()
 
     function give(prefab: string, amount: number, kuId: string) {
-        const command = `c_give(\\"${prefab}\\", ${amount}, \\"${kuId}\\")`
+        const command = `ThePlayer = UserToPlayer(\\"${kuId}\\")   c_give(\\"${prefab}\\", ${amount}) ThePlayer = nil`
         sendCommandApi(cluster || "", "Master", command)
-            .then(resp =>{
+            .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送成功")
                 } else {

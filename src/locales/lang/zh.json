@@ -112,6 +112,7 @@
   "panel.regenerate": "重置世界",
   "panel.c_save()": "保存存档",
   "panel.respawn": "复活",
+  "panel.despawn": "重选角色",
   "panel.kick": "踢出",
   "panel.auto": "自动",
   "panel.send": "发送",
