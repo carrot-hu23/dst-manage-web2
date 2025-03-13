@@ -1,4 +1,4 @@
-import {Navigate, useRoutes} from 'react-router-dom';
+import {Navigate, useParams, useRoutes} from 'react-router-dom';
 
 import Login from './pages/Login/index.jsx';
 
@@ -29,18 +29,33 @@ import UserProfile from "./layout/UserProfile.jsx";
 import TooManyItemsPlus from "./pages/TooManyItemsPlus";
 import AddMod from "./pages/Mod/AddMod/index.jsx";
 
+// layout outside
+import LayoutSide from "./layoutSide/index";
+import ClusterList from "./pages/ClusterList/index";
+import UserList from "./pages/UserList/index.jsx";
+import Server from "./pages/ClusterList/Server/index.jsx";
+
+function RedirectToPanel() {
+    const { cluster, name } = useParams();
+    return <Navigate to={`/${cluster}/${name}/panel`} replace />;
+}
+
+
 export default function Routes() {
     return useRoutes([
         {
-            path: '/',
+            path: '/:cluster/:name/',
             element: <Layout/>,
             children: [
-                {element: <Navigate to="/panel"/>, index: true,},
+                {
+                    element: <RedirectToPanel />, // 这里替换 Navigate
+                    index: true,
+                },
                 {path: 'dashboard', element: <Dashboard/>},
                 {path: 'playerLog', element: <PlayerLog/>},
                 {path: 'mod', element: <Mod/>},
                 {path: 'panel', element: <Panel/>},
-                { path: 'mod/add/:modId', element: <AddMod /> },
+                {path: 'mod/add/:modId', element: <AddMod/>},
                 {
                     path: 'home',
                     children: [
@@ -61,13 +76,25 @@ export default function Routes() {
                 },
                 {path: 'backup', element: <Backup/>},
                 {path: 'setting', element: <Setting/>},
-                {path: 'github', element: <Github/>},
-                {path: 'help', element: <Help/>},
-                {path: 'lobby', element: <DstServerList/>},
+                {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
+            ],
+        },
+        {
+            element: <LayoutSide/>,
+            children: [
+                {element: <Navigate to="/cluster"/>, index: true},
+                {
+                    path: '/cluster',
+                    element: <Server />,
+                },
+                {path: 'userList', element: <UserList/>},
                 {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},
-                {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
+                {path: 'lobby', element: <DstServerList/>},
+                {path: 'github', element: <Github/>},
+                {path: 'help', element: <Help/>},
                 {path: '404', element: <Page404/>},
+                {path: '*', element: <Navigate to="/404"/>},
             ],
         },
         {

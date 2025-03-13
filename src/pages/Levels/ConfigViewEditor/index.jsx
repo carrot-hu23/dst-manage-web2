@@ -22,7 +22,7 @@ export default ({valueRef, dstWorldSetting, changeValue, porklandSetting}) => {
     const { t } = useTranslation()
     const { i18n } = useTranslation()
     const [lang, setLang] = useState(i18n.language)
-    console.log(i18n.language)
+
     useEffect(() => {
         const handleLanguageChange = (lng) => {
             setLang(lng)

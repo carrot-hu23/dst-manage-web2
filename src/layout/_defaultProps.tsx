@@ -1,14 +1,12 @@
 import {
     AppstoreOutlined,
-    CompassOutlined,
     DashboardOutlined,
     DesktopOutlined,
     FolderOutlined,
-    GithubOutlined,
     GlobalOutlined,
     HomeOutlined,
     SettingOutlined,
-    SmileFilled, TeamOutlined,
+    TeamOutlined,
 } from '@ant-design/icons';
 export default {
     route: {
@@ -89,21 +87,6 @@ export default {
                 path: '/setting',
                 name: 'menu.setting',
                 icon: <SettingOutlined />,
-            },
-            {
-                path: '/lobby',
-                name: 'menu.lobby',
-                icon: <CompassOutlined />,
-            },
-            {
-                path: '/help',
-                name: 'menu.help',
-                icon: <SmileFilled />,
-            },
-            {
-                path: '/github',
-                name: 'menu.github',
-                icon: <GithubOutlined />,
             },
         ],
     },
