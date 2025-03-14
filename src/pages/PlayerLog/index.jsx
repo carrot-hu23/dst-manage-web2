@@ -113,6 +113,13 @@ export default ()=> {
             render: (text, record, _, action) => <HiddenText text={record.ip}/>
         },
         {
+            title: 'Region',
+            dataIndex: 'region',
+            key: 'region',
+            valueType: 'string',
+            search: false,
+        },
+        {
             title: 'Action',
             dataIndex: 'action',
             key: 'action',

@@ -11,6 +11,7 @@ import {useTheme} from "../../hooks/useTheme/index.jsx";
 import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
 import ToggleTheme from "../../layout/ToggleTheme";
 import {isFirstApi} from "../../api/InitApi.jsx";
+import useUserStore from "../../store/useUserStore";
 
 const {Title} = Typography;
 
@@ -21,13 +22,13 @@ const StyledContent = {
     display: 'flex',
     justifyContent: 'center',
     flexDirection: 'column',
-    // textAlign: 'center',
     alignItems: 'center'
 }
 
 const Login = () => {
     const {t} = useTranslation()
     const navigate = useNavigate()
+    const login = useUserStore((state) => state.login);
 
     const [isFirstTime, setIsFirstTime] = useState(false);
     useEffect(() => {
@@ -49,9 +50,7 @@ const Login = () => {
             message.error("登录失败")
             return
         }
-
-        localStorage.setItem("token", loginResponseData.data.username)
-        localStorage.setItem("user", JSON.stringify(loginResponseData.data))
+        login(loginResponseData.data)
         // 3.跳转
         navigate('/')
     }

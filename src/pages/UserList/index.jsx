@@ -10,12 +10,16 @@ import {
     updateUserAccountApi, queryUserClusterListApi, addUserClusterApi, deleteUserClusterApi, putUserClusterApi
 } from "../../api/userApi";
 import {getClusterList} from "../../api/clusterApi";
+import useUserStore from "../../store/useUserStore";
 
 
 export default () => {
 
     const [serverList, setServerList] = useState([])
     const [loading, setLoading] = useState(false)
+
+    const userInfo = useUserStore(state => state.userInfo)
+
     useEffect(() => {
         setLoading(true)
         getClusterList()
@@ -244,8 +248,9 @@ export default () => {
             };
 
             const clusterOptions = () => {
-                return serverList?.map(level => {
+                return serverList?.map((level, index) => {
                     return {
+                        key: index,
                         value: level.ID,
                         label: level.name,
                         clusterName: level.clusterName
@@ -511,39 +516,42 @@ export default () => {
     }
 
     return (<>
+            {userInfo?.role === 'admin' && (
+                <>
+                    <Drawer size={'large'} title="管理房间列表" onClose={onClose} open={open}>
+                        <HomeList userId={userId}/>
+                    </Drawer>
 
-            <Drawer size={'large'} title="管理房间列表" onClose={onClose} open={open}>
-                <HomeList userId={userId}/>
-            </Drawer>
-
-            <ProTable
-                actionRef={actionRef}
-                columns={columns}
-                request={async (params = {}, sort, filter) => {
-                    console.log(sort, filter);
-                    console.log('params', params)
-                    const resp = await queryUserAccountListApi(params)
-                    console.log('resp', resp)
-                    return {
-                        data: resp.data.data,
-                        success: true,
-                        total: resp.data.total
-                    };
-                }}
-                scroll={{
-                    x: 600,
-                }}
-                rowKey="ID"
-                pagination={{
-                    pageSize: 10,
-                    onChange: (page) => console.log(page),
-                }}
-                headerTitle="用户列表"
-                // tableAlertRender={({selectedRowKeys, selectedRows, onCleanSelected}) => false}
-                toolBarRender={() => [
-                    <AddUserAccount actionRef={actionRef}/>
-                ]}
-            />
+                    <ProTable
+                        actionRef={actionRef}
+                        columns={columns}
+                        request={async (params = {}, sort, filter) => {
+                            console.log(sort, filter);
+                            console.log('params', params)
+                            const resp = await queryUserAccountListApi(params)
+                            console.log('resp', resp)
+                            return {
+                                data: resp.data.data,
+                                success: true,
+                                total: resp.data.total
+                            };
+                        }}
+                        scroll={{
+                            x: 600,
+                        }}
+                        rowKey="ID"
+                        pagination={{
+                            pageSize: 10,
+                            onChange: (page) => console.log(page),
+                        }}
+                        headerTitle="用户列表"
+                        // tableAlertRender={({selectedRowKeys, selectedRows, onCleanSelected}) => false}
+                        toolBarRender={() => [
+                            <AddUserAccount actionRef={actionRef}/>
+                        ]}
+                    />
+                </>
+            )}
         </>
     )
 }

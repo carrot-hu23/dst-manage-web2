@@ -33,7 +33,7 @@ import AddMod from "./pages/Mod/AddMod/index.jsx";
 import LayoutSide from "./layoutSide/index";
 import ClusterList from "./pages/ClusterList/index";
 import UserList from "./pages/UserList/index.jsx";
-import Server from "./pages/ClusterList/Server/index.jsx";
+import Server from "./pages/ClusterList/index.jsx";
 
 function RedirectToPanel() {
     const { cluster, name } = useParams();

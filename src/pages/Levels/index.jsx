@@ -12,9 +12,9 @@ import {
     Tabs,
     Alert,
     Divider,
-    Skeleton, Empty, Radio, Drawer, Spin
+    Skeleton, Empty, Radio, Spin
 } from 'antd';
-import {format, parse} from "lua-json";
+import {parse} from "lua-json";
 import {useTranslation} from "react-i18next";
 
 import {MonacoEditor} from "../NewEditor/index.jsx";
@@ -24,6 +24,8 @@ import {useParams} from "react-router-dom";
 import ConfigViewEditor from "./ConfigViewEditor/index.jsx";
 import {cave, forest, porkland} from "../../utils/dst";
 import axios from "axios";
+import useUserStore from "../../store/useUserStore";
+import {queryUserClusterPermissionApi} from "../../api/userApi.jsx";
 
 function base64ToUtf8(base64) {
     return new TextDecoder().decode(Uint8Array.from(atob(base64), c => c.charCodeAt(0)));
@@ -139,7 +141,6 @@ const Leveldataoverride = ({editorRef, dstWorldSetting, levelName, level, change
     )
 }
 
-
 const Modoverrides = ({editorRef, modoverridesRef, levelName, level, changeValue}) => {
 
     const {theme} = useTheme();
@@ -171,7 +172,7 @@ const Modoverrides = ({editorRef, modoverridesRef, levelName, level, changeValue
     )
 }
 
-const ServerIni = ({levelName, level, changeValue}) => {
+const ServerIni = ({permission, levelName, level, changeValue}) => {
     const {t} = useTranslation()
 
     function onValuesChange(changedValues, allValues) {
@@ -206,7 +207,7 @@ const ServerIni = ({levelName, level, changeValue}) => {
             页面自动分配的端口不会与已填写的端口重复，但页面不会擅自修改自行填写的端口，所以确保不要填写重复的端口。
             `}
             >
-                <InputNumber style={{
+                <InputNumber disabled={!permission?.allowEditingServerIni} style={{
                     width: '100%',
                 }} placeholder="范围: 10998-11018"/>
             </Form.Item>
@@ -319,7 +320,7 @@ function parseWorldConfig(modoverrides) {
     }
 }
 
-const LevelItem = ({dstWorldSetting, levelName, level, changeValue}) => {
+const LevelItem = ({dstWorldSetting, levelName, level, changeValue, permission}) => {
     const {t} = useTranslation()
 
     const modoverridesRef = useRef(level.modoverrides)
@@ -336,67 +337,7 @@ const LevelItem = ({dstWorldSetting, levelName, level, changeValue}) => {
         world_config: parseWorldConfig(level.modoverrides)
     })
 
-
-    const formValueChange = (changedValues, allValues) => {
-
-        const world_config = allValues.world_config
-        if (world_config === null || world_config === undefined) {
-            return
-        }
-        world_config.forEach(item => {
-            if (item !== null || item !== undefined) {
-                Object.keys(item).forEach(key => {
-                    if (item[key] === undefined) {
-                        delete item[key];
-                    }
-                });
-            }
-
-        })
-        // 转成对象
-        const object = {}
-        if (world_config === null || world_config === undefined) {
-            return
-        }
-        world_config.forEach(item => {
-            const temp = {...item}
-            delete temp['id']
-            object[item.id] = temp
-        })
-
-        let oldValue = editorRef.current.current.getValue()
-        const mobject = parse(oldValue)
-        if (mobject['workshop-1754389029'] === null || mobject['workshop-1754389029'] === undefined || mobject['workshop-1754389029'].configuration_options === undefined) {
-            mobject['workshop-1754389029'] = {
-                configuration_options: {
-                    world_config: {},
-                    default_galleryful: 0,
-                    auto_balancing: true,
-                    no_bat: true,
-                    world_prompt: false,
-                    say_dest: true,
-                    migration_postern: false,
-                    ignore_sinkholes: false,
-                    open_button: true,
-                    migrator_required: false,
-                    force_population: false,
-                    name_button: true,
-                    always_show_ui: false,
-                    gift_toasts_offset: 100,
-                },
-                enabled: true,
-            }
-        }
-
-        mobject['workshop-1754389029'].configuration_options.world_config = object
-
-        const newValue = format(mobject, {singleQuote: false})
-        editorRef.current.current.setValue(newValue)
-
-    }
-
     const onTabItemChange = (activeKey) => {
-
         if (activeKey === '4') {
             // 更新form 的数据
             const world_config = parseWorldConfig(editorRef.current.current.getValue())
@@ -444,7 +385,7 @@ const LevelItem = ({dstWorldSetting, levelName, level, changeValue}) => {
                     height: '60vh',
                     overflowY: 'auto',
                 }}>
-                    <ServerIni levelName={levelName} level={level} changeValue={changeValue}/>
+                    <ServerIni permission={permission} levelName={levelName} level={level} changeValue={changeValue}/>
                 </div>,
             key: '3',
             forceRender: true,
@@ -497,7 +438,7 @@ const App = () => {
     const levelListRef = useRef([]);
     const [openAdd, setOpenAdd] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
-    const levelNameRef = useRef("");
+
     const [activeKey, setActiveKey] = useState('');
     const [items, setItems] = useState([]);
     const newTabIndex = useRef(0);
@@ -507,67 +448,151 @@ const App = () => {
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        setLoading(true)
-        axios.get('/api/dst-static/dst_world_setting.json')
-            .then(response => {
-                return JSON.parse(base64ToUtf8(response.data))
-            })
-            .then(data => {
-                setDstWorldSetting(data)
-                getLevelListApi()
-                    .then(resp => {
-                        // console.log(resp)
-                        if (resp.code === 200) {
-                            const levels = resp.data
-                            levelListRef.current = levels
-                            const items2 = levels.map(level => {
-                                const closable = level.uuid !== "Master"
-                                if (lang === "en") {
-                                    if (level.uuid === "Master") {
-                                        level.levelName = "Forest"
-                                    }
-                                    if (level.uuid === "Caves") {
-                                        level.levelName = "Caves"
-                                    }
-                                }
-                                if (level.uuid !== "Master") {
-                                    if (level.leveldataoverride === "return {}" || level.leveldataoverride === "") {
-                                        level.leveldataoverride = forest
-                                    }
-                                }
-                                return {
-                                    label: level.levelName,
-                                    children: <LevelItem
-                                        dstWorldSetting={data}
-                                        level={{
-                                            leveldataoverride: level.leveldataoverride,
-                                            modoverrides: level.modoverrides,
-                                            server_ini: level.server_ini
-                                        }}
-                                        levelName={level.levelName}
-                                        changeValue={changeValue}
-                                    />,
-                                    key: level.uuid,
-                                    closable: closable,
-                                }
-                            })
-                            setItems(items2)
-                            if (levels.length === 0) {
-                                setActiveKey("")
-                            } else {
-                                setActiveKey(levels[0].uuid)
+        const fetchData = async () => {
+            setLoading(true);
+            try {
+                // 获取并解析世界设置
+                const configResponse = await axios.get('/api/dst-static/dst_world_setting.json');
+                const rawData = base64ToUtf8(configResponse.data);
+                const worldSettings = JSON.parse(rawData);
+                setDstWorldSetting(worldSettings);
+                // 获取关卡列表
+                const levelResponse = await getLevelListApi();
+                const permissionResp = await queryUserClusterPermissionApi(cluster)
+                if (levelResponse.code === 200) {
+                    const levels = levelResponse.data
+                    const permission = permissionResp.data
+                    levelListRef.current = levels
+                    const items2 = levels.map(level => {
+                        let closable = level.uuid !== "Master"
+                        if (lang === "en") {
+                            if (level.uuid === "Master") {
+                                level.levelName = "Forest"
                             }
-                        } else {
-                            message.error(t('level.fetch.error'))
+                            if (level.uuid === "Caves") {
+                                level.levelName = "Caves"
+                            }
                         }
-                        setLoading(false)
+                        if (level.uuid !== "Master") {
+                            if (level.leveldataoverride === "return {}" || level.leveldataoverride === "") {
+                                level.leveldataoverride = forest
+                            }
+                        }
+                        if (userInfo?.role === 'admin') {
+                            closable = level.uuid !== "Master";
+                        } else {
+                            if (level.uuid === "Master") {
+                                closable = false
+                            } else {
+                                closable = permission.allowAddLevel
+                            }
+                        }
+                        return {
+                            label: level.levelName,
+                            children: <LevelItem
+                                dstWorldSetting={worldSettings}
+                                level={{
+                                    leveldataoverride: level.leveldataoverride,
+                                    modoverrides: level.modoverrides,
+                                    server_ini: level.server_ini
+                                }}
+                                levelName={level.levelName}
+                                changeValue={changeValue}
+                                permission={permission}
+                            />,
+                            key: level.uuid,
+                            closable: closable,
+                        }
                     })
-            })
-            .catch(error => {
-                console.error('无法加载配置文件', error);
-            })
+                    setItems(items2)
+                    if (levels.length === 0) {
+                        setActiveKey("")
+                    } else {
+                        setActiveKey(levels[0].uuid)
+                    }
+                } else {
+                    message.error(t('level.fetch.error'))
+                }
+            } catch (error) {
+                console.error('数据加载失败:', error);
+                message.error(error.message || t('common.loading.error'));
+            } finally {
+                setLoading(false);
+            }
+        };
 
-    }, [])
+        fetchData();
+    }, [lang, t, forest, base64ToUtf8]); // 确保所有依赖项正确
+
+    // useEffect(() => {
+    //     setLoading(true)
+    //     axios.get('/api/dst-static/dst_world_setting.json')
+    //         .then(response => {
+    //             return JSON.parse(base64ToUtf8(response.data))
+    //         })
+    //         .then(data => {
+    //             setDstWorldSetting(data)
+    //             getLevelListApi()
+    //                 .then(resp => {
+    //                     // console.log(resp)
+    //                     if (resp.code === 200) {
+    //                         const levels = resp.data
+    //                         levelListRef.current = levels
+    //                         const items2 = levels.map(level => {
+    //                             const closable = level.uuid !== "Master"
+    //                             if (lang === "en") {
+    //                                 if (level.uuid === "Master") {
+    //                                     level.levelName = "Forest"
+    //                                 }
+    //                                 if (level.uuid === "Caves") {
+    //                                     level.levelName = "Caves"
+    //                                 }
+    //                             }
+    //                             if (level.uuid !== "Master") {
+    //                                 if (level.leveldataoverride === "return {}" || level.leveldataoverride === "") {
+    //                                     level.leveldataoverride = forest
+    //                                 }
+    //                             }
+    //                             return {
+    //                                 label: level.levelName,
+    //                                 children: <LevelItem
+    //                                     dstWorldSetting={data}
+    //                                     level={{
+    //                                         leveldataoverride: level.leveldataoverride,
+    //                                         modoverrides: level.modoverrides,
+    //                                         server_ini: level.server_ini
+    //                                     }}
+    //                                     levelName={level.levelName}
+    //                                     changeValue={changeValue}
+    //                                 />,
+    //                                 key: level.uuid,
+    //                                 closable: closable,
+    //                             }
+    //                         })
+    //                         setItems(items2)
+    //                         if (levels.length === 0) {
+    //                             setActiveKey("")
+    //                         } else {
+    //                             setActiveKey(levels[0].uuid)
+    //                         }
+    //                     } else {
+    //                         message.error(t('level.fetch.error'))
+    //                     }
+    //                     const fetch = async ()=>{
+    //                         if (userInfo.role !== 'admin') {
+    //                             const resp = await queryUserClusterPermissionApi(cluster)
+    //                             setPermission(resp.data)
+    //                         }
+    //                     }
+    //                     fetch()
+    //                     setLoading(false)
+    //                 })
+    //         })
+    //         .catch(error => {
+    //             console.error('无法加载配置文件', error);
+    //         })
+    //
+    // }, [])
 
     const onChange = (newActiveKey) => {
         setActiveKey(newActiveKey);
@@ -612,32 +637,12 @@ const App = () => {
         setActiveKey(uuid);
 
     }
-    const remove = (targetKey) => {
 
+    const remove = (targetKey) => {
         setDeleteLevelName(targetKey)
         setOpenDelete(true)
-
-        // let newActiveKey = activeKey;
-        // let lastIndex = -1;
-        // items.forEach((item, i) => {
-        //     if (item.key === targetKey) {
-        //         lastIndex = i - 1;
-        //     }
-        // });
-        // const newPanes = items.filter((item) => item.key !== targetKey);
-        // if (newPanes.length && newActiveKey === targetKey) {
-        //     if (lastIndex >= 0) {
-        //         newActiveKey = newPanes[lastIndex].key;
-        //     } else {
-        //         newActiveKey = newPanes[0].key;
-        //     }
-        // }
-        // setItems(newPanes);
-        // setActiveKey(newActiveKey);
-        //
-        // // TODO 删除对应的level
-        // levelListRef.current = levelListRef.current.filter((item) => item.levelName !== targetKey)
     };
+
     const removeLevel = (targetKey) => {
         let newActiveKey = activeKey;
         let lastIndex = -1;
@@ -660,6 +665,7 @@ const App = () => {
         // TODO 删除对应的level
         levelListRef.current = levelListRef.current.filter((item) => item.uuid !== targetKey)
     }
+
     const onEdit = (targetKey, action) => {
         if (action === 'add') {
             add();
@@ -755,7 +761,6 @@ const App = () => {
         return Promise.resolve();
     };
 
-
     function getMasterModoverrides() {
         const levels = levelListRef.current
         let modoverrides = "return {}"
@@ -806,48 +811,12 @@ const App = () => {
     }
 
     const [spinLoading, setSpinLoading] = useState(false)
-    const handleRefresh = () => {
-        setSpinLoading(true)
-        getLevelListApi()
-            .then(resp => {
-                if (resp.code === 200) {
-                    const levels = resp.data
-                    levelListRef.current = levels
-                    const items2 = levels.map(level => {
-                        const closable = level.uuid !== "Master"
-                        if (level.uuid !== "Master") {
-                            if (level.leveldataoverride === "return {}" || level.leveldataoverride === "") {
-                                level.leveldataoverride = forest
-                            }
-                        }
-                        return {
-                            label: level.levelName,
-                            children: <LevelItem
-                                dstWorldSetting={dstWorldSetting}
-                                level={{
-                                    leveldataoverride: level.leveldataoverride,
-                                    modoverrides: level.modoverrides,
-                                    server_ini: level.server_ini
-                                }}
-                                levelName={level.levelName}
-                                changeValue={changeValue}
-                            />,
-                            key: level.uuid,
-                            closable: closable,
-                        }
-                    })
-                    setItems([...items2])
-                    if (levels.length === 0) {
-                        setActiveKey("")
-                    } else {
-                        setActiveKey(levels[0].uuid)
-                    }
-                    setSpinLoading(false)
-                } else {
-                    message.error(t('level.fetch.error'))
-                }
-            })
-    };
+
+    const userInfo = useUserStore(state => state.userInfo)
+    const [permission, setPermission] = useState({
+        allowAddLevel: true,
+        allowEditingServerIni: true
+    })
 
     return (
         <>
@@ -885,7 +854,9 @@ const App = () => {
                                         }
                                     })
                             }}>{t('level.save')}</Button>
-                            <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
+                            {permission?.allowAddLevel &&(<>
+                                <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
+                            </>)}
                         </Space>
                     </div>
                 </Spin>

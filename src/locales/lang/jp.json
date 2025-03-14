@@ -30,6 +30,7 @@
   "time.last.month": "先月",
 
   "dashboard": "ダッシュボード",
+  "menu.userList": "UserList",
   "menu.cluster": "Cluster",
   "menu.dashboard": "ダッシュボード",
   "menu.panel": "パネル",
@@ -112,6 +113,7 @@
   "panel.regenerate": "再生成",
   "panel.c_save()": "C_SAVE()",
   "panel.respawn": "再スポーン",
+  "panel.despawn": "despawn",
   "panel.kick": "キック",
   "panel.auto": "自動",
   "panel.send": "送信",

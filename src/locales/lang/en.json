@@ -30,6 +30,7 @@
   "time.last.month": "Last Month",
 
   "dashboard": "dashBoard",
+  "menu.userList": "UserList",
   "menu.cluster": "Cluster",
   "menu.dashboard": "DashBoard",
   "menu.panel": "Panel",
@@ -112,6 +113,7 @@
   "panel.regenerate": "Regenerate",
   "panel.c_save()": "C_SAVE()",
   "panel.respawn": "respawn",
+  "panel.despawn": "despawn",
   "panel.kick": "kick",
   "panel.auto": "auto",
   "panel.send": "send",

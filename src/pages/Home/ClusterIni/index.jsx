@@ -10,8 +10,7 @@ import {
     Switch,
     Tooltip,
     Skeleton,
-    Modal,
-    Typography
+    Modal
 } from "antd";
 
 import {useTranslation} from "react-i18next";
@@ -22,29 +21,44 @@ import {getClusterIniApi, saveClusterIniApi} from "../../../api/level.jsx";
 import style from '../../DstServerList/index.module.css'
 import {FooterToolbar, ProCard} from "@ant-design/pro-components";
 import DstEmoji from "../../DstServerList/DstEmoji/index.jsx";
+import useUserStore from "../../../store/useUserStore";
+import {queryUserClusterPermissionApi} from "../../../api/userApi.jsx";
+import {useParams} from "react-router-dom";
 
 const {TextArea} = Input;
-const {Paragraph, Text } = Typography;
 
 export default () => {
 
+    const {cluster} = useParams()
     const {t} = useTranslation()
     const {i18n} = useTranslation();
-    const [lang, setLang] = useState( 'zh')
+    const [lang, setLang] = useState('zh')
+
+    const userInfo = useUserStore(state => state.userInfo)
+    const [permission, setPermission] = useState({
+        allowAddLevel: true,
+        allowEditingServerIni: true
+    })
+    useEffect( () => {
+        const fetch = async ()=>{
+            if (userInfo.role !== 'admin') {
+                const resp = await queryUserClusterPermissionApi(cluster)
+                setPermission(resp.data)
+            }
+        }
+        fetch()
+    }, [])
 
     useEffect(() => {
         const handleLanguageChange = (lng) => {
             setLang(lng)
         };
-
         i18n.on("languageChanged", handleLanguageChange);
-
         // 清理事件监听器
         return () => {
             i18n.off("languageChanged", handleLanguageChange);
         };
     }, [i18n]);
-
 
     const [loading, setLoading] = useState(false)
     const [form] = Form.useForm()
@@ -92,18 +106,6 @@ export default () => {
     }, [])
 
     const [open, setOpen] = useState(false)
-
-    const Description = ({text})=>{
-        return(
-            <div style={{
-                paddingTop: 12,
-            }}>
-                <Text>
-                    {text}
-                </Text>
-            </div>
-        )
-    }
 
     return (
         <>
@@ -324,7 +326,7 @@ export default () => {
 主从服务器都在同一计算机上时，填127.0.0.1(表示本机);否则填0.0.0.0(表示所有IP ) 。
 只需要为主服务器设置此项。"
                             >
-                                <Input.Password placeholder="bind_ip" maxLength={200}/>
+                                <Input.Password disabled={!permission?.allowEditingServerIni} placeholder="bind_ip" maxLength={200}/>
                             </Form.Item>
 
                             <Form.Item
@@ -334,7 +336,7 @@ export default () => {
 主服务器的IPv4地址，从服务器请求此IP并与其连接。
 主从服务器都在同一计算机上时，填127.0.0.1 ;否则填主服务器IP只需要为从服务器设置此项"
                             >
-                                <Input.Password placeholder="master_ip" maxLength={200}/>
+                                <Input.Password disabled={!permission?.allowEditingServerIni} placeholder="master_ip" maxLength={200}/>
                             </Form.Item>
 
                             <Form.Item
@@ -344,7 +346,8 @@ export default () => {
                                     "主服务器将监听/从服务器请求与主服务器连接的UDP端口。\n" +
                                     "主从服务器应设为相同值"}
                             >
-                                <InputNumber placeholder="master_port" maxLength={200}/>
+                                <InputNumber disabled={!permission?.allowEditingServerIni} placeholder="master_port"
+                                             maxLength={200}/>
                             </Form.Item>
 
                             <Form.Item
@@ -353,7 +356,7 @@ export default () => {
                                 tooltip={"世界验证密码\n" +
                                     "多服务器开服时，服务器间的验证密码"}
                             >
-                                <Input placeholder="cluster_key" maxLength={200}/>
+                                <Input disabled={!permission?.allowEditingServerIni} placeholder="cluster_key" maxLength={200}/>
                             </Form.Item>
                         </ProCard>
                         <br/>

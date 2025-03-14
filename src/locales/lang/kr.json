@@ -30,6 +30,7 @@
   "time.last.month": "지난달",
 
   "dashboard": "대시보드",
+  "menu.userList": "UserList",
   "menu.cluster": "Cluster",
   "menu.dashboard": "대시보드",
   "menu.panel": "패널",
@@ -112,6 +113,7 @@
   "panel.regenerate": "재생성",
   "panel.c_save()": "C_SAVE()",
   "panel.respawn": "재생성",
+  "panel.despawn": "despawn",
   "panel.kick": "강퇴",
   "panel.auto": "자동",
   "panel.send": "보내기",

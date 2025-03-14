@@ -2,19 +2,21 @@ import React, {useState} from "react";
 import {Button, Col, Dropdown, message, Modal, Popconfirm, Row, Space, Tag, Typography} from "antd";
 import {useNavigate} from "react-router-dom";
 
-import style from "../../DstServerList/index.module.css";
-import {dstSeason, dstSegs, getDstMod, getTimeStatus} from "../../../utils/dst";
-import {UpdateServer} from "./index";
-import {deleteCluster} from "../../../api/clusterApi";
+import style from "../DstServerList/index.module.css";
+import {dstSeason, dstSegs, getDstMod, getTimeStatus} from "../../utils/dst.js";
+import {UpdateServer} from "./index.jsx";
+import {deleteCluster} from "../../api/clusterApi.jsx";
 import {ProCard, ProDescriptions} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
-import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
+import HiddenText from "../Home/HiddenText/HiddenText.jsx";
+import useUserStore from "../../store/useUserStore";
 
 const {Title, Link} = Typography;
 
-export default ({cluster, showAddBtn, serverList, updateServerList, removeServerList}) => {
+export default ({cluster, serverList, updateServerList, removeServerList}) => {
 
     const {t} = useTranslation()
+    const userInfo = useUserStore(state => state.userInfo)
     const navigate = useNavigate()
     const [openUpdate, setOpenUpdate] = useState(false)
 
@@ -29,44 +31,6 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                 }
             })
     }
-
-    const items = [
-        {
-            label: (
-                <div>
-                    {showAddBtn && (
-                        <Popconfirm
-                            title="是否删除房间"
-                            description="请自行做好备份"
-                            okText="Yes"
-                            cancelText="No"
-                            onConfirm={() => {
-                                deleteServer(cluster)
-                            }}
-                        >
-                            <Button size={"small"} color="danger" variant="filled">删除</Button>
-                        </Popconfirm>
-                    )}
-                </div>
-            ),
-            key: '1',
-        },
-        {
-            type: 'divider',
-        },
-        {
-            label: (
-                <div>
-                    {showAddBtn && (
-                        <Button size={"small"} color="primary" variant="filled" onClick={() => {
-                            setOpenUpdate(true)
-                        }}>编辑</Button>
-                    )}
-                </div>
-            ),
-            key: '2',
-        },
-    ];
 
     return (<>
 
@@ -115,6 +79,19 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                     <ProDescriptions.Item
                         span={2}
                         valueType="text"
+                        contentStyle={{
+                            maxWidth: '80%',
+                        }}
+                        ellipsis
+                        label={t('panel.clusterName')}
+                    >
+                        <span className={style.icon}>
+                            {cluster?.gameArchive?.clusterName}
+                        </span>
+                    </ProDescriptions.Item>
+                    <ProDescriptions.Item
+                        span={2}
+                        valueType="text"
                         label={t('游戏天数')}
                     >
                                     <span>
@@ -156,12 +133,12 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                 </ProDescriptions>
             </div>
             <p>
-                {showAddBtn && (
-                    <Button style={{marginRight: 12}} type="primary"  onClick={() => {
+                {userInfo?.role === 'admin' && (
+                    <Button style={{marginRight: 12}} type="primary" onClick={() => {
                         setOpenUpdate(true)
                     }}>编辑</Button>
                 )}
-                {showAddBtn && (
+                {userInfo?.role === 'admin' && (
                     <Popconfirm
                         title="是否删除房间"
                         description="请自行做好备份"

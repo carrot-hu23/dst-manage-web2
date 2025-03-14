@@ -11,15 +11,16 @@ import {
     Space,
     Skeleton, Segmented, InputNumber, Empty, Select, Row, Col
 } from 'antd';
-import {PlusOutlined} from '@ant-design/icons';
+
 import {
     createCluster,
     fetchRemoteClusterList,
     getClusterList,
     updateCluster
-} from "../../../api/clusterApi";
-import {generateUUID} from "../../../utils/dateUitls";
-import ClusterCard from "./clusterCard";
+} from "../../api/clusterApi.jsx";
+import {generateUUID} from "../../utils/dateUitls.js";
+import ClusterCard from "./ClusterCard.jsx";
+import useUserStore from "../../store/useUserStore";
 
 
 export const UpdateServer = ({server, serverList, updateServerList, setOpen}) => {
@@ -236,24 +237,11 @@ export default () => {
     const [serverListBak, setServerListBak] = useState([])
     const [serverList, setServerList] = useState([])
     const [openAdd, setOpenAdd] = useState(false)
-
     const [loading, setLoading] = useState(false)
-    const [showAddBtn, setShowAddBtn] = useState(true)
+
+    const userInfo = useUserStore(state => state.userInfo)
 
     useEffect(() => {
-
-        const userJson = localStorage.getItem('user');
-        let user = JSON.parse(userJson);
-        if (user === null) {
-            user = {
-                displayName: '',
-                email: '',
-                photoURL: ''
-            }
-        }
-        if (user.role !== 'admin') {
-            setShowAddBtn(false)
-        }
         setLoading(true)
         getClusterList()
             .then(resp => {
@@ -280,6 +268,7 @@ export default () => {
         }
         setServerList(newServerList)
     }
+
     const removeServerList = (server) => {
         const oldServerList = serverList
         const newServerList = []
@@ -290,7 +279,6 @@ export default () => {
         }
         setServerList(newServerList)
     }
-
 
     const reload = () => {
         getClusterList()
@@ -308,7 +296,6 @@ export default () => {
     const AddServer = ({serverList, reload}) => {
 
         const [clusterType, setClusterType] = useState('本地')
-
         const stringList = serverList.map(server => server.clusterName)
         const [spining, setSpinning] = useState(false)
 
@@ -333,25 +320,6 @@ export default () => {
 
             return Promise.resolve();
         }
-
-        const onFinish = (values) => {
-            setSpinning(true)
-            if (values.clusterType === '远程') {
-                values.clusterName = generateUUID()
-            }
-            console.log('createCluster:', values);
-            createCluster(values)
-                .then(resp => {
-                    if (resp.code === 200) {
-                        message.success("创建房间成功")
-                        reload()
-                    } else {
-                        message.error("创建房间成功")
-                    }
-                    setOpenAdd(false)
-                    setSpinning(false)
-                })
-        };
 
         const [remote, setRemote] = useState("remote1");
         const onChange = (e) => {
@@ -658,7 +626,7 @@ export default () => {
             <Skeleton loading={loading} active>
                 <div style={{marginBottom: '16px'}}>
                     <Space size={16} wrap>
-                        {showAddBtn && <div>
+                        {userInfo?.role === 'admin' && <div>
                             <Button color="primary" onClick={() => setOpenAdd(true)} type={'primary'}>添加房间</Button>
                         </div>}
                         <Segmented
@@ -679,7 +647,6 @@ export default () => {
                     {serverList.map((cluster, index) => (
                         <Col xs={24} sm={12} md={8} key={index}>
                             <ClusterCard cluster={cluster}
-                                         showAddBtn={showAddBtn}
                                          serverList={serverList}
                                          updateServerList={updateServerList}
                                          removeServerList={removeServerList}

@@ -14,7 +14,7 @@ import {
     ConfigProvider,
     Dropdown,
 } from 'antd';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 // @ts-ignore
 import defaultProps from './_defaultProps';
 import {Outlet, useLocation} from "react-router";
@@ -28,8 +28,12 @@ import {ToggleLanguage} from "../layout/Language.tsx";
 import ToggleTheme from "../layout/ToggleTheme.tsx";
 // @ts-ignore
 import {useTheme} from "../hooks/useTheme/index.jsx";
+import useUserStore from "../store/useUserStore.tsx";
 
 export default () => {
+
+    const logout = useUserStore((state) => state.logout);
+    const userInfo = useUserStore(state => state.userInfo)
 
     // @ts-ignore
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
@@ -48,28 +52,11 @@ export default () => {
     const navigate = useNavigate()
     const {t} = useTranslation()
 
-    const [account, setAcount] = useState({
-        displayName: '',
-        email: '',
-        photoURL: ''
-    })
-    useEffect(() => {
-        const userJson = localStorage.getItem('user') || '{}';
-        let user = JSON.parse(userJson);
-        if (user === null) {
-            user = {
-                displayName: '',
-                email: '',
-                photoURL: ''
-            }
-        }
-        setAcount(user)
-    }, [])
-
-    const logout = async () => {
-        localStorage.clear()
+    const goLogout = async () => {
+        // localStorage.clear()
         const data = await http.get("/api/logout")
         console.log('logout', data);
+        logout()
         navigate('/login', {replace: true});
 
     };
@@ -120,9 +107,9 @@ export default () => {
                             })
                         }}
                         avatarProps={{
-                            src: account.photoURL,
+                            src: userInfo?.photoURL,
                             size: 'small',
-                            title: account.displayName,
+                            title: userInfo?.displayName,
                             render: (_props, dom) => {
                                 return (
                                     <Dropdown
@@ -132,7 +119,7 @@ export default () => {
                                                     key: 'logout',
                                                     icon: <LogoutOutlined/>,
                                                     label: t('header.logout'),
-                                                    onClick: () => logout(),
+                                                    onClick: () => goLogout(),
                                                 },
                                                 {
                                                     key: 'userProfile',
