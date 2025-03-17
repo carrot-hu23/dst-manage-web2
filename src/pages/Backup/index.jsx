@@ -14,11 +14,11 @@ export default ()=>{
             label: t("backup.BackupList"),
             children: <BackupList showStatistic={true}/>,
         },
-        {
-            key: '2',
-            label: t("backup.SnapshotBackup"),
-            children: <SnapshotBackup/>,
-        },
+        // {
+        //     key: '2',
+        //     label: t("backup.SnapshotBackup"),
+        //     children: <SnapshotBackup/>,
+        // },
     ]
 
     return(

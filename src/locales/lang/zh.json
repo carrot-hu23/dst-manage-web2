@@ -34,7 +34,8 @@
 
   "menu.userList": "用户列表",
   "menu.cluster": "房间列表",
-  "menu.dashboard": "Dashboard",
+  "menu.dashboard": "统计页面",
+  "menu.playerLine": "玩家时间线",
   "menu.panel": "面板操作",
   "menu.home": "房间设置",
   "menu.home.clusterIni": "房间设置",

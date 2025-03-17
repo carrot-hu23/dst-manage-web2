@@ -15,7 +15,18 @@ export default {
                 path: '/dashboard',
                 name: 'menu.dashboard',
                 icon: <DashboardOutlined />,
-                
+                routes: [
+                    {
+                        path: '/dashboard/dashboard',
+                        name: 'menu.dashboard',
+                        icon: <DashboardOutlined />,
+
+                    },
+                    {
+                        path: '/dashboard/playerLine',
+                        name: 'menu.playerLine',
+                    },
+                ]
             },
             {
                 path: '/panel',

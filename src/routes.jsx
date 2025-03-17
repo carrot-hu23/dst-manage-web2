@@ -31,9 +31,9 @@ import AddMod from "./pages/Mod/AddMod/index.jsx";
 
 // layout outside
 import LayoutSide from "./layoutSide/index";
-import ClusterList from "./pages/ClusterList/index";
 import UserList from "./pages/UserList/index.jsx";
 import Server from "./pages/ClusterList/index.jsx";
+import PlayerLine from "./pages/Dashboard/Statistics/PlayerLine";
 
 function RedirectToPanel() {
     const { cluster, name } = useParams();
@@ -51,7 +51,13 @@ export default function Routes() {
                     element: <RedirectToPanel />, // 这里替换 Navigate
                     index: true,
                 },
-                {path: 'dashboard', element: <Dashboard/>},
+                {
+                    path: 'dashboard',
+                    children: [
+                        {path: 'dashboard', element: <Dashboard/>},
+                        {path: 'playerLine', element: <PlayerLine />,},
+                    ]
+                },
                 {path: 'playerLog', element: <PlayerLog/>},
                 {path: 'mod', element: <Mod/>},
                 {path: 'panel', element: <Panel/>},
@@ -83,10 +89,7 @@ export default function Routes() {
             element: <LayoutSide/>,
             children: [
                 {element: <Navigate to="/cluster"/>, index: true},
-                {
-                    path: '/cluster',
-                    element: <Server />,
-                },
+                {path: '/cluster', element: <Server />,},
                 {path: 'userList', element: <UserList/>},
                 {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},

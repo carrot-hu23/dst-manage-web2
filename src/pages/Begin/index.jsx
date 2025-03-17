@@ -10,8 +10,9 @@ import Register from './component/Register.jsx';
 import End from './component/End.jsx';
 
 import {http} from '../../utils/http';
-import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
+import {ProConfigProvider} from "@ant-design/pro-components";
 import {useTheme} from "../../hooks/useTheme/index.jsx";
+import useUserStore from "../../store/useUserStore";
 
 const mainCss = {
     textAlign: 'center',
@@ -28,6 +29,8 @@ const mainCss = {
 const Begin = (props) => {
     const {t} = useTranslation()
     const {theme} = useTheme()
+
+    const login = useUserStore((state) => state.login);
 
     const [form] = Form.useForm();
     const [current, setCurrent] = useState(0);
@@ -87,8 +90,7 @@ const Begin = (props) => {
             message.error("登录失败")
             return
         }
-        localStorage.setItem("token", loginResponseData.data.username)
-        localStorage.setItem("user", JSON.stringify(loginResponseData.data))
+        login(loginResponseData.data)
         // 3.跳转
         navigate('/')
     }
