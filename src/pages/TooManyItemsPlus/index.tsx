@@ -7,6 +7,7 @@ import {useParams} from "react-router-dom";
 import {getAllOnlinePlayersApi} from "../../api/onlinPlayerApi.ts";
 import {dstRoles} from "../../types/dst.ts";
 import {ProCard} from "@ant-design/pro-components";
+import {useLevelsStore} from "../../store/useLevelsStore.tsx";
 
 export default function TooManyItemsPlus() {
 
@@ -19,6 +20,10 @@ export default function TooManyItemsPlus() {
 
     const playerList = usePlayerListStore((state) => state.playerList);
     const setPlayerList = usePlayerListStore((state) => state.setPlayerList);
+
+    const levels = useLevelsStore((state) => state.levels)
+    const notHasLevels = levels === undefined || levels === null || levels.length === 0
+    const [levelName, setLevelName] = useState(notHasLevels?"":levels[0].key)
 
     useEffect(() => {
         getAllOnlinePlayersApi(cluster || '').then(resp => {
@@ -77,9 +82,9 @@ export default function TooManyItemsPlus() {
         return Object.keys(filteredData).map(key => ({
             key,
             label: translations[key],
-            children: <ItemsList items={filteredData[key]} kuId={kuId} amount={amount} />
+            children: <ItemsList levelName={levelName} items={filteredData[key]} kuId={kuId} amount={amount} />
         }));
-    }, [filteredData, kuId, amount]);
+    }, [filteredData, levelName, kuId, amount]);
 
     return (
         <ProCard>
@@ -87,6 +92,19 @@ export default function TooManyItemsPlus() {
                 <Row gutter={[16, 32]}>
                     <Col xs={24} sm={12} md={12} lg={16} xl={16}>
                         <Space size={16} wrap>
+                            <Select
+                                style={{
+                                    width: 120,
+                                }}
+                                onChange={value => {
+                                    setLevelName(value)
+                                }}
+                                defaultValue={notHasLevels?"":levels[0].levelName}
+                                options={levels.map(level=>({
+                                    value: level.key,
+                                    label: level.levelName,
+                                }))}
+                            />
                             <Select
                                 defaultValue={kuId}
                                 style={{ width: 120 }}

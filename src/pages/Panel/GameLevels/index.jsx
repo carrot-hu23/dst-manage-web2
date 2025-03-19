@@ -7,7 +7,7 @@ import {ClearOutlined} from '@ant-design/icons';
 import {parse} from "lua-json";
 
 import {cleanAllLevelApi, cleanLevelApi, getLevelStatusApi, startAllLevelApi, startLevelApi} from "../../../api/level.jsx";
-import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
+import {useLevelsStore} from "../../../store/useLevelsStore";
 
 
 function formatData(data, num) {

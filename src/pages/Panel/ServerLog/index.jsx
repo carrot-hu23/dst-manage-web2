@@ -8,7 +8,7 @@ import {MonacoEditor} from "../../NewEditor/index.jsx";
 import {readLevelServerLogApi, sendCommandApi} from "../../../api/level.jsx";
 import {useTheme} from "../../../hooks/useTheme/index.jsx";
 import style from "../../DstServerList/index.module.css";
-import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
+import {useLevelsStore} from "../../../store/useLevelsStore";
 import {ProCard} from "@ant-design/pro-components";
 
 export default () => {

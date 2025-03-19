@@ -5,6 +5,7 @@ import {ProCard} from "@ant-design/pro-components";
 import {useState} from "react";
 import {usePlayerListStore} from "../../store/usePlayerListStore.tsx";
 import {dstRoles} from "../../types/dst.ts";
+import {useLevelsStore} from "../../store/useLevelsStore.tsx";
 
 export default function OtherIOrder(){
 
@@ -26,9 +27,13 @@ export default function OtherIOrder(){
     const [prefab, setPrefab] = useState<string>();
     const playerList = usePlayerListStore((state) => state.playerList);
 
+    const levels = useLevelsStore((state) => state.levels)
+    const notHasLevels = levels === undefined || levels === null || levels.length === 0
+    const [levelName, setLevelName] = useState(notHasLevels?"":levels[0].key)
+
     function give(prefab: string, amount: number, kuId: string) {
         const command = `ThePlayer = UserToPlayer(\\"${kuId}\\")   c_give(\\"${prefab}\\", ${amount}) ThePlayer = nil`
-        sendCommandApi(cluster || "", "Master", command)
+        sendCommandApi(cluster || "", levelName, command)
             .then(resp =>{
                 if (resp.code === 200) {
                     message.success("发送成功")
@@ -64,6 +69,19 @@ export default function OtherIOrder(){
                 自定义模组物品给予
             </Typography.Title>
             <Space size={16} wrap>
+                <Select
+                    style={{
+                        width: 120,
+                    }}
+                    onChange={value => {
+                        setLevelName(value)
+                    }}
+                    defaultValue={notHasLevels?"":levels[0].levelName}
+                    options={levels.map(level=>({
+                        value: level.key,
+                        label: level.levelName,
+                    }))}
+                />
                 <Select
                     defaultValue={kuId}
                     style={{ width: 120 }}

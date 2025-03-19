@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 import {Skeleton, Tabs} from 'antd';
-import {useLevelsStore} from "../../store/useLevelsStore.jsx";
+import {useLevelsStore} from "../../store/useLevelsStore";
 import {getLevelStatusApi} from "../../api/level.jsx";
 import GameOperator from "./GameOperator/index.jsx";
 import RemoteControl from "./RemoteControl/index.jsx";
