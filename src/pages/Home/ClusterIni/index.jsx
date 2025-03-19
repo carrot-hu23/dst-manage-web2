@@ -76,7 +76,7 @@ export default () => {
             }
             body.cluster.cluster_description = body.cluster.cluster_description.replace(/\n/g, "")
             console.log('body:', body);
-            saveClusterIniApi("", body)
+            saveClusterIniApi(cluster, body)
                 .then(resp => {
                     if (resp.code === 200) {
                         message.success(t('cluster.save.ok'))
@@ -94,7 +94,7 @@ export default () => {
 
     useEffect(() => {
         setLoading(true)
-        getClusterIniApi("")
+        getClusterIniApi(cluster)
             .then(resp => {
                 if (resp.code === 200) {
                     form.setFieldsValue({...resp.data.cluster, ...{cluster_token: resp.data.token}})

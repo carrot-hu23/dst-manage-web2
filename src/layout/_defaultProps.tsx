@@ -77,6 +77,10 @@ export default {
                         path: '/levels/genMap',
                         name: 'menu.levels.genMap',
                     },
+                    // {
+                    //     path: '/levels/levelImport',
+                    //     name: 'menu.levels.importLevel',
+                    // },
                 ],
             },
             {

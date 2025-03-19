@@ -15,6 +15,7 @@ import {ProCard} from "@ant-design/pro-components";
 import zhCN from "antd/es/locale/zh_CN";
 import enUS from "antd/es/locale/en_US";
 import 'dayjs/locale/zh-cn';
+import TopNPlayerChart from "./TopNPlayerChart.jsx";
 
 dayjs.locale('zh-cn');
 const {RangePicker} = DatePicker;
@@ -80,9 +81,10 @@ export default () => {
         countTopNActive(cluster, 10, start, end)
             .then(response => {
                 const {data} = response
+                console.log(data)
                 setTopNActive({
                     title: t('top10PlayerRankingsOfThisWeek'),
-                    chartData: data.map(item => ({label: item.name, value: item.count}))
+                    chartData: data
                 })
             })
             .catch(ereor => {
@@ -169,13 +171,9 @@ export default () => {
                         <RoleVisits chartData={roleRate.chartData} title={t('roleRatioOfThisTheWeek')}/>
                     </Col>
 
-                    {/*
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
-                        <ProCard title={t("top10PlayerRankingsOfThisWeek")}>
-                            1
-                        </ProCard>
+                        <TopNPlayerChart title={t("top10PlayerRankingsOfThisWeek")} chartData={topNActive.chartData}/>
                     </Col>
-                    */}
 
                     <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                         <ProCard title={t("lastRegenerateLine")}>

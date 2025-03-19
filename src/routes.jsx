@@ -34,10 +34,11 @@ import LayoutSide from "./layoutSide/index";
 import UserList from "./pages/UserList/index.jsx";
 import Server from "./pages/ClusterList/index.jsx";
 import PlayerLine from "./pages/Dashboard/Statistics/PlayerLine";
+import ImportPage from "./pages/Tool/ImportPage";
 
 function RedirectToPanel() {
-    const { cluster, name } = useParams();
-    return <Navigate to={`/${cluster}/${name}/panel`} replace />;
+    const {cluster, name} = useParams();
+    return <Navigate to={`/${cluster}/${name}/panel`} replace/>;
 }
 
 
@@ -48,14 +49,14 @@ export default function Routes() {
             element: <Layout/>,
             children: [
                 {
-                    element: <RedirectToPanel />, // 这里替换 Navigate
+                    element: <RedirectToPanel/>, // 这里替换 Navigate
                     index: true,
                 },
                 {
                     path: 'dashboard',
                     children: [
                         {path: 'dashboard', element: <Dashboard/>},
-                        {path: 'playerLine', element: <PlayerLine />,},
+                        {path: 'playerLine', element: <PlayerLine/>,},
                     ]
                 },
                 {path: 'playerLog', element: <PlayerLog/>},
@@ -78,6 +79,7 @@ export default function Routes() {
                         {path: 'selectorMod', element: <Assembly/>},
                         {path: 'preinstall', element: <Preinstall/>},
                         {path: 'genMap', element: <DstMapData/>},
+                        {path: 'levelImport', element: <ImportPage/>},
                     ]
                 },
                 {path: 'backup', element: <Backup/>},
@@ -89,7 +91,7 @@ export default function Routes() {
             element: <LayoutSide/>,
             children: [
                 {element: <Navigate to="/cluster"/>, index: true},
-                {path: '/cluster', element: <Server />,},
+                {path: '/cluster', element: <Server/>,},
                 {path: 'userList', element: <UserList/>},
                 {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},
