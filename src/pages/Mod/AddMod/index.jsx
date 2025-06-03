@@ -5,7 +5,7 @@ import {Button, Spin, Space, Input, message, Typography, Grid, Card} from "antd"
 import {useNavigate} from "react-router-dom";
 import {ArrowLeftOutlined} from '@ant-design/icons';
 
-import {useTheme} from "../../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../../hooks/useTheme";
 
 import {addModInfoFileApi} from "../../../api/modApi.jsx";
 import {MonacoEditor} from "../../NewEditor/index.jsx";

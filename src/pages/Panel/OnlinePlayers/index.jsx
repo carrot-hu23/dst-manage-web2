@@ -10,7 +10,7 @@ import {dstRoles} from '../../../utils/dst';
 import {sendCommandApi} from "../../../api/level.jsx";
 import style from "../../DstServerList/index.module.css";
 import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
-import {useLevelsStore} from "../../../store/useLevelsStore.jsx";
+import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {getAllOnlinePlayersApi, getOnlinePlayersApi} from "../../../api/onlinPlayerApi";
 import PlayerBtn from "./PlayerBtn.jsx";

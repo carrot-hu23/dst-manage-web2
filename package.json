@@ -13,6 +13,7 @@
     "@ant-design/icons": "^5.5.1",
     "@ant-design/pro-components": "^2.8.2",
     "@emotion/css": "^11.13.5",
+    "@types/lua-json": "^1.0.3",
     "antd": "^5.22.2",
     "axios": "^1.7.8",
     "dayjs": "^1.11.13",

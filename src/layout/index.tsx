@@ -26,7 +26,7 @@ import {http} from '../utils/http';
 import {ToggleLanguage} from "./Language.tsx";
 import ToggleTheme from "./ToggleTheme.tsx";
 // @ts-ignore
-import {useTheme} from "../hooks/useTheme/index.jsx";
+import {useTheme} from "../hooks/useTheme";
 
 export default () => {
 

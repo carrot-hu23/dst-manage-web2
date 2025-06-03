@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 
 import {MonacoEditor} from "../../NewEditor/index.jsx";
 import {readPanelLogApi} from "../../../api/level.jsx";
-import {useTheme} from "../../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../../hooks/useTheme";
 
 
 export default ()=>{

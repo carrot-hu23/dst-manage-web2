@@ -81,9 +81,9 @@ export default () => {
         subscribeModList.forEach(mod => {
             const {modid} = mod
             const options = mod.mod_config.configuration_options
-            if (options !== undefined && options !== null) {
+            if (typeof options === 'object' && options !== undefined && options !== null) {
                 const defaultOptions = {}
-                options.forEach((item) => {
+                options?.forEach((item) => {
                     if (item.default !== '' && item.name !== "null" && item.name !== undefined) {
                         defaultOptions[item.name] = item.default
                     }

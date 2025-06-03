@@ -6,7 +6,7 @@ import {
 import {useTranslation} from "react-i18next";
 
 import {CaretRightOutlined} from "@ant-design/icons";
-import {useTheme} from "../../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../../hooks/useTheme";
 import TengxuCloudAd3 from "../../Ad/TengxunCloudAd3.jsx";
 
 const { Title, Paragraph, Text, Link } = Typography;

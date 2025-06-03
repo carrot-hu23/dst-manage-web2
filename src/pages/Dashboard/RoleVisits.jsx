@@ -1,4 +1,4 @@
-import {useTheme} from "../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../hooks/useTheme";
 import {ProCard} from "@ant-design/pro-components";
 import EChartComponent from "./EChartComponent.jsx";
 

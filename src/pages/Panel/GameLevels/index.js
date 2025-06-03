@@ -31,7 +31,7 @@ var antd_1 = require("antd");
 var icons_1 = require("@ant-design/icons");
 var lua_json_1 = require("lua-json");
 var _8level_1 = require("../../../api/level.jsx");
-var useLevelsStore_1 = require("../../../store/useLevelsStore");
+var useLevelsStore_1 = require("../../../store/useLevelsStore.js");
 function formatData(data, num) {
     return data.toFixed(num);
 }

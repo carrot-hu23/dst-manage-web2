@@ -19,7 +19,7 @@ import {useTranslation} from "react-i18next";
 
 import {MonacoEditor} from "../NewEditor/index.jsx";
 import {createLevelApi, deleteLevelApi, getLevelListApi, updateLevelsApi} from "../../api/clusterLevelApi.jsx";
-import {useTheme} from "../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../hooks/useTheme";
 import {useParams} from "react-router-dom";
 import ConfigViewEditor from "./ConfigViewEditor/index.jsx";
 import {cave, forest, porkland} from "../../utils/dst";
