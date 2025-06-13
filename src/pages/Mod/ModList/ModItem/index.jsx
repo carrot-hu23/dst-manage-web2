@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import {useState} from 'react';
+import {useEffect, useState} from 'react';
 import {Card, Switch, Popconfirm, Row, Col, Button, message, Spin, Badge} from 'antd';
 
 import './mod.css';
@@ -49,12 +49,17 @@ const ModItem = (props) => {
     const {cluster} = useParams()
     const [startLoading, setStartLoading] = useState(false)
 
+    useEffect(()=>{
+        console.log('xxxxxxxxxx')
+        setMod({...props.mod})
+    }, [props?.mod])
+
     return <Spin spinning={startLoading} tip={t('mod.subscribing')}>
-        <Card className='mod' style={{margin: ' 0 0 16px', backgroundColor: props?.mod?.update ? "#583D23" : ""}}>
+        <Card className='mod' style={{margin: ' 0 0 16px', backgroundColor: mod?.update ? "#583D23" : ""}}>
             <Row onClick={() => {
-                props.changeMod(props?.mod)
+                props.changeMod(mod)
             }}>
-                {props?.mod?.installed && <>
+                {mod?.installed && <>
                     <div style={{display: "flex", justifyContent: "stretch", flex: "1", overflow: "hidden"}}>
                         <div style={{flexBasis: "20%", marginRight: "20px"}}>
                             <img
@@ -76,25 +81,25 @@ const ModItem = (props) => {
                             }}
                             >
 
-                                <span style={{}}>{props?.mod?.name}</span>
+                                <span style={{}}>{mod?.name}</span>
                             </div>
                             <div>
-                                {props?.mod?.update && <Badge count={1}>
+                                {mod?.update && <Badge count={1}>
                                     <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
-                                            defaultChecked={props?.mod?.enable}
+                                            checked={mod?.enable}
                                             onChange={() => {
-                                                props.changeEnable(props?.mod?.modid)
+                                                props.changeEnable(mod?.modid)
                                             }}
                                     />
                                 </Badge>}
-                                {!props?.mod?.update &&
+                                {!mod?.update &&
                                     <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
-                                            defaultChecked={props?.mod?.enable}
+                                            checked={mod?.enable}
                                             onChange={() => {
-                                                props.changeEnable(props?.mod?.modid)
+                                                props.changeEnable(mod?.modid)
                                             }}
                                     />}
-                                {props?.mod?.modid !== "client_mods_disabled" && <>
+                                {mod?.modid !== "client_mods_disabled" && <>
                                     <Popconfirm
                                         title={t('mod.delete.title')}
                                         okText="Yes"
@@ -116,14 +121,14 @@ const ModItem = (props) => {
                                         </Button>
                                     </Popconfirm>
                                 </>}
-                                {props?.mod?.update && <span>{t('mod.update')}</span>}
+                                {mod?.update && <span>{t('mod.update')}</span>}
                             </div>
                         </div>
                     </div>
                 </>}
             </Row>
             <Row>
-                {props?.mod?.installed === false && <>
+                {mod?.installed === false && <>
                     <Col flex="64px">
                         <img
                             alt="example"
@@ -147,7 +152,7 @@ const ModItem = (props) => {
                                     okText="Yes"
                                     cancelText="No"
                                     onConfirm={() => {
-                                        subscribeMod(lang, t, props?.mod?.modid, modList, setModList, setStartLoading)
+                                        subscribeMod(lang, t, mod?.modid, modList, setModList, setStartLoading)
                                     }}
                                 >
                                     <Button type="primary" onClick={() => {

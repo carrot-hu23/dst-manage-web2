@@ -45,9 +45,6 @@ function Select2({item, defaultValue}) {
                 <Select
                     className={isDefault ? '' : 'selected'}
                     defaultValue={defaultValue === undefined ? item.default : defaultValue}
-                    style={{
-                        width: 160,
-                    }}
                     onChange={(value) => {
                         setIsDefault(value === item.default)
                     }}

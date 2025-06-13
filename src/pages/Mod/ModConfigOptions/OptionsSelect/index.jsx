@@ -64,7 +64,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
         };
     }, []);
 
-    const fiftyVhHeight = pageHeight * 0.58;
+    const fiftyVhHeight = pageHeight * 0.85;
 
     return (
         <>
@@ -75,7 +75,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                     span: 8,
                 }}
                 wrapperCol={{
-                    span: 16,
+                    span: 14,
                 }}
             >
                 {mod?.mod_config?.configuration_options !== undefined && configurationOptions.length > 30 && (
