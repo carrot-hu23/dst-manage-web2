@@ -10,6 +10,7 @@ import ModList from "./ModList/index.jsx";
 
 import Workshop from "./Workshop/index.jsx";
 import UgcAcf from "./UgcAcf/index.jsx";
+import {useLevelsStore} from "../../store/useLevelsStore";
 
 
 export default () => {
@@ -22,6 +23,7 @@ export default () => {
 
     // 模组列表展示数据
     const [modList, setmodList] = useState([])
+    const [modDataList, setModDataList] = useState([])
     // 模组默认的配置项 Module default configuration items
     const defaultConfigOptionsRef = useRef(new Map())
     // 模组配置项
@@ -47,18 +49,33 @@ export default () => {
             if (modList === null) {
                 modList = []
             }
-            setmodList(modList)
+            setmodList([...modList])
+            setModDataList([...modList])
             // modInfoListResp.data
             initModConfigList(modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
+
+            await reFlushLevels(cluster)
             setLoading(false)
         }
         fetchData()
 
     }, [])
 
+    const levels = useLevelsStore((state) => state.levels)
+    const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
+
+    function changeLevel(newLevel) {
+        const modoverrides = levels.filter(level=>level.uuid === newLevel)[0].modoverrides
+        const newModDataList = modDataList.map(a=>{
+            return {...a}
+        })
+        initModConfigList(modoverrides, newModDataList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
+    }
+
     function initModConfigList(modoverrides, subscribeModList, setModList, defaultConfigOptionsRef, modConfigOptionsRef) {
         const workshopMap = parseModoverrides(modoverrides);
-        console.log("workshopMap", workshopMap)
+        //console.log("workshopMap", workshopMap)
+
         // subscribeModList.push({
         //     mod_config: {
         //         author: "kelei",
@@ -81,9 +98,9 @@ export default () => {
         subscribeModList.forEach(mod => {
             const {modid} = mod
             const options = mod.mod_config.configuration_options
-            if (options !== undefined && options !== null) {
+            if (typeof options === 'object' && options !== undefined && options !== null) {
                 const defaultOptions = {}
-                options.forEach((item) => {
+                options?.forEach((item) => {
                     if (item.default !== '' && item.name !== "null" && item.name !== undefined) {
                         defaultOptions[item.name] = item.default
                     }
@@ -162,6 +179,7 @@ export default () => {
             children: <ModList modList={modList} setModList={setmodList}
                                defaultConfigOptionsRef={defaultConfigOptionsRef}
                                modConfigOptionsRef={modConfigOptionsRef}
+                               changeLevel={changeLevel}
             />,
         },
         {

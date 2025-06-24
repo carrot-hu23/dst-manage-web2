@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 
 import {Button, Spin, Space, Input, message, Typography, Grid, Card} from "antd";
 
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {ArrowLeftOutlined} from '@ant-design/icons';
 
 import {useTheme} from "../../../hooks/useTheme/index.jsx";
@@ -21,6 +21,8 @@ export default () => {
 
     const editorRef = useRef()
 
+    const {cluster,name} = useParams()
+
     function wrokShopOnChange(e) {
         setWorkshopId(e.target.value)
     }
@@ -31,7 +33,7 @@ export default () => {
             modinfo: editorRef.current.current.getValue()
         }
         setSpinLoading(true)
-        addModInfoFileApi("", data)
+        addModInfoFileApi(cluster, data)
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("添加成功")
@@ -52,7 +54,7 @@ export default () => {
         <Spin spinning={spinLoading} description={"正在添加模组"}>
             <Space size={8} wrap>
                 <Button type={"link"} icon={<ArrowLeftOutlined/>}
-                        onClick={() => navigate(`/mod`)}>
+                        onClick={() => navigate(`/${cluster}/${name}/mod`)}>
                     返回
                 </Button>
                 <Button type="primary" onClick={() => {

@@ -1,4 +1,4 @@
-import {Button, Divider, Form, Space} from "antd";
+import {Divider, Form} from "antd";
 import {useEffect, useState} from "react";
 import _ from "lodash";
 import { FixedSizeList as List } from 'react-window';
@@ -46,7 +46,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
         console.log("new modConfigOptionsRef", modConfigOptionsRef.current)
     };
 
-    const configurationOptions = mod?.mod_config?.configuration_options !== undefined? mod?.mod_config?.configuration_options.filter((item) => item.options !== undefined).map(item=>item):[]
+    const configurationOptions = mod?.mod_config?.configuration_options !== undefined? mod?.mod_config?.configuration_options?.filter((item) => item.options !== undefined).map(item=>item):[]
     console.log("configurationOptions", configurationOptions.length)
 
     const [pageHeight, setPageHeight] = useState(0);
@@ -64,7 +64,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
         };
     }, []);
 
-    const fiftyVhHeight = pageHeight * 0.58;
+    const fiftyVhHeight = pageHeight * 0.85;
 
     return (
         <>
@@ -75,7 +75,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                     span: 8,
                 }}
                 wrapperCol={{
-                    span: 16,
+                    span: 14,
                 }}
             >
                 {mod?.mod_config?.configuration_options !== undefined && configurationOptions.length > 30 && (

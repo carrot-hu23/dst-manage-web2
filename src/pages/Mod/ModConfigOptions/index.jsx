@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Badge, Button, message, Modal, Popconfirm, Space, Spin, Typography} from "antd";
+import {Badge, Button, Drawer, message, Modal, Popconfirm, Space, Spin, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 
@@ -137,7 +137,7 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     </>
                 )}
 
-                <Modal
+                <Drawer
                     getContainer={document.body}
                     title={`${mod?.name}`}
                     // centered
@@ -145,16 +145,12 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     onOk={() => {
                         setOpen(false);
                     }}
-                    onCancel={() => setOpen(false)}
-                    width={640}
+                    onClose={() => setOpen(false)}
+                    width={860}
                     destroyOnClose
                     footer={null}
                 >
-                    <div className={'scrollbar'} style={{
-                        height: '60vh',
-                        overflowY: 'auto',
-                        overflowX: 'auto'
-                    }}>
+                    <div>
                         {mod?.mod_config?.configuration_options !== undefined && (
                             <OptionSelect
                                 mod={mod}
@@ -164,13 +160,13 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                         )}
                         {mod?.mod_config?.configuration_options === undefined && mod?.mod_config?.author === undefined &&<>
                             <Paragraph>
-                               网络问题!!! 下模组失败
+                                网络问题!!! 下模组失败
                             </Paragraph>
                             <Paragraph>
-                               点击 更新 按钮重新下载
+                                点击 更新 按钮重新下载
                             </Paragraph>
                             <Paragraph>
-                               如果多次更新依旧没有配置，请先加此mod加入到你的模组配置文件里面,然后在启动房间，等待房间mod下载完成后，在点击 更新 按钮就会有配置选项
+                                如果多次更新依旧没有配置，请先加此mod加入到你的模组配置文件里面,然后在启动房间，等待房间mod下载完成后，在点击 更新 按钮就会有配置选项
                             </Paragraph>
                         </>}
                         {mod?.mod_config?.configuration_options === undefined && mod?.mod_config?.author !== undefined &&<>
@@ -179,7 +175,7 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                             <span>{t('mod.tips4')}</span>
                         </>}
                     </div>
-                </Modal>
+                </Drawer>
 
             </Spin>
         </>

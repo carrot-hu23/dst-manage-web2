@@ -15,7 +15,7 @@ function Select2({item, defaultValue}) {
     // console.log("label: ", item.label, "name: ", item.name, "defaultValue: ", defaultValue, "typeof", typeof defaultValue, item)
     const [isDefault, setIsDefault] = useState(checkDefault(defaultValue, item.default))
     useEffect(() => {
-        
+
     }, [])
     return <>
         {typeof item.default === 'object' && (
@@ -45,9 +45,6 @@ function Select2({item, defaultValue}) {
                 <Select
                     className={isDefault ? '' : 'selected'}
                     defaultValue={defaultValue === undefined ? item.default : defaultValue}
-                    style={{
-                        width: 160,
-                    }}
                     onChange={(value) => {
                         setIsDefault(value === item.default)
                     }}
