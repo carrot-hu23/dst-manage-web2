@@ -36,7 +36,8 @@ const jobTaskEnum = {
 
     "restart": "重启世界",
     "regenerate": "重置世界",
-    "script": "shell脚本"
+    "script": "shell脚本",
+    "none": "无操作(定时公告)"
 }
 
 export default () => {
@@ -298,6 +299,7 @@ export default () => {
                             <Option value="start">启动世界</Option>
                             <Option value="stop">停止世界</Option>
                             <Option value="regenerate">重置世界</Option>
+                            <Option value="none">无操作(定时公告)</Option>
                         </Select>
                     </Form.Item>
                     <Form.Item
