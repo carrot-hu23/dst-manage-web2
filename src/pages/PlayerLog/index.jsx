@@ -110,7 +110,6 @@ export default ()=> {
             dataIndex: 'ip',
             key: 'ip',
             valueType: 'string',
-            search: false,
             render: (text, record, _, action) => <HiddenText text={record.ip}/>
         },
         {
