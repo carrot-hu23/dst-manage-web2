@@ -21,6 +21,7 @@ const playerActionEnum = {
     "[Say]": '聊天',
     "[DeathAnnouncement]": '死亡',
     "[ResurrectAnnouncement]": '复活',
+    "[Announcement]": '系统',
 }
 
 export default ()=> {
@@ -124,6 +125,7 @@ export default ()=> {
                 {record.action === '[DeathAnnouncement]' && <Tag color="red">死亡</Tag>}
                 {record.action === '[ResurrectAnnouncement]' && <Tag color="green">复活</Tag>}
                 {record.action === '[Say]' && <Tag color="gold">聊天</Tag>}
+                {record.action === '[Announcement]' && <Tag color="geekblue">系统</Tag>}
             </div>)
         },
         {
@@ -158,7 +160,7 @@ export default ()=> {
                         okText="Yes"
                         cancelText="No"
                     >
-                        <Button size={'small'} type={'primary'} danger>{t('player.log.block')}</Button>
+                        <Button size={'small'} type={'primary'} danger disabled={record.action === '[Announcement]'}>{t('player.log.block')}</Button>
                     </Popconfirm>
                 </div>)
         },
