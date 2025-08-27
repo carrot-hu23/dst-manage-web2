@@ -237,36 +237,36 @@ const Backup = ({showStatistic}) => {
         {
             title: t('backup.action'),
             key: 'action',
+            align: 'right',
             render: (_, record) => (
-                <Space size="middle">
-                    <Popconfirm
-                        title={t('backup.restore.title')}
-                        description={<>
-                            <br/>
-                           <span>
-                               {t('backup.restore.desc')}
-                           </span>
-                            <br/><br/>
-                            <CreateBackUpBtn/>
-                        </>}
-                        onConfirm={() => {
-                            restoreArchive(record.fileName)
-                        }}
-                        onCancel={() => {
-                        }}
-                        okText="Yes"
-                        cancelText="No"
-                    >
-                        <Button type="link">{t('backup.restore')}</Button>
-                    </Popconfirm>
+                <Space size="middle" style={{ justifyContent: 'flex-end', display: 'flex', width: '100%' }}>
+                    <Button type="link" onClick={() => {
+                        Modal.confirm({
+                            title: t('backup.restore.title'),
+                            content: (
+                                <div>
+                                    <p><strong>{record.fileName}</strong></p>  {/* 显示备份文件名 */}
+                                    <p>{t('backup.restore.desc')}</p>
+                                    <CreateBackUpBtn/>
+                                </div>
+                            ),
+                            okText: 'Yes',
+                            cancelText: 'No',
+                            onOk: () => restoreArchive(record.fileName),
+                        });
+                    }}>
+                        {t('backup.restore')}
+                    </Button>
 
                     <Button type="link" onClick={() => {
                         setIsEditModalOpen(true);
                         setDeleteBackup(record)
                     }}>{t('backup.edit')}</Button>
+
                     <Button type="link" onClick={() => {
                         window.location.href = `/api/game/backup/download?fileName=${record.fileName}`;
                     }}>{t('backup.download')}</Button>
+
                     <Button type="text" danger onClick={() => {
                         setIsDeleteModalOpen(true);
                         setDeleteBackup(record)

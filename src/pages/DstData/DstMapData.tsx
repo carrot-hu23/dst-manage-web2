@@ -8,6 +8,7 @@ import useIsMobile from "../../hooks/UseIsMobile";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import { sendCommandApi } from "../../api/level.jsx";
+import {useTranslation} from "react-i18next";
 
 type Level = {
     levelName: string;
@@ -15,6 +16,7 @@ type Level = {
 };
 
 export default () => {
+    const { t } = useTranslation()
     const isMobile = useIsMobile();
 
     const [levels, setLevels] = useState<Level[]>([]);
@@ -136,7 +138,7 @@ export default () => {
                         />
                         <br />
                         <Popconfirm
-                            title="重置世界"
+                            title={t('panel.regenerate')}
                             description="请保存好数据"
                             onConfirm={() => resetWorld("Master", l.uuid)} // ⚠️ 这里 cluster 先写死
                             okText="Yes"
@@ -148,7 +150,7 @@ export default () => {
                                 danger
                                 style={{ marginTop: 8 }}
                             >
-                                重置世界
+                                {t('panel.regenerate')}
                             </Button>
                         </Popconfirm>
                     </div>
