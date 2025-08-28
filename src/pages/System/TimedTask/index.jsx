@@ -147,7 +147,7 @@ export default () => {
 
                     <Popconfirm
                         title="删除定时任务"
-                        description="Are you sure to delete this job task?"
+                        description="确定要删除这个定时任务吗？"
                         onConfirm={() => {
                             deleteJobTaskApi("", record.jobId)
                                 .then(resp=>{
