@@ -29,6 +29,7 @@ import UserProfile from "./layout/UserProfile.jsx";
 import TooManyItemsPlus from "./pages/TooManyItemsPlus";
 import AddMod from "./pages/Mod/AddMod/index.jsx";
 import Level2 from "./pages/Level2/index";
+import ModViewer from "./pages/ModViewer/index";
 
 export default function Routes() {
     return useRoutes([
@@ -70,6 +71,7 @@ export default function Routes() {
                 {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
                 {path: '404', element: <Page404/>},
                 {path: 'level2', element: <Level2 />},
+                {path: 'mod2', element: <ModViewer />},
             ],
         },
         {

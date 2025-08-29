@@ -1,4 +1,5 @@
 import {
+    CloudServerOutlined,
     GithubFilled,
     LogoutOutlined, UserOutlined,
 } from '@ant-design/icons';
@@ -11,6 +12,7 @@ import {
     // SettingDrawer,
 } from '@ant-design/pro-components';
 import {
+    Typography,
     ConfigProvider,
     Dropdown,
 } from 'antd';
@@ -27,6 +29,8 @@ import {ToggleLanguage} from "./Language.tsx";
 import ToggleTheme from "./ToggleTheme.tsx";
 // @ts-ignore
 import {useTheme} from "../hooks/useTheme";
+
+const {Link} = Typography;
 
 export default () => {
 
@@ -161,6 +165,10 @@ export default () => {
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
+                                <Link target={'_blank'} href={'https://www.lcayun.com/aff/OYXIWEQC'}>
+                                    莱卡云
+                                    <CloudServerOutlined />
+                                </Link>,
                                 <div onClick={() => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}>

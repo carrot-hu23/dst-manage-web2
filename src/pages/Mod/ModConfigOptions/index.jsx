@@ -1,5 +1,5 @@
 import {useState} from "react";
-import {Badge, Button, message, Modal, Popconfirm, Space, Spin, Typography} from "antd";
+import {Badge, Button, Drawer, message, Modal, Popconfirm, Space, Spin, Typography} from "antd";
 import {useTranslation} from "react-i18next";
 import {useParams} from "react-router-dom";
 
@@ -137,7 +137,7 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     </>
                 )}
 
-                <Modal
+                <Drawer
                     getContainer={document.body}
                     title={`${mod?.name}`}
                     // centered
@@ -145,16 +145,12 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     onOk={() => {
                         setOpen(false);
                     }}
-                    onCancel={() => setOpen(false)}
-                    width={640}
+                    onClose={() => setOpen(false)}
+                    width={860}
                     destroyOnClose
                     footer={null}
                 >
-                    <div className={'scrollbar'} style={{
-                        height: '60vh',
-                        overflowY: 'auto',
-                        overflowX: 'auto'
-                    }}>
+                    <div>
                         {mod?.mod_config?.configuration_options !== undefined && (
                             <OptionSelect
                                 mod={mod}
@@ -179,7 +175,7 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                             <span>{t('mod.tips4')}</span>
                         </>}
                     </div>
-                </Modal>
+                </Drawer>
 
             </Spin>
         </>

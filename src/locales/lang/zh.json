@@ -251,7 +251,7 @@
   "mod.author": "作者",
   "mod.version": "版本",
   "mod.lasttime": "最后更新",
-  "mod.tips1": "请先启动世界，mod将自动下载，ugc模块将优先读取。",
+  "mod.tips1": "请先启动世界，mod将自动下载，ugc模块将优先读取。点击保存按钮会替换所有世界的模组配置",
   "mod.tips2": "是否更新所有mod配置",
   "mod.tips3": "手动上传modinfo.lua文件。由于服务器网络问题，mod常常下载失败，此时可以将本地模块modinfo上传到服务器。",
   "mod.tips4": "该mod没有配置选项",
