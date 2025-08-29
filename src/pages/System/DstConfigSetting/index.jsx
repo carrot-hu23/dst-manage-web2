@@ -263,7 +263,6 @@ export default () => {
                                 <Input placeholder="ugc_directory"/>
                             </Form.Item>
                         </div>}
-                        {/*
                         <Form.Item
                             label="beta"
                             name="beta"
@@ -279,7 +278,6 @@ export default () => {
                                 <Radio value={1}>true</Radio>
                             </Radio.Group>
                         </Form.Item>
-                        */}
                         <Form.Item
                             label={t('setting.dstConfig.bin')}
                             name="bin"

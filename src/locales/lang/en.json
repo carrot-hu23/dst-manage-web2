@@ -85,6 +85,7 @@
   "panel.season": "season",
   "panel.password": "password",
   "panel.version": "version",
+  "panel.beta": "Beta",
 
   "panel.start.all": "Start",
   "panel.stop.all": "Stop",
@@ -110,6 +111,7 @@
   "panel.regenerate": "Regenerate",
   "panel.c_save()": "C_SAVE()",
   "panel.respawn": "respawn",
+  "panel.despawn": "despawn",
   "panel.kick": "kick",
   "panel.auto": "auto",
   "panel.send": "send",

@@ -7,7 +7,7 @@ import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter' // 代码高
 import {tomorrow} from 'react-syntax-highlighter/dist/esm/styles/prism'
 // import 'github-markdown-css';
 
-import {useTheme} from "../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../hooks/useTheme";
 
 export default ({url}) => {
 

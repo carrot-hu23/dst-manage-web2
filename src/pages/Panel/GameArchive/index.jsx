@@ -1,4 +1,4 @@
-import {Alert, Space, Tooltip} from 'antd';
+import {Alert, Space, Tag, Tooltip} from 'antd';
 
 import {QuestionCircleOutlined} from '@ant-design/icons';
 import React, {useEffect, useState} from 'react';
@@ -13,6 +13,7 @@ import {dstSeason, dstSegs, getDstMod} from "../../../utils/dst.js";
 import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {ProDescriptions} from "@ant-design/pro-components";
 import OpBtnGroup from "../OpBtnGroup/index.jsx";
+import {readDstConfigSync} from "../../../api/dstConfigApi.jsx";
 
 
 export default () => {
@@ -54,11 +55,20 @@ export default () => {
         return '';
     }
 
+    const [dstConfig, setDstConfig] = useState({})
+    useEffect(() => {
+        // 获取配置文件
+        readDstConfigSync()
+            .then(data => {
+                setDstConfig(data.data)
+            })
+    }, [])
+
     return (
         <>
             <OpBtnGroup/>
             <br/>
-            {archive?.version !== archive?.lastVersion && archive?.version !== 0 &&
+            {dstConfig.beta !== 1 && archive?.version !== archive?.lastVersion && archive?.version !== 0 &&
                 <Alert
                     action={[
                         <>
@@ -89,7 +99,9 @@ export default () => {
                     label={t('panel.clusterName')}
                 >
                     <span className={style.icon}>
-                        {archive.clusterName}
+                        {dstConfig.beta === 1 &&(
+                            <Tag color={'orange'}>{t('panel.beta')}</Tag>
+                        )}{archive.clusterName}
                     </span>
                 </ProDescriptions.Item>
                 <ProDescriptions.Item

@@ -85,6 +85,7 @@
   "panel.season": "시즌",
   "panel.password": "비밀번호",
   "panel.version": "버전",
+  "panel.beta": "Beta",
 
   "panel.start.all": "모두 시작",
   "panel.stop.all": "모두 중지",
@@ -110,6 +111,7 @@
   "panel.regenerate": "재생성",
   "panel.c_save()": "C_SAVE()",
   "panel.respawn": "재생성",
+  "panel.despawn": "despawn",
   "panel.kick": "강퇴",
   "panel.auto": "자동",
   "panel.send": "보내기",

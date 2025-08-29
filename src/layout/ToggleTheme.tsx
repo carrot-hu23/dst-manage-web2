@@ -1,5 +1,5 @@
 // @ts-ignore
-import {useTheme} from "../hooks/useTheme/index.jsx";
+import {useTheme} from "../hooks/useTheme";
 
 export default () => {
     const {theme, toggleTheme} = useTheme();

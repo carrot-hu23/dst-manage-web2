@@ -59,31 +59,31 @@ export default () => {
     function initModConfigList(modoverrides, subscribeModList, setModList, defaultConfigOptionsRef, modConfigOptionsRef) {
         const workshopMap = parseModoverrides(modoverrides);
         console.log("workshopMap", workshopMap)
-        subscribeModList.push({
-            mod_config: {
-                author: "kelei",
-                description: "禁用本地所有模组，tips: 这个只是个虚拟的模组，只是兼容了下。如果不知道是干什么用的请不要开启！！！ 不支持自定禁用某些模组 \n\n 请勿乱点！！！\n\n 如果要删除，对应模组配置里面的 client_mods_disabled = {\n" +
-                    "    configuration_options = {},\n" +
-                    "    enabled = true,\n" +
-                    "  },",
-                name: "client_mods_disabled",
-                configuration_options: []
-            },
-            enable: false,
-            update: false,
-            modid: "client_mods_disabled",
-            installed: true,
-            name: "client_mods_disabled",
-            img: "https://steamuserimages-a.akamaihd.net/ugc/1829046490069435373/B2073D1E5B13DA00D29D316FC946C154C0854146/?imw=64&imh=64&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
-
-        })
+        // subscribeModList.push({
+        //     mod_config: {
+        //         author: "kelei",
+        //         description: "禁用本地所有模组，tips: 这个只是个虚拟的模组，只是兼容了下。如果不知道是干什么用的请不要开启！！！ 不支持自定禁用某些模组 \n\n 请勿乱点！！！\n\n 如果要删除，对应模组配置里面的 client_mods_disabled = {\n" +
+        //             "    configuration_options = {},\n" +
+        //             "    enabled = true,\n" +
+        //             "  },",
+        //         name: "client_mods_disabled",
+        //         configuration_options: []
+        //     },
+        //     enable: false,
+        //     update: false,
+        //     modid: "client_mods_disabled",
+        //     installed: true,
+        //     name: "client_mods_disabled",
+        //     img: "https://steamuserimages-a.akamaihd.net/ugc/1829046490069435373/B2073D1E5B13DA00D29D316FC946C154C0854146/?imw=64&imh=64&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true"
+        //
+        // })
         const modOptions = {}
         subscribeModList.forEach(mod => {
             const {modid} = mod
             const options = mod.mod_config.configuration_options
-            if (options !== undefined && options !== null) {
+            if (typeof options === 'object' && options !== undefined && options !== null) {
                 const defaultOptions = {}
-                options.forEach((item) => {
+                options?.forEach((item) => {
                     if (item.default !== '' && item.name !== "null" && item.name !== undefined) {
                         defaultOptions[item.name] = item.default
                     }

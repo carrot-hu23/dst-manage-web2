@@ -86,6 +86,7 @@
   "panel.season": "天数季节",
   "panel.password": "房间密码",
   "panel.version": "游戏版本",
+  "panel.beta": "测试服",
 
   "panel.start.all": "启动世界",
   "panel.stop.all": "停止世界",
@@ -111,6 +112,7 @@
   "panel.regenerate": "重置世界",
   "panel.c_save()": "保存存档",
   "panel.respawn": "复活",
+  "panel.despawn": "重选角色",
   "panel.kick": "踢出",
   "panel.auto": "自动",
   "panel.send": "发送",
@@ -220,7 +222,7 @@
   "mod.update.all": "全部更新",
   "mod.options": "选项",
   "mod.workshop": "创意工坊",
-  "mod.upload.modinfo": "上传Mod信息",
+  "mod.upload.modinfo": "上传自定义模组配置",
   "mod.none": "无模组",
   "mod.choose.please": "请选择模组",
   "mod.update.title": "更新模组配置选项",
@@ -308,7 +310,7 @@
   "player.log.title": "玩家日志",
 
   "setting.dstConfig": "Dst游戏设置",
-  "setting.dstConfig.tips1": "请先停止所有等级并自行保存存档，否则之前的世界将继续运行",
+  "setting.dstConfig.tips1": "请先停止所有世界并自行保存存档，否则之前的世界将继续运行",
   "setting.dstConfig.steamcmd": "steamcmd",
   "setting.dstConfig.force_install_dir": "dst-dedicated-server",
   "setting.dstConfig.backup": "备份",

@@ -85,6 +85,7 @@
   "panel.season": "シーズン",
   "panel.password": "パスワード",
   "panel.version": "バージョン",
+  "panel.beta": "Beta",
 
   "panel.start.all": "すべて開始",
   "panel.stop.all": "すべて停止",
@@ -110,6 +111,7 @@
   "panel.regenerate": "再生成",
   "panel.c_save()": "C_SAVE()",
   "panel.respawn": "再スポーン",
+  "panel.despawn": "despawn",
   "panel.kick": "キック",
   "panel.auto": "自動",
   "panel.send": "送信",

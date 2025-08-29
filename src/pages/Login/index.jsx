@@ -7,7 +7,7 @@ import {http} from '../../utils/http';
 import './index.css';
 import {useTranslation} from "react-i18next";
 import {useEffect, useState} from "react";
-import {useTheme} from "../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../hooks/useTheme";
 import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
 import ToggleTheme from "../../layout/ToggleTheme";
 import {isFirstApi} from "../../api/InitApi.jsx";

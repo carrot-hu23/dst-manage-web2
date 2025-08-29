@@ -11,7 +11,7 @@ import End from './component/End.jsx';
 
 import {http} from '../../utils/http';
 import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
-import {useTheme} from "../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../hooks/useTheme";
 
 const mainCss = {
     textAlign: 'center',

@@ -5,7 +5,7 @@ import './App.css'
 import Routes from "./routes.jsx";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import {ThemeProvider2} from "./hooks/useTheme/index.jsx";
+import {ThemeProvider2} from "./hooks/useTheme";
 import {HashRouter} from "react-router";
 
 import './locales/i18n'

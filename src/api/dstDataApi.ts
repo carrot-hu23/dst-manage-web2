@@ -13,8 +13,8 @@ async function getDstMapImageApi(clusterName: string) {
     return response.data
 }
 
-async function hasWalrusHutPlainsApi() {
-    const url = `/api/dst/map/has/walrusHut/plains`
+async function hasWalrusHutPlainsApi(clusterName: string) {
+    const url = `/api/dst/map/has/walrusHut/plains?clusterName=${clusterName}`
     const response = await http.get(url)
     return response.data
 }

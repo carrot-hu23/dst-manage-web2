@@ -156,13 +156,11 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                         >
                             <Button type="primary">{t('mod.update.all')}</Button>
                         </Popconfirm>
-                        {/*
                         <Tooltip
                             title={t('mod.tips3')}>
                             <Button type="primary"
-                                    onClick={() => navigate(`/dashboard/mod/add/0`)}>{t('mod.upload.modinfo')}</Button>
+                                    onClick={() => navigate(`/mod/add/:modId`)}>{t('mod.upload.modinfo')}</Button>
                         </Tooltip>
-                        */}
                     </Space>
                     <br/><br/>
                     <Row gutter={24}>

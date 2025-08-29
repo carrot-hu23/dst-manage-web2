@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var jsx_runtime_1 = require("react/jsx-runtime");
-var index_jsx_1 = require("../../hooks/useTheme/index.jsx");
+var index_jsx_1 = require("../../hooks/useTheme");
 var pro_components_1 = require("@ant-design/pro-components");
 var EChartComponent_jsx_1 = __importDefault(require("./EChartComponent.jsx"));
 exports.default = (function (_a) {

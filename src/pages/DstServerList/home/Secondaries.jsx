@@ -1,6 +1,6 @@
 import {Card} from "antd";
 import {useEffect, useState} from "react";
-import {useTheme} from "../../../hooks/useTheme/index.jsx";
+import {useTheme} from "../../../hooks/useTheme";
 
 export default ({secondaries}) => {
 
