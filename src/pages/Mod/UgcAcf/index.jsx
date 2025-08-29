@@ -137,8 +137,8 @@ export default () => {
             render: (_, record) => (
                 <Space size="middle">
                     <Popconfirm
-                        title="Restore the archive"
-                        description="Are you sure to back up this archive?"
+                        title="删除模组文件"
+                        description="确定要删除这个模组文件吗？"
                         onConfirm={()=>{
                             deleteUgcModAcfFileApi(cluster, levelName, record.workshopId)
                                 .then(resp=>{

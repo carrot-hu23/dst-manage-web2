@@ -147,7 +147,7 @@ export default () => {
 
                     <Popconfirm
                         title="删除定时任务"
-                        description="Are you sure to delete this job task?"
+                        description="确定要删除这个定时任务吗？"
                         onConfirm={() => {
                             deleteJobTaskApi("", record.jobId)
                                 .then(resp=>{
@@ -233,11 +233,12 @@ export default () => {
                 }
             }
             addJobTaskApi("", data).then((response => {
-                if (response.code !== 200) {
-                    message.error("创建定时任务失败")
+                if (response.code === 200) {
+                    getJobTaskList();
+                    message.success("创建定时任务成功");
+                } else {
+                    message.error("创建定时任务失败: " + response.msg);
                 }
-                getJobTaskList()
-                message.success("创建定时任务成功")
             })).catch(err => console.log(err))
         };
         const [activeTab, setActiveTab] = useState('默认');
@@ -278,12 +279,17 @@ export default () => {
                     </div>}
                     {activeTab === '自定义' && <div>
                         <Form.Item
-                            label={"corn表达式"}
+                            label={"Cron 表达式"}
                             name='cron'
-                            rules={[{required: true, message: '请输入corn表达式',},]}
+                            rules={[
+                                { required: true, message: '请输入 Cron 表达式' },
+                                {
+                                    pattern: /^(\*|[0-5]?\d) (\*|[0-2]?\d) (\*|[1-3]?\d) (\*|[1-12]) (\*|[0-6])$/,
+                                    message: '请输入正确的五位 Cron 表达式（分 时 日 月 周）',
+                                },
+                            ]}
                         >
-                            <Input placeholder="请输入corn表达式（五位）"
-                            />
+                            <Input placeholder="请输入 Cron 表达式（分 时 日 月 周）" />
                         </Form.Item>
                     </div>}
                     <Form.Item

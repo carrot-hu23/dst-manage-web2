@@ -310,7 +310,7 @@
   "player.log.title": "玩家日志",
 
   "setting.dstConfig": "Dst游戏设置",
-  "setting.dstConfig.tips1": "请先停止所有等级并自行保存存档，否则之前的世界将继续运行",
+  "setting.dstConfig.tips1": "请先停止所有世界并自行保存存档，否则之前的世界将继续运行",
   "setting.dstConfig.steamcmd": "steamcmd",
   "setting.dstConfig.force_install_dir": "dst-dedicated-server",
   "setting.dstConfig.backup": "备份",

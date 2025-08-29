@@ -53,7 +53,7 @@ export default () => {
 
                     <Popconfirm
                         title="删除链接"
-                        description="Are you sure to delete this job task?"
+                        description="确定要删除这个链接吗？"
                         onConfirm={() => {
                             deleteWebLinkApi("", record.ID)
                                 .then(resp => {

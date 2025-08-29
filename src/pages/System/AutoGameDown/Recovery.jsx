@@ -3,7 +3,7 @@ import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
 
 import {saveAutoCheck2Api} from "../../../api/autoCheckApi.jsx";
-import DstEmoji from "../../DstServerList/Dst Emoji.woff2";
+import DstEmoji from "../../DstServerList/DstEmoji/index.jsx";
 import style from "../../DstServerList/index.module.css";
 
 

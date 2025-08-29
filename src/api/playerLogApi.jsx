@@ -23,6 +23,7 @@ async function getPlayerLog(cluster,paramsData) {
         kuId: paramsData.kuId,
         steamId: paramsData.steamId,
         action: paramsData.action,
+        ip: paramsData.ip,
     };
 
     const filteredParams = Object.fromEntries(
