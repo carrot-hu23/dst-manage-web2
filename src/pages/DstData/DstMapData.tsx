@@ -1,4 +1,4 @@
-import { Alert, Button, Image, message, Popconfirm, Space, Tag } from "antd";
+import {Alert, Button, Col, Image, message, Popconfirm, Row, Space, Tag} from "antd";
 import { genDstMapApi, hasWalrusHutPlainsApi } from "../../api/dstDataApi.ts";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
@@ -7,15 +7,12 @@ import { useEffect, useState } from "react";
 import useIsMobile from "../../hooks/UseIsMobile";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
-import { sendCommandApi } from "../../api/level.jsx";
+import {readLevelServerLogApi, sendCommandApi} from "../../api/level.jsx";
 import { useTranslation } from "react-i18next";
 import { parse } from "lua-json";
+import {Level} from "../../types";
+import {useParams} from "react-router-dom";
 
-type Level = {
-    levelName: string;
-    uuid: string;
-    location: "forest" | "cave" | "porkland" | string; // 从 leveldataoverride 解析出来
-};
 
 type LevelDataOverride = {
     location?: string;
@@ -33,15 +30,16 @@ function getLevelObject(value: string): LevelDataOverride {
         return {};
     }
 }
-// =====================================================================
 
 export default () => {
     const { t } = useTranslation();
     const isMobile = useIsMobile();
+    const {cluster} = useParams()
 
     const [levels, setLevels] = useState<Level[]>([]);
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [hasWalrusHutPlainsMap, setHasWalrusHutPlainsMap] = useState<Record<string, boolean>>({});
+    const [wasphive, setWasphive] = useState<string>();
 
     // 获取所有世界列表（使用 getLevelObject 解析 leveldataoverride）
     const fetchLevels = async () => {
@@ -149,6 +147,26 @@ export default () => {
         }
     };
 
+    const fetchWasphive = async (cluster: string, levelName: string) =>{
+        await sendCommandApi(cluster, levelName, "c_countprefabs(\"wasphive\")")
+        const resp = await readLevelServerLogApi(cluster, levelName, 100)
+        if (resp.code === 200) {
+            const lines = (resp.data || []) as string[]
+            lines.forEach(line=>{
+                if (line.includes('wasphives in the world.')) {
+                    const splits = line.split(" ")
+                    if (splits.length > 3) {
+                        setWasphive(splits[3])
+                    }
+                }
+            })
+        }
+    }
+
+    useEffect(() => {
+        fetchWasphive(cluster||'', "Master")
+    }, []);
+
     return (
         <>
             <div>
@@ -159,12 +177,15 @@ export default () => {
                     <div>
                         {levels.map(l => (
                             l.location === "forest" && (
-                                <Tag
-                                    key={l.uuid}
-                                    color={hasWalrusHutPlainsMap[l.uuid] ? "blue" : "red"}
-                                >
-                                    {l.levelName} {hasWalrusHutPlainsMap[l.uuid] ? "存在海象平原" : "不存在海象平原"}
-                                </Tag>
+                                <Space size={12} wrap>
+                                    <Tag
+                                        key={l.uuid}
+                                        color={hasWalrusHutPlainsMap[l.uuid] ? "blue" : "red"}
+                                    >
+                                        {l.levelName} {hasWalrusHutPlainsMap[l.uuid] ? "存在海象平原" : "不存在海象平原"}
+                                    </Tag>
+                                    <Tag color={'blue'}>杀人蜂数量: {wasphive}</Tag>
+                                </Space>
                             )
                         ))}
                     </div>
@@ -178,8 +199,9 @@ export default () => {
                 />
             </div>
             <br />
-            <Space size={16} wrap>
+            <Row gutter={[16, 16]}>
                 {levels.map((l, idx) => (
+                    <Col xs={24} sm={24} md={12} lg={12} xl={12}>
                     <div key={l.uuid} style={{ textAlign: "center" }}>
                         <Image
                             width={isMobile ? 300 : 502}
@@ -190,7 +212,7 @@ export default () => {
                         <Popconfirm
                             title={t('panel.regenerate')}
                             description="请保存好数据"
-                            onConfirm={() => resetWorld("Master", l.uuid)} // ⚠️ 这里 cluster 先写死
+                            onConfirm={() => resetWorld(cluster || 'Master', l.uuid)} // ⚠️ 这里 cluster 先写死
                             okText="Yes"
                             cancelText="No"
                         >
@@ -204,8 +226,9 @@ export default () => {
                             </Button>
                         </Popconfirm>
                     </div>
+                    </Col>
                 ))}
-            </Space>
+            </Row>
         </>
     );
 };

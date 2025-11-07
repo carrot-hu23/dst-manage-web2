@@ -9,7 +9,11 @@ import {tomorrow} from 'react-syntax-highlighter/dist/esm/styles/prism'
 
 import {useTheme} from "../../hooks/useTheme";
 
-export default ({url}) => {
+function base64ToUtf8(base64) {
+    return new TextDecoder().decode(Uint8Array.from(atob(base64), c => c.charCodeAt(0)));
+}
+
+export default ({url, decode}) => {
 
     const t = useTheme()
     const [mdContent, setMdContent] = useState('')
@@ -18,7 +22,7 @@ export default ({url}) => {
         // url是markdown文件的路径，我在项目中是放到了media文件夹下，示例：url为'/media/xx.md'
         fetch(url)
             .then(res => res.text())
-            .then(text => setMdContent(text));
+            .then(text => setMdContent(decode ? base64ToUtf8(text) : text));
     }, [])
 
 

@@ -42,7 +42,7 @@ const ModItem = (props) => {
 
     const {t} = useTranslation()
     const {i18n} = useTranslation();
-    const lang = i18n.language;
+    const lang = i18n.language
 
     const {removeMod, modList, setModList} = props
     const [mod, setMod] = useState({})
@@ -50,7 +50,6 @@ const ModItem = (props) => {
     const [startLoading, setStartLoading] = useState(false)
 
     useEffect(()=>{
-        console.log('xxxxxxxxxx')
         setMod({...props.mod})
     }, [props?.mod])
 

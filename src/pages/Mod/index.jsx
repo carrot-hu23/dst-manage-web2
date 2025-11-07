@@ -29,8 +29,6 @@ export default () => {
     // 模组配置项
     const modConfigOptionsRef = useRef({})
 
-    useLevelsStore
-
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)

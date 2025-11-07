@@ -19,6 +19,11 @@ export default ()=>{
 
     const items = [
         {
+            key: '0',
+            label: "部署教程",
+            children: <MarkdownRender url={`/api/dst-static/dst-get-start.md`} decode={true} />,
+        },
+        {
             key: '1',
             label: "常见问题",
             children: <CollapseWithMarkdown markdownContent={markdownContent} />,
@@ -41,6 +46,6 @@ export default ()=>{
     ];
 
     return<>
-        <Tabs defaultActiveKey="1" items={items}/>
+        <Tabs defaultActiveKey="0" items={items}/>
     </>
 }

@@ -12,6 +12,9 @@ async function searchMod(lang, cluster,text, page, size) {
 }
 
 async function getModInfo(lang,cluster,modId) {
+    if (lang.includes('zh')) {
+        lang = 'zh'
+    }
     const url = `/api/mod/${modId}?lang=${lang}`
     const response = await http.get(url,{
         timeout: 1000*60*10,
@@ -51,8 +54,11 @@ async function deleteStepupWorkshopApi(cluster) {
     })
     return response.data
 }
-async function updateModinfosApi() {
-    const url = '/api/mod/modinfo'
+async function updateModinfosApi(lang) {
+    if (lang.includes('zh')) {
+        lang = 'zh'
+    }
+    const url = `/api/mod/modinfo?lang=${lang}`
     const response = await http.put(url)
     return response.data
 }
@@ -68,8 +74,11 @@ async function getModInfoFileApi(cluster,modId) {
     return response.data
 }
 
-async function updateModApi(cluster,modId) {
-    const url = `/api/mod/${modId}`
+async function updateModApi(cluster,modId, lang) {
+    if (lang.includes('zh')) {
+        lang = 'zh'
+    }
+    const url = `/api/mod/${modId}?lang=${lang}`
     const response = await http.put(url,{},{
         headers: {
             'Cluster': cluster,

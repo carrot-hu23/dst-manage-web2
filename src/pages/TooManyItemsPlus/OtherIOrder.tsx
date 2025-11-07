@@ -63,6 +63,10 @@ export default function OtherIOrder(){
                         onClick={() => send('TheWorld:PushEvent(\\"ms_forceprecipitation\\")')}>开始下雨</Button>
                 <Button type={'primary'}
                         onClick={() => send('TheWorld:PushEvent(\\"ms_forceprecipitation\\", false)')}>停止下雨</Button>
+                <Button type={'primary'}
+                        onClick={() => send('TheWorld:PushEvent(\\"ms_startthemoonstorms\\")')}>开启月亮裂隙</Button>
+                <Button type={'primary'}
+                        onClick={() => send('TheWorld:PushEvent(\\"ms_stopthemoonstorms\\")')}>关闭月亮裂隙</Button>
             </Space>
             <Divider />
             <Typography.Title level={5}>

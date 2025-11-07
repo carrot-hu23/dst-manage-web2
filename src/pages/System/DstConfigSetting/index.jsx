@@ -294,7 +294,12 @@ export default () => {
                                 <Tooltip title={'luajit是一种特殊的启动方式，目前只是兼容这种启动方式。环境需要自己安装，详细参考: https://github.com/CN-DST-DEVELOPER/Faster_DST'}>
                                     <Radio value={100}>luajit</Radio>
                                 </Tooltip>
-
+                                <Tooltip title={'box86启动 默认使用64位启动，详细参考: https://github.com/ptitSeb/box64'}>
+                                    <Radio value={86}>box86</Radio>
+                                </Tooltip>
+                                <Tooltip title={'Apple silicon'}>
+                                    <Radio value={2664}>arm64</Radio>
+                                </Tooltip>
                             </Radio.Group>
                         </Form.Item>
                         <Form.Item

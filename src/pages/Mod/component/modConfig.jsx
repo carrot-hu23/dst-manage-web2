@@ -6,6 +6,8 @@ import {Modal, Button, Space, Form, Typography, Divider, message, Popconfirm, Sp
 import Select2 from './Select2';
 import {timestampToString} from "../../../utils/dateUitls";
 import {updateModApi} from "../../../api/modApi";
+import {useParams} from "react-router-dom";
+import i18n from "i18next";
 
 const {Paragraph} = Typography;
 
@@ -146,9 +148,12 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
     const [ellipsis, setEllipsis] = useState(true);
     const [spinning,setSpinning] = useState(false)
 
+    const {cluster} = useParams()
+    const lang = i18n.language
+
     function updateMod() {
         setSpinning(true)
-        updateModApi("", mod.modid)
+        updateModApi(cluster, mod.modid, lang)
             .then(resp=>{
                 if (resp.code === 200) {
                     const newMod = resp.data

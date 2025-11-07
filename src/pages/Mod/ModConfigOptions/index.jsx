@@ -7,6 +7,7 @@ import {timestampToString} from "../../../utils/dateUitls";
 import {updateModApi} from "../../../api/modApi.jsx";
 
 import OptionSelect from "./OptionsSelect/index.jsx";
+import i18n from "i18next";
 
 const { Paragraph } = Typography;
 
@@ -50,13 +51,14 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
 
     const {cluster} = useParams()
     const {t} = useTranslation()
+    const lang = i18n.language
 
     const [open, setOpen] = useState(false);
     const [spinning, setSpinning] = useState(false)
 
     function updateMod() {
         setSpinning(true)
-        updateModApi(cluster, mod.modid)
+        updateModApi(cluster, mod.modid, lang)
             .then(resp => {
                 if (resp.code === 200) {
                     const newMod = resp.data

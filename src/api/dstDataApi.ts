@@ -1,5 +1,5 @@
-// @ts-ignore
 import { http } from "../utils/http";
+import {ApiResponse} from "../types";
 
 async function genDstMapApi(clusterName: string) {
     const url = `/api/dst/map/gen?clusterName=${clusterName}`
@@ -19,8 +19,15 @@ async function hasWalrusHutPlainsApi(clusterName: string) {
     return response.data
 }
 
+async function sessionFileApi(clusterName: string, levelName: string): Promise<ApiResponse<string>> {
+    const url = `/api/dst/map//session/file?clusterName=${clusterName}&levelName=${levelName}`
+    const response = await http.get(url)
+    return response.data
+}
+
 export {
     genDstMapApi,
     getDstMapImageApi,
-    hasWalrusHutPlainsApi
+    hasWalrusHutPlainsApi,
+    sessionFileApi
 }

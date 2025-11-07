@@ -11,6 +11,7 @@ import ModItem from "./ModItem/index.jsx";
 import ModConfigOptions from "../ModConfigOptions/index.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore";
 import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
+import i18n from "i18next";
 
 // eslint-disable-next-line react/prop-types
 export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
@@ -22,6 +23,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     const { t } = useTranslation()
     const navigate = useNavigate();
     const {cluster} = useParams()
+    const lang = i18n.language
 
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [mod, setMod] = useState({})
@@ -68,6 +70,13 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                 }
                 const options = workshopObject[workshopId]
                 delete options.null
+                if (options !== undefined || options !== null) {
+                    Object.keys(options).map(k=>{
+                        if (options[k] === null || options[k] === undefined) {
+                            delete options[k]
+                        }
+                    })
+                }
                 workShops[workshop] = {
                     configuration_options: options,
                     enabled: true
@@ -129,7 +138,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
 
     function updateModConfigOptions() {
         setConfirmLoading(true)
-        updateModinfosApi()
+        updateModinfosApi(lang)
             .then(data => {
                 if (data.code === 200) {
                     message.success(t('mod.update.ok'))
