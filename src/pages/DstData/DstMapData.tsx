@@ -71,7 +71,7 @@ export default () => {
                 });
 
                 setLevels(newLevels);
-                setImageUrls(newLevels.map(l => `/api/dst/map/image?clusterName=${l.uuid}&t=${Date.now()}`));
+                setImageUrls(newLevels.map(l => `/api/dst/map/image?levelName=${l.uuid}&t=${Date.now()}`));
 
                 // 仅对 location === 'forest' 的世界查询海象平原
                 await Promise.all(
@@ -106,7 +106,7 @@ export default () => {
 
     // 刷新所有图片
     const refreshImage = () => {
-        setImageUrls(levels.map(l => `/api/dst/map/image?clusterName=${l.uuid}&t=${Date.now()}`));
+        setImageUrls(levels.map(l => `/api/dst/map/image?levelName=${l.uuid}&t=${Date.now()}`));
     };
 
     // 生成所有地图
