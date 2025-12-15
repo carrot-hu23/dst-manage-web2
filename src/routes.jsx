@@ -1,4 +1,4 @@
-import {Navigate, useRoutes} from 'react-router-dom';
+import {Navigate, useParams, useRoutes} from 'react-router-dom';
 
 import Login from './pages/Login/index.jsx';
 
@@ -31,18 +31,33 @@ import AddMod from "./pages/Mod/AddMod/index.jsx";
 import Level2 from "./pages/Level2/index";
 import ModViewer from "./pages/ModViewer/index";
 
+// layout outside
+import LayoutSide from "./layoutSide/index";
+import ClusterList from "./pages/ClusterList/index";
+import UserList from "./pages/UserList/index.jsx";
+import Server from "./pages/ClusterList/Server/index.jsx";
+
+function RedirectToPanel() {
+    const { cluster, name } = useParams();
+    return <Navigate to={`/${cluster}/${name}/panel`} replace />;
+}
+
+
 export default function Routes() {
     return useRoutes([
         {
-            path: '/',
+            path: '/:cluster/:name/',
             element: <Layout/>,
             children: [
-                {element: <Navigate to="/panel"/>, index: true,},
+                {
+                    element: <RedirectToPanel />, // 这里替换 Navigate
+                    index: true,
+                },
                 {path: 'dashboard', element: <Dashboard/>},
                 {path: 'playerLog', element: <PlayerLog/>},
                 {path: 'mod', element: <Mod/>},
                 {path: 'panel', element: <Panel/>},
-                { path: 'mod/add/:modId', element: <AddMod /> },
+                {path: 'mod/add/:modId', element: <AddMod/>},
                 {
                     path: 'home',
                     children: [
@@ -63,13 +78,25 @@ export default function Routes() {
                 },
                 {path: 'backup', element: <Backup/>},
                 {path: 'setting', element: <Setting/>},
-                {path: 'github', element: <Github/>},
-                {path: 'help', element: <Help/>},
-                {path: 'lobby', element: <DstServerList/>},
+                {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
+            ],
+        },
+        {
+            element: <LayoutSide/>,
+            children: [
+                {element: <Navigate to="/cluster"/>, index: true},
+                {
+                    path: '/cluster',
+                    element: <Server />,
+                },
+                {path: 'userList', element: <UserList/>},
                 {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},
-                {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
+                {path: 'lobby', element: <DstServerList/>},
+                {path: 'github', element: <Github/>},
+                {path: 'help', element: <Help/>},
                 {path: '404', element: <Page404/>},
+                {path: '*', element: <Navigate to="/404"/>},
                 {path: 'level2', element: <Level2 />},
                 {path: 'mod2', element: <ModViewer />},
             ],

@@ -1,5 +1,4 @@
 import {
-    CloudServerOutlined,
     GithubFilled,
     LogoutOutlined, UserOutlined,
 } from '@ant-design/icons';
@@ -12,30 +11,25 @@ import {
     // SettingDrawer,
 } from '@ant-design/pro-components';
 import {
-    Typography,
-    Button,
     ConfigProvider,
     Dropdown,
 } from 'antd';
 import {useEffect, useState} from 'react';
+// @ts-ignore
 import defaultProps from './_defaultProps';
 import {Outlet, useLocation} from "react-router";
-import {useNavigate, useParams} from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error
 import {http} from '../utils/http';
-import {ToggleLanguage} from "./Language.tsx";
-import ToggleTheme from "./ToggleTheme.tsx";
+import {ToggleLanguage} from "../layout/Language.tsx";
+import ToggleTheme from "../layout/ToggleTheme.tsx";
 // @ts-ignore
-import {useTheme} from "../hooks/useTheme";
-
-const {Link} = Typography;
+import {useTheme} from "../hooks/useTheme/index.jsx";
 
 export default () => {
-
-    const {cluster, name} = useParams()
 
     // @ts-ignore
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
@@ -43,7 +37,7 @@ export default () => {
         layout: 'mix',
         splitMenus: false,
     });
-    const firstPagePath = `${cluster}/${name}/panel`;
+    const firstPagePath = '/panel';
     const location = useLocation()
     const [pathname, setPathname] = useState(location.pathname);
     const paddingInlinePageContainerContent = 24;
@@ -142,7 +136,7 @@ export default () => {
                                                 },
                                                 {
                                                     key: 'userProfile',
-                                                    icon: <UserOutlined />,
+                                                    icon: <UserOutlined/>,
                                                     label: t('header.userProfile'),
                                                     onClick: () => navigate('/userProfile'),
                                                 },
@@ -168,10 +162,6 @@ export default () => {
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
-                                <Link target={'_blank'} href={'https://www.lcayun.com/aff/OYXIWEQC'}>
-                                    莱卡云
-                                    <CloudServerOutlined />
-                                </Link>,
                                 <div onClick={() => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}>
@@ -205,27 +195,13 @@ export default () => {
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
-                                    navigate(`/${cluster}/${name}${item.path}` as string)
+                                    navigate(item.path as string)
                                     setPathname(item.path || firstPagePath);
                                 }}
                             >
                                 {dom}
                             </div>
                         )}
-                        menuFooterRender={(props) => {
-                            if (props?.collapsed) return undefined;
-                            return (
-                                <div
-                                    style={{
-                                        paddingLeft: 16
-                                    }}
-                                >
-                                    <Button type={'primary'} onClick={()=>{
-                                        navigate('/cluster')
-                                    }}>返回</Button>
-                                </div>
-                            );
-                        }}
                         {...settings}
                     >
                         <PageContainer
@@ -237,36 +213,16 @@ export default () => {
                             title={false}
                         >
                             {(location.pathname === firstPagePath
-                                || location.pathname.includes('panel')
-                                || location.pathname.includes('dashboard')
-                                || location.pathname.includes('home/clusterIni')) && (
+                                || location.pathname === '/cluster') && (
                                 <Outlet/>
                             )}
                             {(location.pathname !== firstPagePath
-                                && !location.pathname.includes('panel')
-                                && !location.pathname.includes('dashboard')
-                                && !location.pathname.includes('home/clusterIni')) && (
+                                && location.pathname !== '/cluster') && (
                                 <ProCard>
                                     <Outlet/>
                                 </ProCard>
                             )}
                         </PageContainer>
-
-                        {/*
-                         <SettingDrawer
-                            pathname={pathname}
-                            enableDarkTheme
-                            getContainer={(e: any) => {
-                                if (typeof window === 'undefined') return e;
-                                return document.getElementById('test-pro-layout');
-                            }}
-                            settings={settings}
-                            onSettingChange={(changeSetting) => {
-                                setSetting(changeSetting);
-                            }}
-                            disableUrlParams={false}
-                        />
-                        */}
                     </ProLayout>
                 </ConfigProvider>
             </ProConfigProvider>

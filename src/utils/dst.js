@@ -22,6 +22,26 @@ const dstRolesMap = {
     "": '未知角色',
 
 }
+
+export function getTimeStatus(lang,daysElapsedInSeason, daysLeftInSeason) {
+    const totalDays = daysElapsedInSeason + daysLeftInSeason;
+    const thresholdEarly = totalDays / 3;
+
+    if (daysElapsedInSeason <= thresholdEarly) {
+        if (lang === "en") {
+            return "morning"
+        }
+        return '早';
+    }
+    if (daysLeftInSeason < thresholdEarly) {
+        if (lang === "en") {
+            return "evening"
+        }
+        return '晚';
+    }
+    return '';
+}
+
 const dstSeason = {
     spring: "春",
     summer: "夏",

@@ -32,6 +32,7 @@
 
   "dashboard": "Dashboard",
 
+  "menu.cluster": "房间列表",
   "menu.dashboard": "Dashboard",
   "menu.panel": "面板操作",
   "menu.home": "房间设置",
