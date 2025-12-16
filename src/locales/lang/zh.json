@@ -32,8 +32,10 @@
 
   "dashboard": "Dashboard",
 
+  "menu.userList": "用户列表",
   "menu.cluster": "房间列表",
-  "menu.dashboard": "Dashboard",
+  "menu.dashboard": "统计页面",
+  "menu.playerLine": "玩家时间线",
   "menu.panel": "面板操作",
   "menu.home": "房间设置",
   "menu.home.clusterIni": "房间设置",
@@ -252,7 +254,7 @@
   "mod.author": "作者",
   "mod.version": "版本",
   "mod.lasttime": "最后更新",
-  "mod.tips1": "请先启动世界，mod将自动下载，ugc模块将优先读取。点击保存按钮会替换所有世界的模组配置",
+  "mod.tips1": "请先启动世界，mod将自动下载，ugc模块将优先读取。",
   "mod.tips2": "是否更新所有mod配置",
   "mod.tips3": "手动上传modinfo.lua文件。由于服务器网络问题，mod常常下载失败，此时可以将本地模块modinfo上传到服务器。",
   "mod.tips4": "该mod没有配置选项",
@@ -311,7 +313,7 @@
   "player.log.title": "玩家日志",
 
   "setting.dstConfig": "Dst游戏设置",
-  "setting.dstConfig.tips1": "请先停止所有世界并自行保存存档，否则之前的世界将继续运行",
+  "setting.dstConfig.tips1": "请先停止所有等级并自行保存存档，否则之前的世界将继续运行",
   "setting.dstConfig.steamcmd": "steamcmd",
   "setting.dstConfig.force_install_dir": "dst-dedicated-server",
   "setting.dstConfig.backup": "备份",

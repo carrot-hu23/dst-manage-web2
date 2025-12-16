@@ -148,7 +148,7 @@ export default () => {
     };
 
     const fetchWasphive = async (cluster: string, levelName: string) =>{
-        await sendCommandApi(cluster, levelName, "c_countprefabs(\"wasphive\")")
+        await sendCommandApi(cluster, levelName, "c_countprefabs(\\\"wasphive\\\")")
         const resp = await readLevelServerLogApi(cluster, levelName, 100)
         if (resp.code === 200) {
             const lines = (resp.data || []) as string[]

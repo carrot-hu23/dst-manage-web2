@@ -15,11 +15,11 @@ const System = () => {
     const {t} = useTranslation()
 
     const items = [
-        {
-            key: '1',
-            label: t('setting.dstConfig'),
-            children: <DstConfigSetting/>,
-        },
+        // {
+        //     key: '1',
+        //     label: t('setting.dstConfig'),
+        //     children: <DstConfigSetting/>,
+        // },
         {
             key: '2',
             label: t('setting.timedTask'),

@@ -30,8 +30,10 @@
   "time.last.month": "지난달",
 
   "dashboard": "대시보드",
+  "menu.userList": "UserList",
   "menu.cluster": "Cluster",
   "menu.dashboard": "대시보드",
+  "menu.playerLine": "플레이어라인",
   "menu.panel": "패널",
   "menu.home": "홈",
   "menu.home.clusterIni": "클러스터 설정",

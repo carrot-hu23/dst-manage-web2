@@ -113,6 +113,14 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                     column={2}
                 >
                     <ProDescriptions.Item
+                        editable={false}
+                        span={2}
+                        valueType="text"
+                        label={t('房间名称')}
+                    >
+                        {cluster?.gameArchive?.clusterName}
+                    </ProDescriptions.Item>
+                    <ProDescriptions.Item
                         span={2}
                         valueType="text"
                         label={t('游戏天数')}

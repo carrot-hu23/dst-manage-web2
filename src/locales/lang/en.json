@@ -30,8 +30,10 @@
   "time.last.month": "Last Month",
 
   "dashboard": "dashBoard",
+  "menu.userList": "UserList",
   "menu.cluster": "Cluster",
   "menu.dashboard": "DashBoard",
+  "menu.playerLine": "PlayerLine",
   "menu.panel": "Panel",
   "menu.home": "Home",
   "menu.home.clusterIni": "ClusterIni",
