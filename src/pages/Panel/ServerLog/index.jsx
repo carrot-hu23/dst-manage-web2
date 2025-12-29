@@ -148,7 +148,7 @@ export default () => {
                     <br/>
                     <Space align={"baseline"} size={16} wrap>
                         <Button onClick={()=>{
-                            window.location.href = `/api/game/level/server/download?fileName=server_log.txt&levelName=${levelNameRef.current}`
+                            window.location.href = `/api/game/level/server/download?fileName=server_log.txt&clusterName=${cluster}&levelName=${levelNameRef.current}`
                         }}
                                 icon={<DownloadOutlined />} type={'link'}>
                             {t('panel.download.log')}
