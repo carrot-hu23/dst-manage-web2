@@ -19,7 +19,7 @@ import CreateBackUpBtn from "../../Panel/OpBtnGroup/CreateBackUpBtn.jsx";
 
 const MyUploadFile = ({reload}) => {
     const {t} = useTranslation()
-
+    const {cluster} = useParams()
     const [fileList, setFileList] = useState([]);
     const [uploading, setUploading] = useState(false);
 
@@ -32,7 +32,11 @@ const MyUploadFile = ({reload}) => {
         setUploading(true);
         // 发送上传请求
         // 这里使用了axios库，你可以使用你喜欢的库
-        axios.post('/api/game/backup/upload', formData)
+        axios.post('/api/game/backup/upload', formData,{
+            headers: {
+                'Cluster': cluster,
+            }
+        })
             .then(response => {
                 console.log(response.data);
                 if (response?.data?.code === 200) {
@@ -212,6 +216,40 @@ const Backup = ({showStatistic}) => {
         })
     }
 
+    const downloadFile = async (url, cluster, name) => {
+        try {
+            const response = await fetch(url, {
+                method: 'GET',
+                headers: {
+                    // 可以在这里添加必要的请求头，例如 Authorization
+                    Cluster: cluster
+                },
+            });
+
+            // 检查响应是否成功
+            if (!response.ok) {
+                message.warning("下载文件时出错 Network response was not ok")
+                return
+            }
+
+            // 获取文件 Blob
+            const blob = await response.blob();
+
+            // 创建一个链接并下载文件
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = downloadUrl;
+            a.download = name; // 设置下载的文件名
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(downloadUrl); // 释放内存
+        } catch (error) {
+            console.error('下载文件时出错:', error);
+            message.warning("下载文件时出错")
+        }
+    }
+
     const columns = [
         {
             title: t('backup.fileName'),
@@ -264,7 +302,7 @@ const Backup = ({showStatistic}) => {
                     }}>{t('backup.edit')}</Button>
 
                     <Button type="link" onClick={() => {
-                        window.location.href = `/api/game/backup/download?fileName=${record.fileName}`;
+                        downloadFile(`/api/game/backup/download?fileName=${record.fileName}&cluster=${cluster}`, cluster, record.fileName)
                     }}>{t('backup.download')}</Button>
 
                     <Button type="text" danger onClick={() => {

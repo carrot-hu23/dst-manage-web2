@@ -281,7 +281,7 @@
   "backup.fileSize": "文件大小",
   "backup.createTime": "创建时间",
   "backup.action": "操作",
-  "backup.tips1": "当前仅支持zip归档。点击恢复将替换当前归档内容",
+  "backup.tips1": "当前仅支持zip归档。点击恢复将替换当前存档内容",
   "backup.tips2": "快照备份，这只是一个特殊的计划任务，将根据您设置的间隔保存归档，但只保留您设置的快照数量。",
   "backup.tips3": "以(snapshot)开头的文件是快照备份文件，与普通归档文件没有区别，只是为了区分。",
   "backup.backup.number": "备份数量",
