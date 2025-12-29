@@ -51,7 +51,8 @@ export default () => {
     const [account, setAcount] = useState({
         displayName: '',
         email: '',
-        photoURL: ''
+        photoURL: '',
+        role: ''
     })
     useEffect(() => {
         const userJson = localStorage.getItem('user') || '{}';
@@ -107,7 +108,20 @@ export default () => {
                             collapsedShowGroupTitle: true,
                         }}
                         menuDataRender={menuData => {
-                            return menuData.map(menu => {
+                            return menuData
+                                .filter(menu => {
+                                    // 过滤掉没有权限的菜单项
+                                    if (account.role === 'admin') {
+                                        return true; // 管理员拥有所有权限
+                                    } else {
+                                        if (menu.path === '/userList') {
+                                            return false; // 普通用户没有权限访问设置页面
+                                        }
+                                    }
+                                    // 这里可以根据实际需求添加更多的权限判断逻辑
+                                    return true; // 普通用户显示所有菜单项（根据需要修改）
+                                })
+                                .map(menu => {
                                 return {
                                     ...menu, name: t(menu.name as string),
                                     children: menu.children?.map(child => {

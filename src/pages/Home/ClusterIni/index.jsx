@@ -22,6 +22,8 @@ import {getClusterIniApi, saveClusterIniApi} from "../../../api/level.jsx";
 import style from '../../DstServerList/index.module.css'
 import {FooterToolbar, ProCard} from "@ant-design/pro-components";
 import DstEmoji from "../../DstServerList/DstEmoji/index.jsx";
+import {usePermission} from "../../../hooks/usePermission";
+import {useParams} from "react-router-dom";
 
 const {TextArea} = Input;
 const {Paragraph, Text } = Typography;
@@ -31,6 +33,9 @@ export default () => {
     const {t} = useTranslation()
     const {i18n} = useTranslation();
     const [lang, setLang] = useState( 'zh')
+
+    const {cluster} = useParams()
+    const { has } = usePermission(cluster)
 
     useEffect(() => {
         const handleLanguageChange = (lng) => {
@@ -302,91 +307,95 @@ export default () => {
                             </Form.Item>
                         </ProCard>
                         <br/>
-                        <ProCard title={t('cluster.ShardSetting')}
-                                 subTitle={"世界串联"}
-                        >
+                        {has('allowEditingServerIni') &&
+                            <ProCard title={t('cluster.ShardSetting')}
+                                     subTitle={"世界串联"}
+                            >
 
-                            <Form.Item label={t('cluster.shard_enabled')} valuePropName="checked" tooltip="shard_enabled。是否为多世界模式。
+                                <Form.Item label={t('cluster.shard_enabled')} valuePropName="checked" tooltip="shard_enabled。是否为多世界模式。
 对于饥荒而言，一个世界代表一个独立的服务器进程，所以地上加地下一共两个世界也是多服务器模式。
 多世界时会根据玩家设置,将某个世界作为主世界，其他世界为从世界。
 仅在确定只需要开启单世界时关闭。"
-                                       name='shard_enabled'>
-                                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
-                                        defaultChecked/>
-                            </Form.Item>
+                                           name='shard_enabled'>
+                                    <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
+                                            defaultChecked/>
+                                </Form.Item>
 
 
-                            <Form.Item
-                                label={t('cluster.bind_ip')}
-                                name='bind_ip'
-                                tooltip="bind_ip。从服务器IP
+                                <Form.Item
+                                    label={t('cluster.bind_ip')}
+                                    name='bind_ip'
+                                    tooltip="bind_ip。从服务器IP
 从服务器的IPv4地址，主服务器监听此IP并与其连接。
 主从服务器都在同一计算机上时，填127.0.0.1(表示本机);否则填0.0.0.0(表示所有IP ) 。
 只需要为主服务器设置此项。"
-                            >
-                                <Input.Password placeholder="bind_ip" maxLength={200}/>
-                            </Form.Item>
+                                >
+                                    <Input.Password placeholder="bind_ip" maxLength={200}/>
+                                </Form.Item>
 
-                            <Form.Item
-                                label={t('cluster.master_ip')}
-                                name='master_ip'
-                                tooltip="master_ip。主服务器IP
+                                <Form.Item
+                                    label={t('cluster.master_ip')}
+                                    name='master_ip'
+                                    tooltip="master_ip。主服务器IP
 主服务器的IPv4地址，从服务器请求此IP并与其连接。
 主从服务器都在同一计算机上时，填127.0.0.1 ;否则填主服务器IP只需要为从服务器设置此项"
-                            >
-                                <Input.Password placeholder="master_ip" maxLength={200}/>
-                            </Form.Item>
+                                >
+                                    <Input.Password placeholder="master_ip" maxLength={200}/>
+                                </Form.Item>
 
-                            <Form.Item
-                                label={t('cluster.master_port')}
-                                name='master_port'
-                                tooltip={"世界通信端口\n" +
-                                    "主服务器将监听/从服务器请求与主服务器连接的UDP端口。\n" +
-                                    "主从服务器应设为相同值"}
-                            >
-                                <InputNumber placeholder="master_port" maxLength={200}/>
-                            </Form.Item>
+                                <Form.Item
+                                    label={t('cluster.master_port')}
+                                    name='master_port'
+                                    tooltip={"世界通信端口\n" +
+                                        "主服务器将监听/从服务器请求与主服务器连接的UDP端口。\n" +
+                                        "主从服务器应设为相同值"}
+                                >
+                                    <InputNumber placeholder="master_port" maxLength={200}/>
+                                </Form.Item>
 
-                            <Form.Item
-                                label={t('cluster.cluster_key')}
-                                name='cluster_key'
-                                tooltip={"世界验证密码\n" +
-                                    "多服务器开服时，服务器间的验证密码"}
-                            >
-                                <Input placeholder="cluster_key" maxLength={200}/>
-                            </Form.Item>
-                        </ProCard>
+                                <Form.Item
+                                    label={t('cluster.cluster_key')}
+                                    name='cluster_key'
+                                    tooltip={"世界验证密码\n" +
+                                        "多服务器开服时，服务器间的验证密码"}
+                                >
+                                    <Input placeholder="cluster_key" maxLength={200}/>
+                                </Form.Item>
+                            </ProCard>
+                        }
                         <br/>
-                        <ProCard title={t('cluster.SteamSetting')}>
+                        {has('allowEditingServerIni') &&
+                            <ProCard title={t('cluster.SteamSetting')}>
 
-                            <Form.Item
-                                label={t('cluster.steam_group_id')}
-                                name='steam_group_id'
-                                tooltip={"steam群组编号\n" +
-                                    "每个steam群组都有唯一的一串数字与其对应，在这里填写群组编号用于绑定steam群组。\n" +
-                                    "绑定后服务器将在群组成员的大厅中优先显示，并附有红色、黄色或白色小旗子标志。"}
-                            >
-                                <Input placeholder="cluster.steam_group_id"/>
-                            </Form.Item>
+                                <Form.Item
+                                    label={t('cluster.steam_group_id')}
+                                    name='steam_group_id'
+                                    tooltip={"steam群组编号\n" +
+                                        "每个steam群组都有唯一的一串数字与其对应，在这里填写群组编号用于绑定steam群组。\n" +
+                                        "绑定后服务器将在群组成员的大厅中优先显示，并附有红色、黄色或白色小旗子标志。"}
+                                >
+                                    <Input placeholder="cluster.steam_group_id"/>
+                                </Form.Item>
 
-                            <Form.Item label={t('cluster.steam_group_only')} valuePropName="checked"
-                                       name='steam_group_only'
-                                       tooltip={"是否仅允许steam群组成员加入\n" +
-                                           "开启后只有群组成员才可加入，其他玩家不可加入。"}
-                            >
-                                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}/>
-                            </Form.Item>
+                                <Form.Item label={t('cluster.steam_group_only')} valuePropName="checked"
+                                           name='steam_group_only'
+                                           tooltip={"是否仅允许steam群组成员加入\n" +
+                                               "开启后只有群组成员才可加入，其他玩家不可加入。"}
+                                >
+                                    <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}/>
+                                </Form.Item>
 
-                            <Form.Item
-                                valuePropName="checked"
-                                label={t('cluster.steam_group_admins')}
-                                name='steam_group_admins'
-                                tooltip={"是否将steam群组管理员设为游戏管理员\n" +
-                                    "                            开启后，steam群组的管理员将会自动拥有游戏内管理员身份。"}
-                            >
-                                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}/>
-                            </Form.Item>
-                        </ProCard>
+                                <Form.Item
+                                    valuePropName="checked"
+                                    label={t('cluster.steam_group_admins')}
+                                    name='steam_group_admins'
+                                    tooltip={"是否将steam群组管理员设为游戏管理员\n" +
+                                        "                            开启后，steam群组的管理员将会自动拥有游戏内管理员身份。"}
+                                >
+                                    <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}/>
+                                </Form.Item>
+                            </ProCard>
+                        }
                     </Form>
                     <br/>
                 </Skeleton>

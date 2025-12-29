@@ -33,7 +33,6 @@ import ModViewer from "./pages/ModViewer/index";
 
 // layout outside
 import LayoutSide from "./layoutSide/index";
-import ClusterList from "./pages/ClusterList/index";
 import UserList from "./pages/UserList/index.jsx";
 import Server from "./pages/ClusterList/Server/index.jsx";
 

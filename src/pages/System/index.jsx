@@ -15,11 +15,6 @@ const System = () => {
     const {t} = useTranslation()
 
     const items = [
-        // {
-        //     key: '1',
-        //     label: t('setting.dstConfig'),
-        //     children: <DstConfigSetting/>,
-        // },
         {
             key: '2',
             label: t('setting.timedTask'),
@@ -39,11 +34,6 @@ const System = () => {
             key: '5',
             label: t('setting.autoModUpdate'),
             children: <AutoModUpdate />,
-        },
-        {
-            key: '7',
-            label: t('setting.webLinkSetting'),
-            children: <WebLinkSetting />,
         },
     ];
     return (

@@ -11,7 +11,6 @@ import {
     Space,
     Skeleton, Segmented, InputNumber, Empty, Select, Row, Col
 } from 'antd';
-import {PlusOutlined} from '@ant-design/icons';
 import {
     createCluster,
     fetchRemoteClusterList,

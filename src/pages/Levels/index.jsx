@@ -24,6 +24,7 @@ import {useParams} from "react-router-dom";
 import ConfigViewEditor from "./ConfigViewEditor/index.jsx";
 import {cave, forest, porkland} from "../../utils/dst";
 import axios from "axios";
+import {usePermission} from "../../hooks/usePermission";
 
 function base64ToUtf8(base64) {
     return new TextDecoder().decode(Uint8Array.from(atob(base64), c => c.charCodeAt(0)));
@@ -179,6 +180,7 @@ const ServerIni = ({levelName, level, changeValue}) => {
     }
 
     const {cluster} = useParams()
+    const { has } = usePermission(cluster)
 
     return (
         <Form
@@ -206,9 +208,13 @@ const ServerIni = ({levelName, level, changeValue}) => {
             页面自动分配的端口不会与已填写的端口重复，但页面不会擅自修改自行填写的端口，所以确保不要填写重复的端口。
             `}
             >
-                <InputNumber style={{
-                    width: '100%',
-                }} placeholder="范围: 10998-11018"/>
+                <InputNumber
+                    style={{
+                        width: '100%'
+                    }}
+                    placeholder="范围: 10998-11018"
+                    disabled={!has('allowEditingServerIni')}
+                />
             </Form.Item>
 
             <Form.Item
@@ -255,7 +261,7 @@ const ServerIni = ({levelName, level, changeValue}) => {
                 tooltip={`
             使路径编码与不区分大小写的操作系统兼容`}
             >
-                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')} defaultChecked/>
+                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')} />
             </Form.Item>
 
             <Form.Item
@@ -263,9 +269,13 @@ const ServerIni = ({levelName, level, changeValue}) => {
                 name='authentication_port'
                 tooltip={`serverini.authentication_port`}
             >
-                <InputNumber style={{
-                    width: '100%',
-                }} placeholder="serverini.authentication_port"/>
+                <InputNumber
+                    style={{
+                        width: '100%',
+                    }}
+                    placeholder="serverini.authentication_port"
+                    disabled={!has('allowEditingServerIni')}
+                />
             </Form.Item>
 
             <Form.Item
@@ -277,7 +287,9 @@ const ServerIni = ({levelName, level, changeValue}) => {
                     style={{
                         width: '100%',
                     }}
-                    placeholder="master_server_port"/>
+                    placeholder="master_server_port"
+                    disabled={!has('allowEditingServerIni')}
+                />
             </Form.Item>
         </Form>
     )
@@ -490,6 +502,9 @@ const defaultDstWorldSetting = {
 const App = () => {
 
     const {cluster} = useParams()
+    const { has } = usePermission(cluster)
+    const {addLevel, setAddLevel} = useState(has('allowAddLevel')||false)
+
     const {t} = useTranslation()
     const { i18n } = useTranslation();
     const lang = i18n.language;
@@ -497,7 +512,7 @@ const App = () => {
     const levelListRef = useRef([]);
     const [openAdd, setOpenAdd] = useState(false)
     const [openDelete, setOpenDelete] = useState(false)
-    const levelNameRef = useRef("");
+
     const [activeKey, setActiveKey] = useState('');
     const [items, setItems] = useState([]);
     const newTabIndex = useRef(0);
@@ -521,7 +536,7 @@ const App = () => {
                             const levels = resp.data
                             levelListRef.current = levels
                             const items2 = levels.map(level => {
-                                const closable = level.uuid !== "Master"
+                                const closable = (level.uuid !== "Master" && addLevel)
                                 if (lang === "en") {
                                     if (level.uuid === "Master") {
                                         level.levelName = "Forest"
@@ -885,7 +900,9 @@ const App = () => {
                                         }
                                     })
                             }}>{t('level.save')}</Button>
+                            {has('allowAddLevel') &&
                             <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
+                            }
                         </Space>
                     </div>
                 </Spin>

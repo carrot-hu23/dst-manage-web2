@@ -1,15 +1,16 @@
-import {Button, Input, message, Popconfirm, Select, Space, Spin, Switch} from "antd";
+import {Button, Input, message, Popconfirm, Select, Space, Spin} from "antd";
 import {DownloadOutlined} from '@ant-design/icons';
-import React, {useEffect, useRef, useState} from "react";
+import React, {useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
 import {MonacoEditor} from "../../NewEditor/index.jsx";
-import {readLevelServerLogApi, sendCommandApi} from "../../../api/level.jsx";
+import {sendCommandApi} from "../../../api/level.jsx";
 import {useTheme} from "../../../hooks/useTheme";
 import style from "../../DstServerList/index.module.css";
 import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {ProCard} from "@ant-design/pro-components";
+import {useLogStream} from "../../../hooks/useLogStream";
 
 export default () => {
     const { t } = useTranslation()
@@ -22,7 +23,6 @@ export default () => {
     const notHasLevels = levels === undefined || levels === null || levels.length === 0
     const levelNameRef = useRef(notHasLevels?"":levels[0].key)
     const editorRef = useRef()
-    const inputRef = useRef(null);
 
     const [command, setCommand] = useState('');
 
@@ -56,56 +56,22 @@ export default () => {
             })
     }
 
-    useEffect(() => {
-
-        readLevelServerLogApi(cluster, levelNameRef.current, 100)
-            .then(resp => {
-                if (resp.code === 200) {
-                    let logs = ""
-                    const lines = resp.data || []
-                    lines.reverse()
-                    lines.forEach(line => {
-                        logs += `${line}\n`
-                    })
-                    editorRef?.current?.current?.setValue(logs)
-                    editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount());
-                } else {
-                    editorRef?.current?.current?.setValue("")
-                }
-            })
-    }, [])
-
-    useEffect(()=>{
-        const id = setInterval(() => {
-            pullLog(); // 每次请求最新的100行日志
-        }, 3000)
-        return()=>{
-            clearInterval(id)
+    // 使用 useLogStream 处理实时日志流
+    useLogStream({
+        clusterName: cluster,
+        levelName: levelNameRef.current,
+        onLog: (line) => {
+            const currentLogs = editorRef?.current?.current?.getValue() || ""
+            editorRef?.current?.current?.setValue(currentLogs + `${line}\n`)
+            editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
+        },
+        onError: (err) => {
+            console.error('Log stream error:', err)
+        },
+        onOpen: () => {
+            console.log('Log stream connected')
         }
-    }, [])
-
-
-    function pullLog() {
-        if (!inputRef.current) return
-        const lines = inputRef.current.input.value
-        readLevelServerLogApi(cluster, levelNameRef.current, lines)
-            .then(resp => {
-                if (resp.code === 200) {
-                    let logs = ""
-                    const lines = resp.data || []
-                    lines.reverse()
-                    lines.forEach(line => {
-                        logs += `${line}\n`
-                    })
-                    if (logs !== editorRef?.current?.current?.getValue()) {
-                        editorRef?.current?.current?.setValue(logs)
-                        editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
-                    }
-                }else {
-                    editorRef?.current?.current?.setValue("")
-                }
-            })
-    }
+    })
 
     const handleChange = (value) => {
         levelNameRef.current = value
@@ -114,7 +80,7 @@ export default () => {
     return <>
         <Spin spinning={spinLoading}>
             <ProCard>
-                    <Space.Compact style={{width: '100%', marginBottom: 12}}>
+                    <Space style={{width: '100%', marginBottom: 12}}>
                         <Select
                             style={{
                                 width: 120,
@@ -128,9 +94,7 @@ export default () => {
                                 }
                             })}
                         />
-                        <Input defaultValue="100" ref={inputRef}/>
-                        <Button type="primary" onClick={() => pullLog()}>{t('panel.pull')}</Button>
-                    </Space.Compact>
+                    </Space>
                     <br/>
                     <MonacoEditor
                         className={style.icon}
