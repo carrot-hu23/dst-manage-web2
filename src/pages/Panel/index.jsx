@@ -7,10 +7,12 @@ import GameOperator from "./GameOperator/index.jsx";
 import RemoteControl from "./RemoteControl/index.jsx";
 import TooManyItemsPlus from "../TooManyItemsPlus/index";
 import OtherIOrder from "../TooManyItemsPlus/OtherIOrder";
+import {useParams} from "react-router-dom";
 
 const Panel = () => {
 
     const { t } = useTranslation()
+    const { cluster, name } = useParams()
     const setLevels = useLevelsStore((state) => state.setLevels)
     const [loading, setLoading] = useState(true)
 
@@ -38,7 +40,7 @@ const Panel = () => {
                 }
                 setLoading(false)
             })
-    }, [])
+    }, [cluster, name])
 
     const items = [
         {

@@ -23,13 +23,13 @@ import {Outlet, useLocation} from "react-router";
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import {http} from '../utils/http';
 import {ToggleLanguage} from "./Language.tsx";
 import ToggleTheme from "./ToggleTheme.tsx";
-// @ts-ignore
+
+
 import {useTheme} from "../hooks/useTheme";
+import ClusterSelector from "./ClusterSelector";
 
 const {Link} = Typography;
 
@@ -37,7 +37,7 @@ export default () => {
 
     const {cluster, name} = useParams()
 
-    // @ts-ignore
+
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
         fixSiderbar: true,
         layout: 'mix',
@@ -191,14 +191,12 @@ export default () => {
                                 </a>
                             );
                             if (typeof window === 'undefined') return defaultDom;
-                            if (document.body.clientWidth < 1400) {
-                                return defaultDom;
-                            }
-                            if (_.isMobile) return defaultDom;
+
                             return (
-                                <>
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
                                     {defaultDom}
-                                </>
+                                    <ClusterSelector />
+                                </div>
                             );
                         }}
                         onMenuHeaderClick={(e) => console.log(e)}

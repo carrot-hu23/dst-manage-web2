@@ -6,16 +6,21 @@ import {MinusCircleOutlined, PlusOutlined, UploadOutlined} from '@ant-design/ico
 const {Title, Paragraph} = Typography
 
 import './index.css';
+import {useParams} from "react-router-dom";
 
 export default ({title, tips, getApi, saveApi}) => {
+
     const {t} = useTranslation()
+    const {cluster} = useParams()
+
     const [loading, setLoading] = useState(false);
     const [spin, setSpin] = useState(false);
     const [form] = Form.useForm()
     const lines = tips.split("\n")
+
     useEffect(() => {
         fetchData()
-    }, [])
+    }, [cluster])
 
     const fetchData = async () => {
         setLoading(true)

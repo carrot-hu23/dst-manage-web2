@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {ProTable} from '@ant-design/pro-components';
 import {Button, ConfigProvider, Image, message, Popconfirm, Space, Tag} from 'antd';
 
@@ -165,6 +165,9 @@ export default ()=> {
         },
     ];
 
+    useEffect(() => {
+        actionRef.current?.reload()
+    }, [cluster]);
 
     return (
         <>

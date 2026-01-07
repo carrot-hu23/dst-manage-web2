@@ -22,7 +22,7 @@ export default () => {
 
     useEffect(() => {
         getJobTaskList()
-    }, [])
+    }, [cluster])
 
     const columns = [
         {

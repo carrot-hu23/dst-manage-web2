@@ -582,7 +582,7 @@ const App = () => {
                 console.error('无法加载配置文件', error);
             })
 
-    }, [])
+    }, [cluster])
 
     const onChange = (newActiveKey) => {
         setActiveKey(newActiveKey);

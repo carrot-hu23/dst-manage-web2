@@ -62,7 +62,7 @@ export default () => {
     }
     useEffect(() => {
         getJobTaskList()
-    }, [])
+    }, [cluster])
 
     const ShowAnnouncement = ({announcement}) =>{
         if (announcement === null || announcement === undefined) {

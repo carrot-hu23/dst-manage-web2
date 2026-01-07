@@ -20,7 +20,7 @@ export default () => {
                 }
                 setLoading(false)
             })
-    }, [])
+    }, [cluster])
     return (
         <>
             <Skeleton loading={loading} active>

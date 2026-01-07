@@ -130,7 +130,7 @@ const Backup = ({showStatistic}) => {
 
     useEffect(() => {
         updateBackupData()
-    }, [])
+    }, [cluster])
 
     const rowSelection = {
         selectedRowKeys,

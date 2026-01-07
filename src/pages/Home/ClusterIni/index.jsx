@@ -48,7 +48,7 @@ export default () => {
         return () => {
             i18n.off("languageChanged", handleLanguageChange);
         };
-    }, [i18n]);
+    }, [i18n, cluster]);
 
 
     const [loading, setLoading] = useState(false)
@@ -94,7 +94,7 @@ export default () => {
                 }
                 setLoading(false)
             })
-    }, [])
+    }, [cluster])
 
     const [open, setOpen] = useState(false)
 

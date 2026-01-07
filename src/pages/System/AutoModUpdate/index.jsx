@@ -20,7 +20,7 @@ export default ()=>{
                 }
                 setLoading(false)
             })
-    }, [])
+    }, [cluster])
 
     return(
         <>

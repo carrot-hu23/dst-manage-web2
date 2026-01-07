@@ -126,7 +126,7 @@ export default () => {
                 console.error(ereor);
             })
 
-    }, [])
+    }, [cluster])
 
 
     return (

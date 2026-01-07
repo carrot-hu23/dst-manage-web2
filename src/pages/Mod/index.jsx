@@ -59,7 +59,7 @@ export default () => {
         }
         fetchData()
 
-    }, [])
+    }, [cluster])
 
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
