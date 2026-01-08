@@ -317,7 +317,7 @@ const LevelViewEditor: React.FC<{
     return (
         <>
             <div className={'scrollbar'} style={{
-                "height": "54vh",
+                "height": "52vh",
                 overflowY: 'auto',
             }}>
                 {levelType === 'forest' && <Tabs items={forestItems}/>}

@@ -12,7 +12,7 @@ import {deleteLogs, getPlayerLog} from '../../api/playerLogApi.jsx';
 import {dstRoles, dstRolesMap} from '../../utils/dst.js';
 import {addBlackListPlayerListApi} from "../../api/playerApi.jsx";
 import style from "../DstServerList2/index.module.css";
-import HiddenText from "../Home/HiddenText/HiddenText.jsx";
+import HiddenText from "../Home/HiddenText/HiddenText";
 
 
 const playerActionEnum = {

@@ -171,6 +171,11 @@
   "cluster.steam_group_only": "steam_group_only",
   "cluster.steam_group_admins": "steam_group_admins",
 
+  "cluster.alert.console_enabled.disabled": "The panel depends on console functionality, panel console features will be unavailable when disabled",
+  "cluster.alert.master_port.info": "World communication port, master and slave servers should use same value, ensure port is not in use",
+  "cluster.alert.shard_enabled.disabled": "After disabling, only single world mode can be enabled, multi-world connections like above-ground and underground cannot be implemented",
+  "cluster.alert.bind_ip.info": "Slave server IP, fill in 127.0.0.1 if master and slave servers are on same computer, otherwise fill in 0.0.0.0",
+  "cluster.alert.master_ip.info": "Master server IP, fill in 127.0.0.1 if master and slave servers are on same computer, otherwise fill in master server IP",
 
   "level.worldSettings": "Word Settings",
   "level.worldGeneration": "Word Generation",

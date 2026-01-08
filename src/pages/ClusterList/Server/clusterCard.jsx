@@ -8,7 +8,7 @@ import {UpdateServer} from "./index";
 import {deleteCluster} from "../../../api/clusterApi";
 import {ProCard, ProDescriptions} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
-import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
+import HiddenText from "../../Home/HiddenText/HiddenText";
 
 const {Title, Link} = Typography;
 

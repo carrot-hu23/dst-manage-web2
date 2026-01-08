@@ -156,6 +156,9 @@ export default () => {
                         }}
                         actionsRender={(props) => {
                             if (props.isMobile) return [
+                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                                    <ClusterSelector />
+                                </div>,
                                 <div onClick={() => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}><GithubFilled key="GithubFilled"/></div>,

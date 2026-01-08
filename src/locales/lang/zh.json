@@ -172,6 +172,12 @@
   "cluster.steam_group_only": "仅限Steam组",
   "cluster.steam_group_admins": "Steam组管理员",
 
+  "cluster.alert.console_enabled.disabled": "面板依赖控制台功能，关闭后面板控制台功能将不可用",
+  "cluster.alert.master_port.info": "世界通信端口，主从服务器应设为相同值，请确保端口未被占用",
+  "cluster.alert.shard_enabled.disabled": "关闭后只能启用单世界模式，无法实现地上地下等多世界串联",
+  "cluster.alert.bind_ip.info": "从服务器IP，主从服务器都在同一计算机上时填127.0.0.1，否则填0.0.0.0",
+  "cluster.alert.master_ip.info": "主服务器IP，主从服务器都在同一计算机上时填127.0.0.1，否则填主服务器IP",
+
 
   "level.worldSettings": "世界设置",
   "level.worldGeneration": "世界生成",

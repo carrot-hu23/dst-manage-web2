@@ -1,10 +1,10 @@
-import NameList from "./NameList/index.jsx";
-import {getAdminlistApi, saveAdminlistApi} from "../../api/level.jsx";
+import NameList from "./NameList/index.tsx";
+import {getAdminlistApi, saveAdminlistApi} from "../../api/levelApi";
 import {useTranslation} from "react-i18next";
 
-export default ()=>{
+const Adminlist: React.FC = () => {
 
-    const {t} = useTranslation()
+    const {t} = useTranslation();
 
     return(<>
         <NameList
@@ -15,3 +15,5 @@ export default ()=>{
         />
     </>)
 }
+
+export default Adminlist;
