@@ -8,7 +8,7 @@ import {useParams} from "react-router-dom";
 import {archiveApi} from '../../../api/gameApi.jsx';
 
 import style from "../../DstServerList/index.module.css";
-import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
+import HiddenText from "../../Home/HiddenText/HiddenText";
 import {dstSeason, dstSegs, getDstMod} from "../../../utils/dst.js";
 import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {ProDescriptions} from "@ant-design/pro-components";

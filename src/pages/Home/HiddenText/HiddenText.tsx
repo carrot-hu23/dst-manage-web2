@@ -1,11 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import {Space, Typography} from 'antd';
 import { EyeTwoTone, EyeInvisibleTwoTone } from '@ant-design/icons';
 
 const { Paragraph } = Typography;
 
-function HiddenText({ text }) {
-    const [hidden, setHidden] = useState(true);
+interface HiddenTextProps {
+    text: string;
+}
+
+function HiddenText({ text }: HiddenTextProps) {
+    const [hidden, setHidden] = useState<boolean>(true);
 
     const handleToggle = () => {
         setHidden(!hidden);

@@ -4,12 +4,11 @@ import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
-import {Image, Skeleton, Col, Row, Button, Divider, Space, message, Spin, Select, List, Tag} from 'antd';
+import {Image, Skeleton, Col, Button, Space, Spin, Select, List, Tag} from 'antd';
 
 import {dstRoles} from '../../../utils/dst';
-import {sendCommandApi} from "../../../api/level.jsx";
 import style from "../../DstServerList/index.module.css";
-import HiddenText from "../../Home/HiddenText/HiddenText.jsx";
+import HiddenText from "../../Home/HiddenText/HiddenText";
 import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {getAllOnlinePlayersApi, getOnlinePlayersApi} from "../../../api/onlinPlayerApi";

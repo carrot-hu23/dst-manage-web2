@@ -1,10 +1,10 @@
-import NameList from "./NameList/index.jsx";
+import NameList from "./NameList/index.tsx";
+import {getWhitelistApi, saveWhitelistApi} from "../../api/levelApi";
 import {useTranslation} from "react-i18next";
-import {getWhitelistApi, saveWhitelistApi} from "../../api/level.jsx";
 
-export default () => {
+const Whitelist: React.FC = () => {
 
-    const {t} = useTranslation()
+    const {t} = useTranslation();
 
     return (<>
         <NameList
@@ -15,3 +15,5 @@ export default () => {
         />
     </>)
 }
+
+export default Whitelist;
