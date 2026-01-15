@@ -16,15 +16,16 @@ import type { RadioChangeEvent } from "antd/es/radio";
 
 import {useTranslation} from "react-i18next";
 
-import {dstGameMod} from "../../../utils/dst";
+
 import {getClusterIniApi, saveClusterIniApi} from "../../../api/levelApi";
 import type {ClusterIniFormValues, ClusterIniResponse} from "../../../type";
 
 import style from '../../DstServerList/index.module.css'
 import {FooterToolbar, ProCard} from "@ant-design/pro-components";
-import DstEmoji from "../../DstServerList/DstEmoji/index.jsx";
-import {usePermission} from "../../../hooks/usePermission";
+
 import {useParams} from "react-router-dom";
+import {dstGameMod} from "../../../utils/dst";
+import DstEmoji from "../DstEomj";
 
 const {TextArea} = Input;
 
@@ -35,7 +36,10 @@ const ClusterIni: React.FC = () => {
     const [lang, setLang] = useState<'zh' | 'en' | 'jp' | 'kr'>('zh')
 
     const {cluster} = useParams<{cluster?: string}>()
-    const { has } = usePermission(cluster)
+    // const { has } = usePermission(cluster)
+    const has= (p: string)=>{
+        return true
+    }
 
     useEffect(() => {
         const handleLanguageChange = (lng: string) => {

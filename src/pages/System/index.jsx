@@ -7,7 +7,6 @@ import TimedTask from "./TimedTask/index.jsx";
 import AutoGameUpdate from "./AutoGameUpdate/index.jsx";
 import AutoGameDown from "./AutoGameDown/index.jsx";
 import AutoModUpdate from "./AutoModUpdate/index.jsx";
-import WebLinkSetting from "./WebLinkSetting/index.jsx";
 
 
 const System = () => {
@@ -39,11 +38,6 @@ const System = () => {
             key: '5',
             label: t('setting.autoModUpdate'),
             children: <AutoModUpdate />,
-        },
-        {
-            key: '7',
-            label: t('setting.webLinkSetting'),
-            children: <WebLinkSetting />,
         },
     ];
     return (

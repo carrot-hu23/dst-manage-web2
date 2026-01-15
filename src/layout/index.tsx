@@ -22,12 +22,10 @@ import {Outlet, useLocation} from "react-router";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import {http} from '../utils/http';
 import {ToggleLanguage} from "./Language.tsx";
 import ToggleTheme from "./ToggleTheme.tsx";
-// @ts-ignore
+
 import {useTheme} from "../hooks/useTheme";
 
 const {Link} = Typography;
@@ -153,18 +151,11 @@ export default () => {
                         }}
                         actionsRender={(props) => {
                             if (props.isMobile) return [
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                    <ClusterSelector />
-                                </div>,
                                 <div onClick={() => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}><GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
-                                <div style={{
-                                    paddingTop: 16
-                                }}>
-                                    <ToggleTheme/>
-                                </div>
+                                <ToggleTheme/>
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
@@ -177,11 +168,7 @@ export default () => {
                                 }}>
                                     <GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
-                                <div style={{
-                                    paddingTop: 16
-                                }}>
-                                    <ToggleTheme/>
-                                </div>
+                                <ToggleTheme/>
                             ];
                         }}
                         headerTitleRender={(_logo, _title, _) => {

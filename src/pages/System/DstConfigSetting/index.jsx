@@ -307,7 +307,7 @@ export default () => {
                                 span: 24,
                             }}
                         >
-                            <Button style={{margin: "0 auto", display: "block"}} type="primary" htmlType="submit">
+                            <Button type="primary" htmlType="submit">
                                 {t('setting.dstConfig.save')}
                             </Button>
                         </Form.Item>

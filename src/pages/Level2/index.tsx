@@ -24,7 +24,7 @@ import {EditOutlined} from '@ant-design/icons';
 import MonacoEditor2, {MonacoEditorRef} from "../NewEditor2";
 import {useTheme} from "../../hooks/useTheme";
 import {useParams} from "react-router-dom";
-import {usePermission} from "../../hooks/usePermission";
+
 import axios from "axios";
 import LevelViewer from "./LevelViewer.tsx";
 import {getLevelListApi, createLevelApi, deleteLevelApi, updateLevelsApi} from "../../api/levelApi";
@@ -325,7 +325,11 @@ function base64ToUtf8(base64: string) {
 
 const Level2 = () => {
     const {cluster} = useParams<{ cluster?: string }>();
-    const {has} = usePermission(cluster);
+
+    const has= (p: string)=>{
+        return true
+    }
+
     const {t} = useTranslation();
     const {i18n} = useTranslation();
     const lang = i18n.language;
@@ -455,7 +459,7 @@ const Level2 = () => {
         }
 
         fetchData();
-    }, [cluster, has, lang, t]);
+    }, [cluster, lang, t]);
 
     // Helper functions
     const getMasterModoverrides = () => {
