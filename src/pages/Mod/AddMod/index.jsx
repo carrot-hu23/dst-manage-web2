@@ -2,7 +2,7 @@ import React, {useState, useEffect, useRef} from "react";
 
 import {Button, Spin, Space, Input, message, Typography, Grid, Card} from "antd";
 
-import {useNavigate} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {ArrowLeftOutlined} from '@ant-design/icons';
 
 import {useTheme} from "../../../hooks/useTheme";
@@ -15,6 +15,9 @@ const {Title} = Typography;
 export default () => {
     const {theme} = useTheme()
     const navigate = useNavigate();
+
+    const {cluster, name} = useParams()
+
     const [spinLoading, setSpinLoading] = useState(false)
 
     const [workshopId, setWorkshopId] = useState("")
@@ -52,7 +55,7 @@ export default () => {
         <Spin spinning={spinLoading} description={"正在添加模组"}>
             <Space size={8} wrap>
                 <Button type={"link"} icon={<ArrowLeftOutlined/>}
-                        onClick={() => navigate(`/mod`)}>
+                        onClick={() => navigate(`/${cluster}/${name}/mod`)}>
                     返回
                 </Button>
                 <Button type="primary" onClick={() => {

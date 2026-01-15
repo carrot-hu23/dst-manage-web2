@@ -22,7 +22,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
 
     const { t } = useTranslation()
     const navigate = useNavigate();
-    const {cluster} = useParams()
+    const {cluster, name} = useParams()
     const lang = i18n.language
 
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -201,7 +201,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                         <Tooltip
                             title={t('mod.tips3')}>
                             <Button type="primary"
-                                    onClick={() => navigate(`/mod/add/:modId`)}>{t('mod.upload.modinfo')}</Button>
+                                    onClick={() => navigate(`/${cluster}/${name}/mod/add/:modId`)}>{t('mod.upload.modinfo')}</Button>
                         </Tooltip>
                         <Select
                             style={{
