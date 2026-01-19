@@ -2,13 +2,11 @@ import React from "react";
 
 import {Tabs} from "antd";
 import {useTranslation} from "react-i18next";
-import DstConfigSetting from "./DstConfigSetting/index.jsx";
 import TimedTask from "./TimedTask/index.jsx";
 import AutoGameUpdate from "./AutoGameUpdate/index.jsx";
 import AutoGameDown from "./AutoGameDown/index.jsx";
 import AutoModUpdate from "./AutoModUpdate/index.jsx";
-import WebLinkSetting from "./WebLinkSetting/index.jsx";
-
+import ThemeSetting from "./ThemeSetting/index";
 
 const System = () => {
 
@@ -34,6 +32,11 @@ const System = () => {
             key: '5',
             label: t('setting.autoModUpdate'),
             children: <AutoModUpdate />,
+        },
+        {
+            key: '6',
+            label: '主题设置',
+            children: <ThemeSetting />,
         },
     ];
     return (
