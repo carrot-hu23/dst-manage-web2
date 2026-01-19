@@ -27,6 +27,7 @@ import {ToggleLanguage} from "./Language.tsx";
 import ToggleTheme from "./ToggleTheme.tsx";
 
 import {useTheme} from "../hooks/useTheme";
+import {useThemeConfigStore} from "../store/useThemeConfigStore";
 
 const {Link} = Typography;
 
@@ -77,6 +78,8 @@ export default () => {
 
     const {theme} = useTheme()
 
+    const {themeConfig} = useThemeConfigStore();
+
     // @ts-ignore
     return (
         <div
@@ -90,6 +93,9 @@ export default () => {
                 <ConfigProvider
                     getTargetContainer={() => {
                         return document.getElementById('test-pro-layout') || document.body;
+                    }}
+                    theme={{
+                        "token": themeConfig
                     }}
                 >
                     <ProLayout

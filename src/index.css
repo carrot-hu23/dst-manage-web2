@@ -2,6 +2,10 @@
     border-radius: 16px;
 }
 
+.ant-btn-color-primary {
+    box-shadow: none;
+}
+
 /*.ant-input-outlined {*/
 /*    background: rgba(255, 255, 255, 0.22);*/
 /*    border-width: 0.6px;*/
