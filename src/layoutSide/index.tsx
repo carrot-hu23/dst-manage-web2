@@ -28,6 +28,7 @@ import {ToggleLanguage} from "../layout/Language.tsx";
 import ToggleTheme from "../layout/ToggleTheme.tsx";
 // @ts-ignore
 import {useTheme} from "../hooks/useTheme/index.jsx";
+import {useThemeConfigStore} from "../store/useThemeConfigStore.tsx";
 
 export default () => {
 
@@ -77,6 +78,8 @@ export default () => {
 
     const {theme} = useTheme()
 
+    const {themeConfig} = useThemeConfigStore();
+
     // @ts-ignore
     return (
         <div
@@ -90,6 +93,9 @@ export default () => {
                 <ConfigProvider
                     getTargetContainer={() => {
                         return document.getElementById('test-pro-layout') || document.body;
+                    }}
+                    theme={{
+                        "token": themeConfig
                     }}
                 >
                     <ProLayout
@@ -168,11 +174,7 @@ export default () => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}><GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
-                                <div style={{
-                                    paddingTop: 16
-                                }}>
-                                    <ToggleTheme/>
-                                </div>
+                                <ToggleTheme/>
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
@@ -181,11 +183,7 @@ export default () => {
                                 }}>
                                     <GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
-                                <div style={{
-                                    paddingTop: 16
-                                }}>
-                                    <ToggleTheme/>
-                                </div>
+                                <ToggleTheme/>
                             ];
                         }}
                         headerTitleRender={(_logo, _title, _) => {
