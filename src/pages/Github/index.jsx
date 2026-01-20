@@ -3,12 +3,13 @@ import aliPayImage from './alipay.jpg';
 import wechatpayImage from './wechatpay.png';
 import qqgroup from './qqgroup.png'
 import TengxuCloudAd1 from "../Ad/TengxunCloudAd1.jsx";
+import {ProCard} from "@ant-design/pro-components";
 
 export default () => {
 
     return (
-        <div>
-            <h1>帮助文档</h1>
+        <ProCard>
+            <h1>Github</h1>
             <strong>禁止商用，商用请联系本人授权！！！</strong>
             <br/>
             <div>
@@ -48,6 +49,6 @@ export default () => {
                 <h3>QQ群反馈</h3>
                 <Image style={{borderRadius: '4px'}} width={160} src={qqgroup}/>
             </div>
-        </div>
+        </ProCard>
     )
 }

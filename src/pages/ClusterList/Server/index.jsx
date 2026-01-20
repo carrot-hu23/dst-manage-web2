@@ -19,6 +19,7 @@ import {
 } from "../../../api/clusterApi";
 import {generateUUID} from "../../../utils/dateUitls";
 import ClusterCard from "./clusterCard";
+import {PageContainer} from "@ant-design/pro-components";
 
 
 export const UpdateServer = ({server, serverList, updateServerList, setOpen}) => {
@@ -653,13 +654,16 @@ export default () => {
     }
 
     return (
-        <>
+        <PageContainer title={'房间列表'}
+                       extra={showAddBtn ? [
+                           <Button key="1" type="primary" onClick={() => setOpenAdd(true)}>
+                               添加房间
+                           </Button>
+                       ] : null}
+        >
             <Skeleton loading={loading} active>
                 <div style={{marginBottom: '16px'}}>
                     <Space size={16} wrap>
-                        {showAddBtn && <div>
-                            <Button color="primary" onClick={() => setOpenAdd(true)} type={'primary'}>添加房间</Button>
-                        </div>}
                         <Segmented
                             options={['全部', '本地', '远程',]}
                             onChange={(value) => {
@@ -699,6 +703,6 @@ export default () => {
                     <AddServer serverList={serverList} reload={reload}/>
                 </Modal>
             </Skeleton>
-        </>
+        </PageContainer>
     )
 }

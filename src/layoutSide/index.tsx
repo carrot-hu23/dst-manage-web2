@@ -4,7 +4,6 @@ import {
 } from '@ant-design/icons';
 import type {ProSettings} from '@ant-design/pro-components';
 import {
-    PageContainer,
     ProCard,
     ProConfigProvider,
     ProLayout,
@@ -15,18 +14,16 @@ import {
     Dropdown,
 } from 'antd';
 import {useEffect, useState} from 'react';
-// @ts-ignore
+
 import defaultProps from './_defaultProps';
 import {Outlet, useLocation} from "react-router";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import {http} from '../utils/http';
 import {ToggleLanguage} from "../layout/Language.tsx";
 import ToggleTheme from "../layout/ToggleTheme.tsx";
-// @ts-ignore
+
 import {useTheme} from "../hooks/useTheme/index.jsx";
 import {useThemeConfigStore} from "../store/useThemeConfigStore.tsx";
 
@@ -41,7 +38,7 @@ export default () => {
     const firstPagePath = '/panel';
     const location = useLocation()
     const [pathname, setPathname] = useState(location.pathname);
-    const paddingInlinePageContainerContent = 24;
+
     if (typeof document === 'undefined') {
         return <div/>;
     }
@@ -216,25 +213,7 @@ export default () => {
                         )}
                         {...settings}
                     >
-                        <PageContainer
-                            token={{
-                                paddingInlinePageContainerContent,
-                            }}
-                            // 去掉面包屑
-                            breadcrumbRender={false}
-                            title={false}
-                        >
-                            {(location.pathname === firstPagePath
-                                || location.pathname === '/cluster') && (
-                                <Outlet/>
-                            )}
-                            {(location.pathname !== firstPagePath
-                                && location.pathname !== '/cluster') && (
-                                <ProCard>
-                                    <Outlet/>
-                                </ProCard>
-                            )}
-                        </PageContainer>
+                        <Outlet/>
                     </ProLayout>
                 </ConfigProvider>
             </ProConfigProvider>

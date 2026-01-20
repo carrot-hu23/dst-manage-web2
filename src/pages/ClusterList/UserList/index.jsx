@@ -2,14 +2,14 @@ import {Button, Drawer, Form, Image, Input, message, Modal, Popconfirm, Select, 
 import React, {useEffect, useRef, useState} from "react";
 import {DeleteOutlined, LockOutlined, UserOutlined} from "@ant-design/icons";
 
-import {ProTable} from "@ant-design/pro-components";
+import {PageContainer, ProTable} from "@ant-design/pro-components";
 import {
     createUserAccountApi,
     queryUserAccountListApi,
     deleteUserAccountApi,
     updateUserAccountApi, queryUserClusterListApi, addUserClusterApi, deleteUserClusterApi, putUserClusterApi
-} from "../../api/userApi";
-import {getClusterList} from "../../api/clusterApi";
+} from "../../../api/userApi.jsx";
+import {getClusterList} from "../../../api/clusterApi.jsx";
 
 
 export default () => {
@@ -510,7 +510,7 @@ export default () => {
         )
     }
 
-    return (<>
+    return (<PageContainer title={'管理房间列表'} extra={<AddUserAccount actionRef={actionRef}/>}>
 
             <Drawer size={'large'} title="管理房间列表" onClose={onClose} open={open}>
                 <HomeList userId={userId}/>
@@ -538,12 +538,12 @@ export default () => {
                     pageSize: 10,
                     onChange: (page) => console.log(page),
                 }}
-                headerTitle="用户列表"
+                // headerTitle="用户列表"
                 // tableAlertRender={({selectedRowKeys, selectedRows, onCleanSelected}) => false}
-                toolBarRender={() => [
-                    <AddUserAccount actionRef={actionRef}/>
-                ]}
+                // toolBarRender={() => [
+                //     <AddUserAccount actionRef={actionRef}/>
+                // ]}
             />
-        </>
+        </PageContainer>
     )
 }
