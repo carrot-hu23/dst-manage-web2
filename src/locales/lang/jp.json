@@ -32,6 +32,8 @@
   "dashboard": "ダッシュボード",
   "menu.userList": "UserList",
   "menu.cluster": "Cluster",
+  "menu.cluster-config": "ClusterConfig",
+  "menu.theme": "Theme",
   "menu.dashboard": "ダッシュボード",
   "menu.playerLine": "プレイヤーライン",
   "menu.panel": "パネル",

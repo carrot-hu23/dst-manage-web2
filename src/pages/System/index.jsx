@@ -33,11 +33,11 @@ const System = () => {
             label: t('setting.autoModUpdate'),
             children: <AutoModUpdate />,
         },
-        {
-            key: '6',
-            label: '主题设置',
-            children: <ThemeSetting />,
-        },
+        // {
+        //     key: '6',
+        //     label: '主题设置',
+        //     children: <ThemeSetting />,
+        // },
     ];
     return (
         <Tabs defaultActiveKey="1" items={items}/>

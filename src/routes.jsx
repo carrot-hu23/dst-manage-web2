@@ -34,7 +34,9 @@ import ModViewer from "./pages/ModViewer/index";
 // layout outside
 import LayoutSide from "./layoutSide/index";
 import UserList from "./pages/ClusterList/UserList/index.jsx";
-import Server from "./pages/ClusterList/Server/index.jsx";
+import Server from "./pages/ClusterList/Cluster/index";
+import ServerConfig from "./pages/ClusterList/ClusterConfig/index";
+import ThemeSetting from "./pages/System/ThemeSetting/index";
 
 function RedirectToPanel() {
     const { cluster, name } = useParams();
@@ -88,6 +90,10 @@ export default function Routes() {
                     path: '/cluster',
                     element: <Server />,
                 },
+                {
+                    path: '/cluster-config',
+                    element: <ServerConfig />,
+                },
                 {path: 'userList', element: <UserList/>},
                 {path: 'userProfile', element: <UserProfile/>},
                 {path: 'link', element: <Link/>},
@@ -98,6 +104,7 @@ export default function Routes() {
                 {path: '*', element: <Navigate to="/404"/>},
                 {path: 'level2', element: <Level2 />},
                 {path: 'mod2', element: <ModViewer />},
+                {path: 'theme', element: <ThemeSetting />},
             ],
         },
         {

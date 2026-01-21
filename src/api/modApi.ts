@@ -1,4 +1,4 @@
-// @ts-ignore
+// Removed ts-ignore in favor of proper typings
 import { http } from "../utils/http";
 
 async function getMyModInfoList(cluster: string) {

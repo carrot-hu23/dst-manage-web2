@@ -19,7 +19,7 @@ const defaultData: ThemeData = {
     borderRadius: 6,
     colorPrimary: '#1677ff',
     Button: {
-        colorPrimary: '#00B96B',
+        colorPrimary: '#1677ff',
     },
 };
 
@@ -27,7 +27,7 @@ const loadFromStorage = (): ThemeData => {
     try {
         const stored = localStorage.getItem('themeConfig');
         if (stored) {
-            return { ...defaultData, ...JSON.parse(stored) };
+            return JSON.parse(stored);
         }
     } catch (e) {
         console.error('Failed to parse theme config from localStorage', e);

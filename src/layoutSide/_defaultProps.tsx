@@ -1,5 +1,6 @@
 import {
-    CompassOutlined,
+    BgColorsOutlined,
+    CompassOutlined, CopyOutlined,
     DashboardOutlined,
     GithubOutlined, SmileFilled, UsergroupAddOutlined,
 } from '@ant-design/icons';
@@ -13,9 +14,19 @@ export default {
                 
             },
             {
+                path: '/cluster-config',
+                name: 'menu.cluster-config',
+                icon: <CopyOutlined />,
+            },
+            {
                 path: '/userList',
                 name: 'menu.userList',
                 icon: <UsergroupAddOutlined />,
+            },
+            {
+                path: '/theme',
+                name: 'menu.theme',
+                icon: <BgColorsOutlined />,
             },
             {
                 path: '/lobby',

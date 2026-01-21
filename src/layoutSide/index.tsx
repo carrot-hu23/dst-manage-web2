@@ -4,7 +4,6 @@ import {
 } from '@ant-design/icons';
 import type {ProSettings} from '@ant-design/pro-components';
 import {
-    ProCard,
     ProConfigProvider,
     ProLayout,
     // SettingDrawer,

@@ -9,7 +9,7 @@ import {
     deleteUserAccountApi,
     updateUserAccountApi, queryUserClusterListApi, addUserClusterApi, deleteUserClusterApi, putUserClusterApi
 } from "../../../api/userApi.jsx";
-import {getClusterList} from "../../../api/clusterApi.jsx";
+import {getClusterList} from "../../../api/clusterApi";
 
 
 export default () => {

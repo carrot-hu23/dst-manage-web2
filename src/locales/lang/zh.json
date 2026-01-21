@@ -34,6 +34,8 @@
 
   "menu.userList": "用户列表",
   "menu.cluster": "房间列表",
+  "menu.cluster-config": "配置列表",
+  "menu.theme": "主题设置",
   "menu.dashboard": "统计页面",
   "menu.playerLine": "玩家时间线",
   "menu.panel": "面板操作",

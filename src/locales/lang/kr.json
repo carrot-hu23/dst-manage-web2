@@ -32,6 +32,8 @@
   "dashboard": "대시보드",
   "menu.userList": "UserList",
   "menu.cluster": "Cluster",
+  "menu.cluster-config": "ClusterConfig",
+  "menu.theme": "Theme",
   "menu.dashboard": "대시보드",
   "menu.playerLine": "플레이어라인",
   "menu.panel": "패널",

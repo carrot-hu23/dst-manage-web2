@@ -5,8 +5,7 @@ import {TranslationOutlined} from "@ant-design/icons";
 export const ToggleLanguage = () => {
 
     const {i18n} = useTranslation();
-    // @ts-ignore
-    const onClick = ({key}) => {
+    const onClick = ({ key }: { key: string }) => {
         localStorage.setItem('language', key)
         i18n.changeLanguage(key)
     };

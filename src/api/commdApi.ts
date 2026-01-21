@@ -1,4 +1,3 @@
-// @ts-ignore
 import {http} from "../utils/http";
 
 async function sendCommandApi(cluster: string, levelName: string, command: string) {

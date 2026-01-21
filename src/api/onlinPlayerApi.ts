@@ -1,4 +1,3 @@
-// @ts-ignore
 import { http } from "../utils/http";
 
 async function getOnlinePlayersApi(cluster: string,levelName: string) {
