@@ -33,13 +33,14 @@ import {cave, forest, porkland} from "../../utils/dst";
 
 interface LevelItemProps {
     dstWorldSetting?: Record<string, object>
+    porklandSetting?: Record<string, object>
     levelName: string,
     level: LevelData,
     changeLevel: (levelName: string, newValue: Record<string, unknown>) => void,
     has: (permission: string) => boolean
 }
 
-const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, levelName, level, changeLevel, has}) => {
+const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, levelName, level, changeLevel, has}) => {
     const {t} = useTranslation();
     useEffect(() => {
     }, [level]);
@@ -51,7 +52,7 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, levelName, level,
                 height: height,
                 overflowY: 'auto',
             }}>
-                <Leveldataoverride dstWorldSetting={dstWorldSetting}
+                <Leveldataoverride dstWorldSetting={dstWorldSetting} porklandSetting={porklandSetting}
                                    levelName={levelName}
                                    level={level} changeLevel={changeLevel} has={has}/>
             </div>,
@@ -107,7 +108,7 @@ const Leveldataoverride: React.FC<LevelItemProps> = (props) => {
             key: '1',
             label: t('level.view'),
             children: <LevelViewer leveldataoverride={leveldataoverride} dstWorldSetting={props.dstWorldSetting}
-                                   porklandSetting={{}}
+                                   porklandSetting={props.porklandSetting}
                                    changeValue={(value) => {
                                        props.changeLevel(props.levelName, {leveldataoverride: value})
                                        editorRef?.current?.setValue(value)
@@ -136,9 +137,9 @@ const Leveldataoverride: React.FC<LevelItemProps> = (props) => {
     ];
 
 
-    return (<>
+    return (<Skeleton loading={false}>
         <Tabs defaultActiveKey="1" type={'card'} destroyInactiveTabPane={true} items={items}/>
-    </>)
+    </Skeleton>)
 }
 
 const Modoverrides: React.FC<LevelItemProps> = (props) => {
@@ -331,6 +332,7 @@ const Level2 = () => {
     const lang = i18n.language;
 
     const [dstWorldSetting, setDstWorldSetting] = useState(defaultDstWorldSetting)
+    const [porklandSetting, setPorklandSetting] = useState({})
     const [loading, setLoading] = useState(true)
 
     const levelListRef = useRef<LevelData[]>([]);
@@ -373,8 +375,12 @@ const Level2 = () => {
         async function fetchData() {
             try {
                 const response = await axios.get('/api/dst-static/dst_world_setting.json');
+                const response2 = await axios.get('api/dst-static/porkland_setting.json');
+
                 const dstWorldSetting = JSON.parse(base64ToUtf8(response.data));
+                const porklandSetting = JSON.parse(base64ToUtf8(response2.data));
                 setDstWorldSetting(dstWorldSetting);
+                setPorklandSetting(porklandSetting);
 
                 const resp = await getLevelListApi();
                 if (resp.code === 200 && resp.data) {
@@ -428,6 +434,7 @@ const Level2 = () => {
                             ),
                             children: <LevelItem
                                 dstWorldSetting={dstWorldSetting}
+                                porklandSetting={porklandSetting}
                                 level={level}
                                 levelName={level.levelName}
                                 changeLevel={changeLevel}
@@ -664,6 +671,7 @@ const Level2 = () => {
             ),
             children: <LevelItem
                 dstWorldSetting={dstWorldSetting}
+                porklandSetting={porklandSetting}
                 level={newLevel}
                 levelName={levelName}
                 changeLevel={changeLevel}
@@ -860,6 +868,7 @@ const Level2 = () => {
                             ),
                             children: <LevelItem
                                 dstWorldSetting={dstWorldSetting}
+                                porklandSetting={porklandSetting}
                                 level={level}
                                 levelName={newLevelName}
                                 changeLevel={changeLevel}
