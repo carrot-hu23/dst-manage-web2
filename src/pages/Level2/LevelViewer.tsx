@@ -37,6 +37,8 @@ const Group: React.FC<GroupProps> = ({
                                          isWorldGen
                                      }) => {
 
+    console.log(leveldataoverride, data, url, leveldataoverrideObject);
+
     function getWebp(key: string, key2: string) {
         if (type === 'porkland' && key === 'global' && isWorldGen) {
             return url
