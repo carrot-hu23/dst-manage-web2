@@ -45,7 +45,7 @@ export default function ClusterSelector() {
     }
 
     // 根据屏幕尺寸确定宽度
-    const width = screens.md ? 200 : 120;
+    const width = screens.md ? 240 : 240;
 
     return (
         <Select

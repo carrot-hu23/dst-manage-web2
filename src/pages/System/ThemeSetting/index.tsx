@@ -11,6 +11,7 @@ import {
 } from 'antd';
 import type { ColorPickerProps, GetProp } from 'antd';
 import { useThemeConfigStore, type ThemeData } from '../../../store/useThemeConfigStore';
+import {ProCard} from "@ant-design/pro-components";
 
 
 type Color = Extract<GetProp<ColorPickerProps, 'value'>, { cleared: any }>;
@@ -35,7 +36,7 @@ const ThemeSetting: React.FC = () => {
     };
 
     return (
-        <div style={{ padding: '24px' }}>
+        <ProCard style={{ padding: '24px' }}>
             <Space>
                 <Input placeholder="Test input" />
                 <Button type="primary">Preview Button</Button>
@@ -90,7 +91,7 @@ const ThemeSetting: React.FC = () => {
                     </Space>
                 </Form.Item>
             </Form>
-        </div>
+        </ProCard>
     );
 };
 

@@ -39,11 +39,16 @@ export default () => {
     const {cluster, name} = useParams()
 
 
-    const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
-        fixSiderbar: true,
-        layout: 'mix',
-        splitMenus: false,
-    });
+    const [settings, setSetting] = useState<Partial<ProSettings> | undefined>(
+        {
+            "fixSiderbar": true,
+            "layout": "side",
+            "splitMenus": false,
+            "navTheme": "light",
+            "contentWidth": "Fluid",
+            "fixedHeader": true
+        }
+    );
     const firstPagePath = `${cluster}/${name}/panel`;
     const location = useLocation()
     const [pathname, setPathname] = useState(location.pathname);
@@ -162,45 +167,19 @@ export default () => {
                         }}
                         actionsRender={(props) => {
                             if (props.isMobile) return [
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                    <ClusterSelector />
-                                </div>,
-                                <div onClick={() => {
-                                    window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
-                                }}><GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
                                 <ToggleTheme/>
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
-                                <Link target={'_blank'} href={'https://www.lcayun.com/aff/OYXIWEQC'}>
-                                    莱卡云
-                                    <CloudServerOutlined />
-                                </Link>,
-                                <div onClick={() => {
-                                    window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
-                                }}>
-                                    <GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
                                 <ToggleTheme/>
                             ];
                         }}
-                        headerTitleRender={(_logo, _title, _) => {
-                            const defaultDom = (
-                                <a>
-                                    {t('web.title')}
-                                </a>
-                            );
-                            if (typeof window === 'undefined') return defaultDom;
-
-                            return (
-                                <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                                    {defaultDom}
-                                    <ClusterSelector />
-                                </div>
-                            );
-                        }}
                         onMenuHeaderClick={(e) => console.log(e)}
+                        menuHeaderRender={()=>(
+                            <ClusterSelector />
+                        )}
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {
@@ -219,7 +198,7 @@ export default () => {
                                         paddingLeft: 16
                                     }}
                                 >
-                                    <Button type={'primary'} onClick={()=>{
+                                    <Button block type={'primary'} onClick={()=>{
                                         navigate('/cluster')
                                     }}>返回</Button>
                                 </div>

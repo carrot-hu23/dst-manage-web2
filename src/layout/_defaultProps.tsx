@@ -93,21 +93,21 @@ export default {
     location: {
         pathname: '/panel',
     },
-    appList: [
-        {
-            // icon: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-            title: '饥荒查房dstserverlist',
-            desc: '饥荒查房网站',
-            url: 'https://dstserverlist.top/',
-            target: '_blank',
-        },
-        {
-            // icon: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-            title: '饥荒ip中转',
-            desc: 'https://server.dstapi.com/server/',
-            url: 'https://server.dstapi.com/server/',
-            target: '_blank',
-        },
-
-    ],
+    // appList: [
+    //     {
+    //         // icon: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+    //         title: '饥荒查房dstserverlist',
+    //         desc: '饥荒查房网站',
+    //         url: 'https://dstserverlist.top/',
+    //         target: '_blank',
+    //     },
+    //     {
+    //         // icon: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
+    //         title: '饥荒ip中转',
+    //         desc: 'https://server.dstapi.com/server/',
+    //         url: 'https://server.dstapi.com/server/',
+    //         target: '_blank',
+    //     },
+    //
+    // ],
 };

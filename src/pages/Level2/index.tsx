@@ -916,7 +916,7 @@ const Level2 = () => {
             <Tabs
                 tabPosition={'top'}
                 style={{
-                    height: '68vh',
+                    height: '74vh',
                 }}
                 hideAdd
                 type="editable-card"

@@ -9,10 +9,17 @@ import {
     message,
     Spin,
     Space,
-    Skeleton, Segmented, InputNumber, Empty, Select, Row, Col, Steps
+    Skeleton, Segmented, InputNumber, Select, Row, Col, Steps, Card, Typography
 } from 'antd';
 import type {RadioChangeEvent} from 'antd/es/radio';
-import {CheckCard} from '@ant-design/pro-components';
+import {CheckCard, ProCard} from '@ant-design/pro-components';
+import {
+    DownloadOutlined,
+    FolderOpenOutlined,
+    PlusCircleOutlined,
+    RocketOutlined,
+    ThunderboltOutlined
+} from '@ant-design/icons';
 import {
     createCluster,
     fetchRemoteClusterList,
@@ -266,8 +273,552 @@ export const UpdateServer: React.FC<UpdateServerProps> = ({server, serverList, u
                  </Form>
              </Spin>
          </>
-     )
- }
+  )
+}
+
+interface ClusterOnboardingGuideProps {
+    setOpenAdd: (open: boolean) => void;
+}
+
+const ClusterOnboardingGuide: React.FC<ClusterOnboardingGuideProps> = ({ setOpenAdd }) => {
+    const [currentStep, setCurrentStep] = useState(0);
+    const { Text, Paragraph, Title } = Typography;
+
+    const steps = [
+        {
+            title: '安装环境',
+            description: '安装 steamcmd 和 DST 服务器',
+            icon: <DownloadOutlined />
+        },
+        {
+            title: '创建房间',
+            description: '配置并创建您的第一个房间',
+            icon: <RocketOutlined />
+        }
+    ];
+
+    const handleNextStep = () => {
+        if (currentStep < steps.length - 1) {
+            setCurrentStep(currentStep + 1);
+        }
+    };
+
+    const handlePrevStep = () => {
+        if (currentStep > 0) {
+            setCurrentStep(currentStep - 1);
+        }
+    };
+
+    return (
+        <ProCard>
+            <Steps
+                current={currentStep}
+                items={steps}
+                style={{
+                    marginBottom: 48
+                }}
+            />
+
+            {currentStep === 0 && (
+                <div
+                    style={{
+                        padding: 12,
+                    }}
+                >
+                    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                        <div>
+                            <Space size={12} style={{ marginBottom: 16 }}>
+                                <ThunderboltOutlined style={{ fontSize: 24, color: '#3B82F6' }} />
+                                <Title level={4} style={{ margin: 0, color: '#1E293B' }}>
+                                    步骤 1: 安装 SteamCMD
+                                </Title>
+                            </Space>
+                            <Paragraph style={{ color: '#64748B', marginBottom: 16 }}>
+                                SteamCMD 是 Steam 的命令行版本，用于下载和管理游戏服务器文件。
+                            </Paragraph>
+
+                            <Row gutter={[16, 16]}>
+                                <Col xs={24} md={12}>
+                                    <Title level={5} style={{ color: '#1E293B', marginBottom: 12 }}>
+                                        Windows 系统
+                                    </Title>
+                                    <Text strong style={{ color: '#3B82F6' }}>下载方式：</Text>
+                                    <Paragraph style={{ marginBottom: 8 }}>
+                                        访问 Valve 官方网站下载 SteamCMD：
+                                    </Paragraph>
+                                    <a
+                                        href="https://developer.valvesoftware.com/wiki/SteamCMD"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        style={{
+                                            color: '#3B82F6',
+                                            textDecoration: 'none',
+                                            cursor: 'pointer',
+                                            transition: 'color 200ms ease'
+                                        }}
+                                        onMouseEnter={(e) => e.currentTarget.style.color = '#60A5FA'}
+                                        onMouseLeave={(e) => e.currentTarget.style.color = '#3B82F6'}
+                                    >
+                                        https://developer.valvesoftware.com/wiki/SteamCMD
+                                    </a>
+                                    <div style={{
+                                        marginTop: 12,
+                                        padding: 12,
+                                        backgroundColor: '#F8FAFC',
+                                        borderRadius: 6,
+                                        fontFamily: 'Fira Code, monospace',
+                                        fontSize: 12,
+                                        border: '1px solid #E2E8F0'
+                                    }}>
+                                        <Text code style={{
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            border: 'none',
+                                            color: '#1E293B'
+                                        }}>
+                                            1. 解压到 C:\steamcmd
+                                        </Text>
+                                    </div>
+                                </Col>
+                                <Col xs={24} md={12}>
+                                    <Title level={5} style={{ color: '#1E293B', marginBottom: 12 }}>
+                                        Linux 系统
+                                    </Title>
+                                    <Text strong style={{ color: '#3B82F6' }}>下载命令：</Text>
+                                    <div style={{
+                                        marginTop: 12,
+                                        padding: 12,
+                                        backgroundColor: '#F8FAFC',
+                                        borderRadius: 6,
+                                        fontFamily: 'Fira Code, monospace',
+                                        fontSize: 12,
+                                        border: '1px solid #E2E8F0'
+                                    }}>
+                                        <Text code style={{
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            border: 'none',
+                                            color: '#1E293B',
+                                            display: 'block',
+                                            marginBottom: 8
+                                        }}>
+                                            mkdir -p ~/steamcmd
+                                        </Text>
+                                        <Text code style={{
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            border: 'none',
+                                            color: '#1E293B',
+                                            display: 'block'
+                                        }}>
+                                            cd ~/steamcmd
+                                        </Text>
+                                        <Text code style={{
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            border: 'none',
+                                            color: '#1E293B',
+                                            display: 'block'
+                                        }}>
+                                            curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
+                                        </Text>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+
+                        <div style={{
+                            borderTop: '1px solid #E2E8F0',
+                            paddingTop: 24
+                        }}>
+                            <Space size={12} style={{ marginBottom: 16 }}>
+                                <FolderOpenOutlined style={{ fontSize: 24, color: '#3B82F6' }} />
+                                <Title level={4} style={{ margin: 0, color: '#1E293B' }}>
+                                    步骤 2: 安装 DST 专用服务器
+                                </Title>
+                            </Space>
+                            <Paragraph style={{ color: '#64748B', marginBottom: 16 }}>
+                                使用 SteamCMD 下载并安装饥荒专用服务器程序。
+                            </Paragraph>
+
+                            <Row gutter={[16, 16]}>
+                                <Col xs={24} md={12}>
+                                    <Title level={5} style={{ color: '#1E293B', marginBottom: 12 }}>
+                                        Windows 安装命令
+                                    </Title>
+                                    <div style={{
+                                        padding: 12,
+                                        backgroundColor: '#F8FAFC',
+                                        borderRadius: 6,
+                                        fontFamily: 'Fira Code, monospace',
+                                        fontSize: 12,
+                                        border: '1px solid #E2E8F0',
+                                        wordBreak: 'break-all'
+                                    }}>
+                                        <Text code style={{
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            border: 'none',
+                                            color: '#1E293B'
+                                        }}>
+                                            steamcmd +login anonymous +force_install_dir "C:\dst-server" +app_update 343050 validate +quit
+                                        </Text>
+                                    </div>
+                                </Col>
+                                <Col xs={24} md={12}>
+                                    <Title level={5} style={{ color: '#1E293B', marginBottom: 12 }}>
+                                        Linux 安装命令
+                                    </Title>
+                                    <div style={{
+                                        padding: 12,
+                                        backgroundColor: '#F8FAFC',
+                                        borderRadius: 6,
+                                        fontFamily: 'Fira Code, monospace',
+                                        fontSize: 12,
+                                        border: '1px solid #E2E8F0',
+                                        wordBreak: 'break-all'
+                                    }}>
+                                        <Text code style={{
+                                            backgroundColor: 'transparent',
+                                            padding: 0,
+                                            border: 'none',
+                                            color: '#1E293B'
+                                        }}>
+                                            ~/steamcmd/steamcmd.sh +login anonymous +force_install_dir ~/dst-server +app_update 343050 validate +quit
+                                        </Text>
+                                    </div>
+                                </Col>
+                            </Row>
+                        </div>
+
+                        <Alert
+                            message="安装完成后，请记录以下路径，下一步配置时需要用到"
+                            description={
+                                <div style={{ marginTop: 8 }}>
+                                    <div style={{ marginBottom: 8 }}>
+                                        <Text strong>SteamCMD 路径：</Text>
+                                        <Text code style={{ marginLeft: 8 }}>C:\steamcmd (Windows) 或 ~/steamcmd (Linux)</Text>
+                                    </div>
+                                    <div>
+                                        <Text strong>DST 安装路径：</Text>
+                                        <Text code style={{ marginLeft: 8 }}>C:\dst-server (Windows) 或 ~/dst-server (Linux)</Text>
+                                    </div>
+                                </div>
+                            }
+                            type="info"
+                            showIcon
+                            style={{
+                                backgroundColor: '#EFF6FF',
+                                borderColor: '#3B82F6',
+                                borderRadius: 8
+                            }}
+                        />
+
+                        <div style={{ textAlign: 'right' }}>
+                            <Button
+                                type="primary"
+                                onClick={handleNextStep}
+                                style={{
+                                    backgroundColor: '#F97316',
+                                    borderColor: '#F97316',
+                                    color: '#FFFFFF',
+                                    transition: 'all 200ms ease',
+                                    boxShadow: '0 2px 4px rgba(249, 115, 22, 0.2)'
+                                }}
+                                onMouseEnter={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#EA580C';
+                                    e.currentTarget.style.borderColor = '#EA580C';
+                                    e.currentTarget.style.boxShadow = '0 4px 8px rgba(249, 115, 22, 0.3)';
+                                }}
+                                onMouseLeave={(e) => {
+                                    e.currentTarget.style.backgroundColor = '#F97316';
+                                    e.currentTarget.style.borderColor = '#F97316';
+                                    e.currentTarget.style.boxShadow = '0 2px 4px rgba(249, 115, 22, 0.2)';
+                                }}
+                            >
+                                下一步：创建房间
+                            </Button>
+                        </div>
+                    </Space>
+                </div>
+            )}
+
+            {currentStep === 1 && (
+                <div
+                    style={{
+                        padding: 12,
+                    }}
+                >
+                    <Space direction="vertical" size="large" style={{ width: '100%' }}>
+                        <div>
+                            <Space size={12} style={{ marginBottom: 16 }}>
+                                <PlusCircleOutlined style={{ fontSize: 24, color: '#3B82F6' }} />
+                                <Title level={4} style={{ margin: 0, color: '#1E293B' }}>
+                                    步骤 1: 填写基本信息
+                                </Title>
+                            </Space>
+                            <Paragraph style={{ color: '#64748B', marginBottom: 16 }}>
+                                首先为您的房间设置一个名称和类型。
+                            </Paragraph>
+                            <Row gutter={[16, 16]}>
+                                <Col xs={24} md={8}>
+                                    <Card
+                                        size="small"
+                                        style={{
+                                            backgroundColor: '#F8FAFC',
+                                            border: '1px solid #E2E8F0',
+                                            borderRadius: 8,
+                                            transition: 'all 200ms ease'
+                                        }}
+                                    >
+                                        <Text strong style={{ color: '#1E293B' }}>房间名称</Text>
+                                        <Paragraph style={{ margin: '8px 0', color: '#64748B' }}>
+                                            为您的服务器取一个易记的名称
+                                        </Paragraph>
+                                    </Card>
+                                </Col>
+                                <Col xs={24} md={8}>
+                                    <Card
+                                        size="small"
+                                        style={{
+                                            backgroundColor: '#F8FAFC',
+                                            border: '1px solid #E2E8F0',
+                                            borderRadius: 8
+                                        }}
+                                    >
+                                        <Text strong style={{ color: '#1E293B' }}>存档名称</Text>
+                                        <Paragraph style={{ margin: '8px 0', color: '#64748B' }}>
+                                            英文开头的存档标识（不要包含特殊字符）
+                                        </Paragraph>
+                                    </Card>
+                                </Col>
+                                <Col xs={24} md={8}>
+                                    <Card
+                                        size="small"
+                                        style={{
+                                            backgroundColor: '#F8FAFC',
+                                            border: '1px solid #E2E8F0',
+                                            borderRadius: 8
+                                        }}
+                                    >
+                                        <Text strong style={{ color: '#1E293B' }}>服务器类型</Text>
+                                        <Paragraph style={{ margin: '8px 0', color: '#64748B' }}>
+                                            本地服务器或远程服务器
+                                        </Paragraph>
+                                    </Card>
+                                </Col>
+                            </Row>
+                        </div>
+
+                        <div style={{
+                            borderTop: '1px solid #E2E8F0',
+                            paddingTop: 24
+                        }}>
+                            <Space size={12} style={{ marginBottom: 16 }}>
+                                <FolderOpenOutlined style={{ fontSize: 24, color: '#3B82F6' }} />
+                                <Title level={4} style={{ margin: 0, color: '#1E293B' }}>
+                                    步骤 2: 配置路径（本地服务器）
+                                </Title>
+                            </Space>
+                            <Paragraph style={{ color: '#64748B', marginBottom: 16 }}>
+                                填写在步骤 1 中安装的 SteamCMD 和 DST 服务器路径。
+                            </Paragraph>
+                            <Row gutter={[16, 16]}>
+                                <Col xs={24} md={12}>
+                                    <Title level={5} style={{ color: '#1E293B', marginBottom: 12 }}>
+                                        Windows 示例
+                                    </Title>
+                                    <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                                        <div style={{
+                                            padding: 12,
+                                            backgroundColor: '#F8FAFC',
+                                            borderRadius: 6,
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            <Text strong style={{ color: '#3B82F6', display: 'block', marginBottom: 8 }}>
+                                                SteamCMD 路径
+                                            </Text>
+                                            <Text code style={{
+                                                backgroundColor: 'transparent',
+                                                padding: 0,
+                                                border: 'none',
+                                                color: '#1E293B',
+                                                display: 'block',
+                                                wordBreak: 'break-all'
+                                            }}>
+                                                C:\steamcmd
+                                            </Text>
+                                        </div>
+                                        <div style={{
+                                            padding: 12,
+                                            backgroundColor: '#F8FAFC',
+                                            borderRadius: 6,
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            <Text strong style={{ color: '#3B82F6', display: 'block', marginBottom: 8 }}>
+                                                饥荒路径
+                                            </Text>
+                                            <Text code style={{
+                                                backgroundColor: 'transparent',
+                                                padding: 0,
+                                                border: 'none',
+                                                color: '#1E293B',
+                                                display: 'block',
+                                                wordBreak: 'break-all'
+                                            }}>
+                                                C:\dst-server
+                                            </Text>
+                                        </div>
+                                        <div style={{
+                                            padding: 12,
+                                            backgroundColor: '#F8FAFC',
+                                            borderRadius: 6,
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            <Text strong style={{ color: '#3B82F6', display: 'block', marginBottom: 8 }}>
+                                                备份路径
+                                            </Text>
+                                            <Text code style={{
+                                                backgroundColor: 'transparent',
+                                                padding: 0,
+                                                border: 'none',
+                                                color: '#1E293B',
+                                                display: 'block',
+                                                wordBreak: 'break-all'
+                                            }}>
+                                                D:\dst-backups
+                                            </Text>
+                                        </div>
+                                    </Space>
+                                </Col>
+                                <Col xs={24} md={12}>
+                                    <Title level={5} style={{ color: '#1E293B', marginBottom: 12 }}>
+                                        Linux 示例
+                                    </Title>
+                                    <Space direction="vertical" size={12} style={{ width: '100%' }}>
+                                        <div style={{
+                                            padding: 12,
+                                            backgroundColor: '#F8FAFC',
+                                            borderRadius: 6,
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            <Text strong style={{ color: '#3B82F6', display: 'block', marginBottom: 8 }}>
+                                                SteamCMD 路径
+                                            </Text>
+                                            <Text code style={{
+                                                backgroundColor: 'transparent',
+                                                padding: 0,
+                                                border: 'none',
+                                                color: '#1E293B',
+                                                display: 'block'
+                                            }}>
+                                                ~/steamcmd
+                                            </Text>
+                                        </div>
+                                        <div style={{
+                                            padding: 12,
+                                            backgroundColor: '#F8FAFC',
+                                            borderRadius: 6,
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            <Text strong style={{ color: '#3B82F6', display: 'block', marginBottom: 8 }}>
+                                                饥荒路径
+                                            </Text>
+                                            <Text code style={{
+                                                backgroundColor: 'transparent',
+                                                padding: 0,
+                                                border: 'none',
+                                                color: '#1E293B',
+                                                display: 'block'
+                                            }}>
+                                                ~/dst-server
+                                            </Text>
+                                        </div>
+                                        <div style={{
+                                            padding: 12,
+                                            backgroundColor: '#F8FAFC',
+                                            borderRadius: 6,
+                                            border: '1px solid #E2E8F0'
+                                        }}>
+                                            <Text strong style={{ color: '#3B82F6', display: 'block', marginBottom: 8 }}>
+                                                备份路径
+                                            </Text>
+                                            <Text code style={{
+                                                backgroundColor: 'transparent',
+                                                padding: 0,
+                                                border: 'none',
+                                                color: '#1E293B',
+                                                display: 'block'
+                                            }}>
+                                                ~/dst-backups
+                                            </Text>
+                                        </div>
+                                    </Space>
+                                </Col>
+                            </Row>
+                        </div>
+
+                        <Alert
+                            message="路径配置要点"
+                            description={
+                                <ul style={{ margin: '8px 0 0 0', paddingLeft: 20, color: '#64748B' }}>
+                                    <li>请使用绝对路径</li>
+                                    <li>路径中不要包含中文、空格或特殊字符</li>
+                                    <li>Docker 环境请使用容器内路径</li>
+                                    <li>备份路径请选择有足够空间的磁盘</li>
+                                </ul>
+                            }
+                            type="warning"
+                            showIcon
+                            style={{
+                                backgroundColor: '#FFFBEB',
+                                borderColor: '#F59E0B',
+                                borderRadius: 8
+                            }}
+                        />
+
+                        <div style={{ textAlign: 'right' }}>
+                            <Space size={12}>
+                                <Button
+                                    onClick={handlePrevStep}
+                                    style={{
+                                        transition: 'all 200ms ease'
+                                    }}
+                                >
+                                    上一步
+                                </Button>
+                                <Button
+                                    type="primary"
+                                    icon={<PlusCircleOutlined />}
+                                    onClick={() => setOpenAdd(true)}
+                                    style={{
+                                        backgroundColor: '#F97316',
+                                        borderColor: '#F97316',
+                                        color: '#FFFFFF',
+                                        transition: 'all 200ms ease',
+                                        boxShadow: '0 2px 4px rgba(249, 115, 22, 0.2)'
+                                    }}
+                                    onMouseEnter={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#EA580C';
+                                        e.currentTarget.style.borderColor = '#EA580C';
+                                        e.currentTarget.style.boxShadow = '0 4px 8px rgba(249, 115, 22, 0.3)';
+                                    }}
+                                    onMouseLeave={(e) => {
+                                        e.currentTarget.style.backgroundColor = '#F97316';
+                                        e.currentTarget.style.borderColor = '#F97316';
+                                        e.currentTarget.style.boxShadow = '0 2px 4px rgba(249, 115, 22, 0.2)';
+                                    }}
+                                >
+                                    创建我的第一个房间
+                                </Button>
+                            </Space>
+                        </div>
+                    </Space>
+                </div>
+            )}
+        </ProCard>
+    );
+};
 
 export default () => {
 
@@ -410,6 +961,8 @@ export default () => {
         const handleFinish = () => {
             form.validateFields().then(values => {
                 setSpinning(true)
+                console.log('Received values of form: ', values);
+                values.clusterType = selectedType
                 if (values.clusterType === '远程') {
                     values.clusterName = generateUUID()
                 }
@@ -894,11 +1447,7 @@ export default () => {
                         </Col>
                     ))}
                 </Row>
-                {serverList?.length === 0 && (
-                    <>
-                        <Empty description={"当前暂无房间，请点击 添加房间 按钮来创建世界"}/>
-                    </>
-                )}
+                {serverList?.length === 0 && <ClusterOnboardingGuide setOpenAdd={setOpenAdd} />}
                 <Modal style={{
                     top: '8vh',
                 }} width={900}  title="添加房间" open={openAdd} onOk={() => setOpenAdd(false)}
