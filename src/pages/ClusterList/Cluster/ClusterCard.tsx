@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {Button, Popconfirm, Tag, Typography, Modal, Space} from 'antd';
+import {Button, Popconfirm, Tag, Typography, Modal, Space, message} from 'antd';
 import {useNavigate} from 'react-router-dom';
 import {dstSeason, dstSegs, getTimeStatus} from "../../../utils/dst";
 import {UpdateServer} from "./index";
@@ -23,15 +23,23 @@ const ClusterCard: React.FC<Props> = ({cluster, showAddBtn, serverList, updateSe
     const {t} = useTranslation();
     const navigate = useNavigate();
     const [openUpdate, setOpenUpdate] = useState(false);
+    const [deleting, setDeleting] = useState(false);
 
     function deleteSrv(server: Cluster) {
+        setDeleting(true);
+        message.loading('正在删除房间，请稍等约5秒...', 0);
         deleteCluster(server.clusterName).then(resp => {
+            message.destroy();
             if (resp.code === 200) {
                 // 删除成功，通知父组件刷新列表
+                message.success('删除成功');
                 removeServerList(server);
             } else {
                 // 删除失败，友好提示
+                message.error('删除失败');
             }
+        }).finally(() => {
+            setDeleting(false);
         });
     }
 
@@ -131,7 +139,7 @@ const ClusterCard: React.FC<Props> = ({cluster, showAddBtn, serverList, updateSe
                             cancelText="No"
                             onConfirm={() => deleteSrv(cluster)}
                         >
-                            <Button type="primary" danger>删除</Button>
+                            <Button type="primary" danger loading={deleting}>删除</Button>
                         </Popconfirm>
                     )}
                 </p>

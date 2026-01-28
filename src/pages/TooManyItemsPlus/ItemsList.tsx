@@ -27,7 +27,7 @@ export default function ItemList(itemListProps: ItemListProps) {
         <>
             <Space wrap size={16}>
                 {Object.keys(itemListProps.items).map(itemKey => (
-                    <Button key={itemKey} type={'primary'} onClick={() => {
+                    <Button key={itemKey} onClick={() => {
                         give(itemListProps.levelName, itemKey, itemListProps.amount || 1, itemListProps.kuId || "")
                     }}>
                         {itemListProps.items[itemKey] != '未翻译' ? itemListProps.items[itemKey] : itemKey}
