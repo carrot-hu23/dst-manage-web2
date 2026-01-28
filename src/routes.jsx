@@ -27,6 +27,7 @@ import Whitelist from "./pages/Home/Whitelist.tsx";
 import Blacklist from "./pages/Home/Blacklist.tsx";
 import UserProfile from "./layout/UserProfile.jsx";
 import TooManyItemsPlus from "./pages/TooManyItemsPlus";
+import CustomCommands from "./pages/CustomCommands/index";
 import AddMod from "./pages/Mod/AddMod/index.jsx";
 import Level2 from "./pages/Level2/index";
 import ModViewer from "./pages/ModViewer/index";
@@ -80,6 +81,7 @@ export default function Routes() {
                 {path: 'backup', element: <Backup/>},
                 {path: 'setting', element: <Setting/>},
                 {path: 'toomanyitemsplus', element: <TooManyItemsPlus/>},
+                {path: 'custom-commands', element: <CustomCommands/>},
             ],
         },
         {
