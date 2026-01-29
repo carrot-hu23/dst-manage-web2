@@ -92,7 +92,7 @@ export default function ItemsManager({
     const tabItems = useMemo(() => {
         return Object.keys(filteredData).map(key => ({
             key,
-            label: translations[key],
+            label: translations[key] || key,
             children: <ItemsList levelName={levelName} items={filteredData[key]} kuId={kuId} amount={amount} />
         }));
     }, [filteredData, levelName, kuId, amount]);

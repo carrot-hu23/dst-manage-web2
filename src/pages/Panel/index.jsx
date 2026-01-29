@@ -9,6 +9,7 @@ import TooManyItemsPlus from "../TooManyItemsPlus/index";
 import OtherIOrder from "../TooManyItemsPlus/OtherIOrder";
 import {useParams} from "react-router-dom";
 import RenderCustomCommands from "../CustomCommands/RenderCustomCommands.tsx";
+import CustomCommands from "../CustomCommands/index.tsx";
 
 const Panel = () => {
 
@@ -68,6 +69,11 @@ const Panel = () => {
             key: '5',
             label: '自定义指令',
             children: <RenderCustomCommands />,
+        },
+        {
+            key: '6',
+            label: '自定义指令-编辑',
+            children: <CustomCommands />,
         },
     ];
 
