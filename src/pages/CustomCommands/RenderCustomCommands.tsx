@@ -70,7 +70,8 @@ export default function RenderCustomCommands() {
         <ItemsManager
             dataSource={data}
             isLoading={false}
-            warningMessage="自定义指令，请谨慎使用"
+            filterCategories={[]}
+            warningMessage={null}
         />
     );
 }

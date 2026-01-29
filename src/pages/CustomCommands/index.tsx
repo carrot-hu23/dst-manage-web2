@@ -2,6 +2,7 @@ import {useEffect, useState} from 'react';
 import {Form, Input, Button, message, Space, Card, Empty} from 'antd';
 import {PlusOutlined, MinusCircleOutlined, UploadOutlined, ExportOutlined} from '@ant-design/icons';
 import {getKv, saveKv} from '../../api/clusterApi';
+import {ProCard} from "@ant-design/pro-components";
 
 export default function CustomCommands() {
     const [form] = Form.useForm();
@@ -158,7 +159,7 @@ export default function CustomCommands() {
 
     return (
         <div>
-            <Card title="自定义命令管理" loading={loading}>
+            <ProCard title="自定义命令管理" loading={loading}>
                 <Form form={form} layout="vertical">
                     <Form.List name="categories" initialValue={[]}>
                         {(fields, {add, remove}) => (
@@ -305,7 +306,7 @@ export default function CustomCommands() {
                         </Button>
                     </Space>
                 </Form>
-            </Card>
+            </ProCard>
         </div>
     );
 }
