@@ -20,7 +20,7 @@ async function hasWalrusHutPlainsApi(levelName: string) {
 }
 
 async function sessionFileApi(clusterName: string, levelName: string): Promise<ApiResponse<string>> {
-    const url = `/api/dst/map//session/file?clusterName=${clusterName}&levelName=${levelName}`
+    const url = `/api/dst/map/session/file?clusterName=${clusterName}&levelName=${levelName}`
     const response = await http.get(url)
     return response.data
 }
