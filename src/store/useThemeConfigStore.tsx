@@ -19,7 +19,7 @@ const defaultData: ThemeData = {
     borderRadius: 6,
     colorPrimary: '#1677ff',
     Button: {
-        colorPrimary: '#00B96B',
+        colorPrimary: '#1677ff',
     },
 };
 

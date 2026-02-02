@@ -69,7 +69,7 @@ export default function RenderCustomCommands() {
             dataSource={data}
             isLoading={false}
             filterCategories={[]}
-            warningMessage={tips}
+            warningMessage={tips || ''}
         />
     );
 }

@@ -5,7 +5,7 @@ import {useNavigate} from "react-router-dom";
 import style from "../../DstServerList/index.module.css";
 import {dstSeason, dstSegs, getDstMod, getTimeStatus} from "../../../utils/dst";
 import {UpdateServer} from "./index";
-import {deleteCluster} from "../../../api/clusterApi";
+import {deleteCluster} from "../../../api/clusterApi.ts";
 import {ProCard, ProDescriptions} from "@ant-design/pro-components";
 import {useTranslation} from "react-i18next";
 import HiddenText from "../../Home/HiddenText/HiddenText";
