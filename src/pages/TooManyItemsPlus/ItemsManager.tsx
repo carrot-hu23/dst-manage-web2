@@ -178,6 +178,7 @@ export default function ItemsManager({
                             <Alert
                                 type="info"
                                 message={warningMessage}
+                                showIcon
                                 closable
                             />
                             <br />

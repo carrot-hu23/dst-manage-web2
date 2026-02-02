@@ -1,12 +1,14 @@
 import {useEffect, useState} from 'react';
-import {Form, Input, Button, message, Space, Card, Empty} from 'antd';
-import {PlusOutlined, MinusCircleOutlined, UploadOutlined, ExportOutlined} from '@ant-design/icons';
+import {Form, Input, Button, message, Space, Card, Empty, Dropdown} from 'antd';
+import {PlusOutlined, MinusCircleOutlined, UploadOutlined, ExportOutlined, DownOutlined} from '@ant-design/icons';
 import {getKv, saveKv} from '../../api/clusterApi';
 import {ProCard} from "@ant-design/pro-components";
+import RemoteImportModal from '../../components/RemoteImportModal';
 
 export default function CustomCommands() {
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
+    const [remoteImportOpen, setRemoteImportOpen] = useState<boolean>(false);
 
     const loadData = async () => {
         setLoading(true);
@@ -15,23 +17,28 @@ export default function CustomCommands() {
             if (response.code === 200 && response.data) {
                 const jsonString = response.data as string;
                 const data = JSON.parse(jsonString);
-                const categoriesList = Object.entries(data).map(([key, value]) => {
-                    const categoryData = value as {
-                        name?: string;
-                        description?: string;
-                        data?: Record<string, string>
-                    };
-                    const items = categoryData.data ? Object.entries(categoryData.data).map(([itemKey, itemName]) => ({
-                        key: itemKey,
-                        name: itemName
-                    })) : [];
-                    return {
-                        key,
-                        name: categoryData.name || '',
-                        description: categoryData.description || '',
-                        items
-                    };
-                });
+                const tips = data._tips || '';
+
+                const categoriesList = Object.entries(data)
+                    .filter(([key]) => key !== '_tips')
+                    .map(([key, value]) => {
+                        const categoryData = value as Record<string, string> | { data?: Record<string, string> };
+                        const items = (categoryData as any).data
+                            ? Object.entries((categoryData as any).data).map(([itemKey, itemName]) => ({
+                                key: itemKey,
+                                name: itemName
+                            }))
+                            : Object.entries(categoryData).map(([itemKey, itemName]) => ({
+                                key: itemKey,
+                                name: itemName
+                            }));
+                        return {
+                            key,
+                            items
+                        };
+                    });
+
+                form.setFieldValue('tips', tips);
                 form.setFieldValue('categories', categoriesList);
             }
         } catch (error) {
@@ -51,32 +58,24 @@ export default function CustomCommands() {
     const saveData = async () => {
         try {
             const values = await form.validateFields();
-            const categoriesMap: Record<string, {
-                name: string;
-                description: string;
-                data: Record<string, string>
-            }> = {};
+            const categoriesMap: Record<string, Record<string, string>> = {};
 
             values.categories.forEach((cat: {
                 key: string;
-                name: string;
-                description: string;
                 items: Array<{ key: string; name: string }>
             }) => {
                 const data: Record<string, string> = {};
                 cat.items.forEach((item: { key: string; name: string }) => {
                     data[item.key] = item.name;
                 });
-                categoriesMap[cat.key] = {
-                    name: cat.name,
-                    description: cat.description,
-                    data
-                };
+                categoriesMap[cat.key] = data;
             });
+
+            const savedData = values.tips ? { _tips: values.tips, ...categoriesMap } : categoriesMap;
 
             await saveKv({
                 key: 'custom-commands',
-                value: JSON.stringify(categoriesMap)
+                value: JSON.stringify(savedData)
             });
             message.success('保存成功');
         } catch (error) {
@@ -92,60 +91,61 @@ export default function CustomCommands() {
                 const jsonContent = e.target?.result as string;
                 const importedData = JSON.parse(jsonContent);
 
-                const currentCategories = form.getFieldValue('categories') || [];
-                const newCategories = Object.entries(importedData).map(([key, items]) => ({
-                    key,
-                    name: '',
-                    description: '',
-                    items: Object.entries(items as Record<string, string>).map(([itemKey, itemName]) => ({
-                        key: itemKey,
-                        name: itemName
-                    }))
-                }));
-
-                form.setFieldValue('categories', [...currentCategories, ...newCategories]);
-                message.success('导入成功');
+                handleMergeImportData(importedData);
             } catch (error) {
                 console.error('Error parsing JSON:', error);
                 message.error('JSON格式错误，导入失败');
             }
         };
         reader.readAsText(file);
-        return false;
+    };
+
+    const handleMergeImportData = (importedData: any) => {
+        if (importedData._tips) {
+            form.setFieldValue('tips', importedData._tips);
+        }
+
+        const currentCategories = form.getFieldValue('categories') || [];
+        const newCategories = Object.entries(importedData)
+            .filter(([key]) => key !== '_tips')
+            .map(([key, items]) => {
+                const itemData = (items as any).data || items;
+                return {
+                    key,
+                    items: Object.entries(itemData as Record<string, string>).map(([itemKey, itemName]) => ({
+                        key: itemKey,
+                        name: itemName
+                    }))
+                };
+            });
+
+        form.setFieldValue('categories', [...currentCategories, ...newCategories]);
+        message.success('导入成功');
     };
 
     const handleExportJson = async () => {
         try {
             const values = await form.validateFields();
-            const categoriesMap: Record<string, {
-                name: string;
-                description: string;
-                data: Record<string, string>
-            }> = {};
+            const categoriesMap: Record<string, Record<string, string>> = {};
 
             values.categories.forEach((cat: {
                 key: string;
-                name: string;
-                description: string;
                 items: Array<{ key: string; name: string }>
             }) => {
                 const data: Record<string, string> = {};
                 cat.items.forEach((item: { key: string; name: string }) => {
                     data[item.key] = item.name;
                 });
-                categoriesMap[cat.key] = {
-                    name: cat.name,
-                    description: cat.description,
-                    data
-                };
+                categoriesMap[cat.key] = data;
             });
 
-            const jsonString = JSON.stringify(categoriesMap, null, 2);
+            const exportedData = values.tips ? { _tips: values.tips, ...categoriesMap } : categoriesMap;
+            const jsonString = JSON.stringify(exportedData, null, 2);
             const blob = new Blob([jsonString], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const link = document.createElement('a');
             link.href = url;
-            link.download = 'custom-commands.json';
+            link.download = 'dst-custom-commands.json';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
@@ -161,6 +161,10 @@ export default function CustomCommands() {
         <div>
             <ProCard title="自定义命令管理" loading={loading}>
                 <Form form={form} layout="vertical">
+                    <Form.Item name="tips" label="提示信息">
+                        <Input.TextArea placeholder="请输入提示信息（可选）" rows={2}/>
+                    </Form.Item>
+
                     <Form.List name="categories" initialValue={[]}>
                         {(fields, {add, remove}) => (
                             <>
@@ -189,23 +193,6 @@ export default function CustomCommands() {
                                             rules={[{required: true, message: '请输入分类Key'}]}
                                         >
                                             <Input placeholder="例如: itemlist_custom"/>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'name']}
-                                            label="分类名称"
-                                            rules={[{required: true, message: '请输入分类名称'}]}
-                                        >
-                                            <Input placeholder="例如: 自定义物品"/>
-                                        </Form.Item>
-
-                                        <Form.Item
-                                            {...restField}
-                                            name={[name, 'description']}
-                                            label="描述"
-                                        >
-                                            <Input.TextArea placeholder="分类描述（可选）" rows={2}/>
                                         </Form.Item>
 
                                         <Form.Item label="物品列表">
@@ -269,7 +256,7 @@ export default function CustomCommands() {
 
                                 <Button
                                     type="dashed"
-                                    onClick={() => add({key: '', name: '', description: '', items: []})}
+                                    onClick={() => add({key: '', items: []})}
                                     block
                                     icon={<PlusOutlined/>}
                                     style={{marginBottom: '24px'}}
@@ -289,22 +276,45 @@ export default function CustomCommands() {
                             导出JSON
                         </Button>
 
-                        <Button icon={<UploadOutlined/>}>
-                            导入JSON
-                            <input
-                                type="file"
-                                accept=".json"
-                                style={{position: 'absolute', opacity: 0, width: '100%', height: '100%'}}
-                                onChange={(e) => {
-                                    const file = e.target.files?.[0];
-                                    if (file) {
-                                        handleImportJson(file);
+                        <Dropdown
+                            menu={{
+                                items: [
+                                    {
+                                        key: 'local',
+                                        label: '导入本地JSON',
+                                        onClick: () => {
+                                            const input = document.createElement('input');
+                                            input.type = 'file';
+                                            input.accept = '.json';
+                                            input.addEventListener('change', (e: Event) => {
+                                                const target = e.target as HTMLInputElement;
+                                                const file = target.files?.[0];
+                                                if (file) {
+                                                    handleImportJson(file);
+                                                }
+                                            });
+                                            input.click();
+                                        }
+                                    },
+                                    {
+                                        key: 'remote',
+                                        label: '选择远程模板',
+                                        onClick: () => setRemoteImportOpen(true)
                                     }
-                                    e.target.value = '';
-                                }}
-                            />
-                        </Button>
+                                ]
+                            }}
+                        >
+                            <Button icon={<UploadOutlined/>}>
+                                导入 <DownOutlined/>
+                            </Button>
+                        </Dropdown>
                     </Space>
+
+                    <RemoteImportModal
+                        open={remoteImportOpen}
+                        onCancel={() => setRemoteImportOpen(false)}
+                        onImport={handleMergeImportData}
+                    />
                 </Form>
             </ProCard>
         </div>
