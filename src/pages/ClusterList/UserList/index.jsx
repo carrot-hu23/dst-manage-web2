@@ -512,7 +512,9 @@ export default () => {
 
     return (<PageContainer title={'管理房间列表'} extra={<AddUserAccount actionRef={actionRef}/>}>
 
-            <Drawer size={'large'} title="管理房间列表" onClose={onClose} open={open}>
+            <Drawer
+                closable={{ placement: 'end' }}
+                size={'large'} title="管理房间列表" onClose={onClose} open={open}>
                 <HomeList userId={userId}/>
             </Drawer>
 

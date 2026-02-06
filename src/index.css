@@ -1,10 +1,14 @@
 .ant-pro-card {
-    border-radius: 16px;
+    border-radius: 12px;
 }
 
 .ant-btn-color-primary {
     box-shadow: none;
 }
+
+/*.ant-pro-layout .ant-layout-sider.ant-pro-sider {*/
+/*    background: #0D0D0D;*/
+/*}*/
 
 /*.ant-input-outlined {*/
 /*    background: rgba(255, 255, 255, 0.22);*/

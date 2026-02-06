@@ -1,6 +1,4 @@
 import {
-    CloudServerOutlined,
-    GithubFilled,
     LogoutOutlined, UserOutlined,
 } from '@ant-design/icons';
 import type {ProSettings} from '@ant-design/pro-components';
@@ -12,7 +10,6 @@ import {
     // SettingDrawer,
 } from '@ant-design/pro-components';
 import {
-    Typography,
     Button,
     ConfigProvider,
     Dropdown,
@@ -31,8 +28,9 @@ import ToggleTheme from "./ToggleTheme.tsx";
 import {useTheme} from "../hooks/useTheme";
 import ClusterSelector from "./ClusterSelector";
 import {useThemeConfigStore} from "../store/useThemeConfigStore";
+import UseIsMobile from "../hooks/UseIsMobile.tsx";
+import useIsMobile from "../hooks/UseIsMobile.tsx";
 
-const {Link} = Typography;
 
 export default () => {
 
@@ -87,10 +85,11 @@ export default () => {
     };
 
     const {theme} = useTheme()
-
     const {themeConfig} = useThemeConfigStore();
 
-    // @ts-ignore
+    const isMobile = useIsMobile()
+    const [collapsed, setCollapsed] = useState(isMobile);
+
     return (
         <div
             id="test-pro-layout"
@@ -114,9 +113,23 @@ export default () => {
                             pathname,
                         }}
                         logo={null}
+                        // bgLayoutImgList={[
+                        //     {
+                        //         src: './assets/dark-bg.png',
+                        //         // left: 85,
+                        //         // bottom: 100,
+                        //         // height: '303px',
+                        //     }
+                        // ]}
+                        onCollapse={ (collapsed) => {
+                            console.log(collapsed)
+                            setCollapsed(collapsed)
+                        }}
                         token={{
-                            header: {
-                                colorBgMenuItemSelected: 'rgba(0,0,0,0.04)',
+                            bgLayout: theme === 'dark' ? '#000000' : '#F1F2F5',
+                            sider: {
+                                colorMenuBackground: theme === 'dark'? '#000000' : '#FFFFFF',
+                                colorBgMenuItemSelected: theme === 'dark'? '#383838' : '#F1F2F5',
                             },
                         }}
                         // siderMenuType="group"
@@ -177,9 +190,7 @@ export default () => {
                             ];
                         }}
                         onMenuHeaderClick={(e) => console.log(e)}
-                        menuHeaderRender={()=>(
-                            <ClusterSelector />
-                        )}
+                        menuHeaderRender={()=>!collapsed && <ClusterSelector/>}
                         menuItemRender={(item, dom) => (
                             <div
                                 onClick={() => {

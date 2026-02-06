@@ -140,6 +140,7 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                 )}
 
                 <Drawer
+                    closable={{ placement: 'end' }}
                     getContainer={document.body}
                     title={`${mod?.name}`}
                     // centered

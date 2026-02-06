@@ -19,7 +19,9 @@ export default ({block}) => {
     return (
         <>
             <Button block={block} type="primary" onClick={showDrawer}>{t('panel.archive')}</Button>
-            <Drawer title="存档列表" onClose={onClose} open={open} width={1200}>
+            <Drawer
+                closable={{ placement: 'end' }}
+                title="存档列表" onClose={onClose} open={open} width={1200}>
                 <div>
                     <BackupList />
                 </div>

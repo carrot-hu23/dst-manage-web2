@@ -9,7 +9,7 @@ export default function TooManyItemsPlus() {
         const fetchData = async () => {
             setIsLoading(true);
             try {
-                const response = await fetch('./misc/tooManyItemsplus.json');
+                const response = await fetch('./misc/toomanyitemsplus.json');
                 const jsonData = await response.json();
                 setData(jsonData);
             } catch (error) {

@@ -101,8 +101,10 @@ export default () => {
                         }}
                         logo={null}
                         token={{
-                            header: {
-                                colorBgMenuItemSelected: 'rgba(0,0,0,0.04)',
+                            bgLayout: theme === 'dark' ? '#000000' : '#F1F2F5',
+                            sider: {
+                                colorMenuBackground: theme === 'dark'? '#000000' : '#FFFFFF',
+                                colorBgMenuItemSelected: theme === 'dark'? '#383838' : '#F1F2F5',
                             },
                         }}
                         // siderMenuType="group"

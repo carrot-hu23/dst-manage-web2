@@ -149,6 +149,7 @@ export default ({player, levelName}) => {
                 操作
             </Button>
             <Drawer
+                closable={{ placement: 'end' }}
                 title={(
                     <Space size={'middle'}>
                         <div>
