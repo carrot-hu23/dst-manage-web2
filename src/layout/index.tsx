@@ -14,7 +14,7 @@ import {
 import {
     Typography,
     ConfigProvider,
-    Dropdown,
+    Dropdown, Avatar, Tag
 } from 'antd';
 import {useEffect, useState} from 'react';
 import defaultProps from './_defaultProps';
@@ -31,13 +31,20 @@ import {useThemeConfigStore} from "../store/useThemeConfigStore";
 
 const {Link} = Typography;
 
+declare const __APP_VERSION__: string;
+
 export default () => {
 
-    // @ts-ignore
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
-        fixSiderbar: true,
-        layout: 'mix',
-        splitMenus: false,
+        // fixSiderbar: true,
+        // layout: 'mix',
+        // splitMenus: false,
+        "fixSiderbar": true,
+        "layout": "side",
+        "splitMenus": false,
+        "navTheme": "light",
+        "contentWidth": "Fluid",
+        "fixedHeader": true
     });
     const firstPagePath = '/panel';
     const location = useLocation()
@@ -77,15 +84,12 @@ export default () => {
     };
 
     const {theme} = useTheme()
-
     const {themeConfig} = useThemeConfigStore();
 
-    // @ts-ignore
     return (
         <div
             id="test-pro-layout"
             style={{
-                // height: '100vh',
                 overflow: 'auto',
             }}
         >
@@ -105,8 +109,10 @@ export default () => {
                         }}
                         logo={null}
                         token={{
-                            header: {
-                                colorBgMenuItemSelected: 'rgba(0,0,0,0.04)',
+                            bgLayout: theme === 'dark' ? '#000000' : '#F1F2F5',
+                            sider: {
+                                colorMenuBackground: theme === 'dark'? '#000000' : '#FFFFFF',
+                                colorBgMenuItemSelected: theme === 'dark'? '#383838' : '#F1F2F5',
                             },
                         }}
                         // siderMenuType="group"
@@ -126,8 +132,18 @@ export default () => {
                                 }
                             })
                         }}
+                        title={(
+                            <div onClick={()=>{
+                                window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
+                            }}>
+                                <span style={{paddingRight: 8}}>
+                                    Dst-admin-go
+                                </span>
+                                <Tag bordered={false} color={themeConfig.colorPrimary}>v{__APP_VERSION__}</Tag>
+                            </div>
+                        )}
                         avatarProps={{
-                            src: account.photoURL,
+                            src: account.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{account?.displayName[0]}</Avatar>,
                             size: 'small',
                             title: account.displayName,
                             render: (_props, dom) => {
