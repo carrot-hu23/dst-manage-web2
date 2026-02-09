@@ -44,7 +44,7 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, 
     const {t} = useTranslation();
     useEffect(() => {
     }, [level]);
-    const height = '64vh'
+    const height = '74vh'
     const items: any = [
         {
             label: t('level.leveldataoverride'),
@@ -122,7 +122,7 @@ const Leveldataoverride: React.FC<LevelItemProps> = (props) => {
                 <MonacoEditor2 ref={editorRef}
                                theme={theme === 'dark' ? 'vs-dark' : ''}
                                style={{
-                                   "height": "54vh",
+                                   "height": "60vh",
                                    "width": "100%"
                                }}
                                onChange={value => {
@@ -155,7 +155,7 @@ const Modoverrides: React.FC<LevelItemProps> = (props) => {
             <MonacoEditor2 ref={editorRef}
                            theme={theme === 'dark' ? 'vs-dark' : ''}
                            style={{
-                               "height": "50vh",
+                               "height": "60vh",
                                "width": "100%"
                            }}
                            onChange={value => {
@@ -920,7 +920,7 @@ const Level2 = () => {
             <Tabs
                 tabPosition={'top'}
                 style={{
-                    height: '68vh',
+                    height: '78vh',
                 }}
                 hideAdd
                 type="editable-card"
