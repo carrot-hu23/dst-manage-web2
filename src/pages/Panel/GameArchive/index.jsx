@@ -144,7 +144,7 @@ export default () => {
                         name="playerCount"
                         label="玩家数量"
                     >
-                        👥 {archive.maxPlayers ? `${archive.maxPlayers}人` : "0/0"}
+                        👥 <span>{`${playerList?.length}/${archive.maxPlayers}`}</span>
                     </ProFormText>
                     <ProFormText
                         colProps={{xs: 12, xl: 12, md: 12}}
