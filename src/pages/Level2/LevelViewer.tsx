@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {Alert, message, Select, Space, Tabs} from "antd";
 import {parse, format} from "lua-json";
-import './index.css';
+
 import {useTranslation} from "react-i18next";
+import {useThemeConfigStore} from "../../store/useThemeConfigStore.tsx";
 
 function getLevelObject(value: string): Record<string, any> {
     value = value.replace(/\n/g, "")
@@ -148,9 +149,36 @@ const Item: React.FC<ItemProps> = ({
         }
     }
 
+    const {themeConfig} = useThemeConfigStore();
+
+    useEffect(() => {
+        // 避免重复注入：通过唯一 ID 检查
+        const styleId = 'antd-select-selected-style';
+        if (document.getElementById(styleId)) return;
+
+        const style = document.createElement('style');
+        style.id = styleId;
+        // 限定作用域：仅影响当前组件内带 .selected 的 Select
+        style.textContent = `
+      .custom-select-scope .selected.ant-select:not(.ant-select-customize-input) 
+      .ant-select-selector {
+        background: ${themeConfig?.colorPrimary} !important;
+        color: #fff !important;
+      }
+    `;
+        document.head.appendChild(style);
+
+        return () => {
+            // 安全移除（避免 StrictMode 下重复执行导致报错）
+            if (style.parentNode) {
+                style.parentNode.removeChild(style);
+            }
+        };
+    }, []);
+
     const selectClassName = isDefault ? "" : "selected";
     return (
-        <div>
+        <div className="custom-select-scope">
             <Select
                 style={{width: 120}}
                 value={currentValue}

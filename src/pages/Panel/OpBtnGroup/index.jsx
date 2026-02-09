@@ -53,13 +53,10 @@ export default () => {
                 <Button
                     block
                     type="primary"
-                        style={{
-                            backgroundColor: 'rgb(82, 196, 26)'
-                        }}
-                        onClick={() => {
-                            updateGameOnclick()
-                        }}
-                        loading={updateGameStatus}
+                    onClick={() => {
+                        updateGameOnclick()
+                    }}
+                    loading={updateGameStatus}
                 >
                     {t('panel.updateGame')}
                 </Button>

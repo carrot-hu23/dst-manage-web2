@@ -9,8 +9,9 @@ import {
     // SettingDrawer,
 } from '@ant-design/pro-components';
 import {
+    Avatar,
     ConfigProvider,
-    Dropdown,
+    Dropdown, Tag,
 } from 'antd';
 import {useEffect, useState} from 'react';
 
@@ -26,14 +27,21 @@ import ToggleTheme from "../layout/ToggleTheme.tsx";
 import {useTheme} from "../hooks/useTheme/index.jsx";
 import {useThemeConfigStore} from "../store/useThemeConfigStore.tsx";
 
+declare const __APP_VERSION__: string;
+
 export default () => {
 
-    // @ts-ignore
-    const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
-        fixSiderbar: true,
-        layout: 'mix',
-        splitMenus: false,
-    });
+
+    const [settings] = useState<Partial<ProSettings> | undefined>(
+        {
+            "fixSiderbar": true,
+            "layout": "side",
+            "splitMenus": false,
+            "navTheme": "light",
+            "contentWidth": "Fluid",
+            "fixedHeader": true
+        }
+    );
     const firstPagePath = '/panel';
     const location = useLocation()
     const [pathname, setPathname] = useState(location.pathname);
@@ -73,7 +81,6 @@ export default () => {
     };
 
     const {theme} = useTheme()
-
     const {themeConfig} = useThemeConfigStore();
 
     // @ts-ignore
@@ -137,8 +144,18 @@ export default () => {
                                 }
                             })
                         }}
+                        title={(
+                            <div onClick={()=>{
+                                window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
+                            }}>
+                                <span style={{paddingRight: 8}}>
+                                    Dst-admin-go
+                                </span>
+                                <Tag bordered={false} color={themeConfig.colorPrimary}>v{__APP_VERSION__}</Tag>
+                            </div>
+                        )}
                         avatarProps={{
-                            src: account.photoURL,
+                            src: account.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{account?.displayName[0]}</Avatar>,
                             size: 'small',
                             title: account.displayName,
                             render: (_props, dom) => {

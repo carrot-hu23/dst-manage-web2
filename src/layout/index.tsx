@@ -10,6 +10,7 @@ import {
     // SettingDrawer,
 } from '@ant-design/pro-components';
 import {
+    Avatar,
     Button,
     ConfigProvider,
     Dropdown,
@@ -28,7 +29,6 @@ import ToggleTheme from "./ToggleTheme.tsx";
 import {useTheme} from "../hooks/useTheme";
 import ClusterSelector from "./ClusterSelector";
 import {useThemeConfigStore} from "../store/useThemeConfigStore";
-import UseIsMobile from "../hooks/UseIsMobile.tsx";
 import useIsMobile from "../hooks/UseIsMobile.tsx";
 
 
@@ -122,7 +122,6 @@ export default () => {
                         //     }
                         // ]}
                         onCollapse={ (collapsed) => {
-                            console.log(collapsed)
                             setCollapsed(collapsed)
                         }}
                         token={{
@@ -150,7 +149,7 @@ export default () => {
                             })
                         }}
                         avatarProps={{
-                            src: account.photoURL,
+                            src: account.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{account?.displayName[0]}</Avatar>,
                             size: 'small',
                             title: account.displayName,
                             render: (_props, dom) => {
@@ -204,11 +203,7 @@ export default () => {
                         menuFooterRender={(props) => {
                             if (props?.collapsed) return undefined;
                             return (
-                                <div
-                                    style={{
-                                        paddingLeft: 16
-                                    }}
-                                >
+                                <div>
                                     <Button block type={'primary'} onClick={()=>{
                                         navigate('/cluster')
                                     }}>返回</Button>

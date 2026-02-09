@@ -12,6 +12,40 @@ import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {ProCard} from "@ant-design/pro-components";
 import {useLogStream} from "../../../hooks/useLogStream";
 
+const ConfirmButton = ({ title, description, onConfirm, children, ...buttonProps }) => {
+    return (
+        <Popconfirm
+            title={title}
+            description={description}
+            onConfirm={onConfirm}
+            okText="Yes"
+            cancelText="No"
+        >
+            <Button {...buttonProps}>{children}</Button>
+        </Popconfirm>
+    );
+};
+
+const RollbackButtons = ({ onRollback, t }) => {
+    const rollbackDays = [1, 2, 3, 4, 5, 6];
+
+    return (
+        <Space size={8} wrap>
+            {rollbackDays.map(day => (
+                <ConfirmButton
+                    key={day}
+                    title={t('panel.rollback')}
+                    description={`确认回档 ${day} 天？请先保存数据`}
+                    onConfirm={() => onRollback(day)}
+                    size="small"
+                >
+                    {t(`panel.rollback${day}`)}
+                </ConfirmButton>
+            ))}
+        </Space>
+    );
+};
+
 export default () => {
     const { t } = useTranslation()
     const {theme} = useTheme();
@@ -94,6 +128,15 @@ export default () => {
                                 }
                             })}
                         />
+                        <Button style={{float: "right"}}
+                                onClick={()=>{
+                                    window.location.href = `/api/game/level/server/download?fileName=server_log.txt&clusterName=${cluster}&levelName=${levelNameRef.current}`
+                                }}
+                                icon={<DownloadOutlined />}
+                                type={'link'}
+                        >
+                            {t('panel.download.log')}
+                        </Button>
                     </Space>
                     <br/>
                     <MonacoEditor
@@ -110,15 +153,6 @@ export default () => {
                         }}
                     />
                     <br/>
-                    <Space align={"baseline"} size={16} wrap>
-                        <Button onClick={()=>{
-                            window.location.href = `/api/game/level/server/download?fileName=server_log.txt&clusterName=${cluster}&levelName=${levelNameRef.current}`
-                        }}
-                                icon={<DownloadOutlined />} type={'link'}>
-                            {t('panel.download.log')}
-                        </Button>
-                    </Space>
-                    <br/>
                     <Space.Compact
                         style={{
                             width: '100%',
@@ -129,23 +163,29 @@ export default () => {
                         <Button type="primary" onClick={() => sendInstruct(command)}>{t('panel.send')}</Button>
                     </Space.Compact>
                     <Space size={8} wrap>
-                        <Button size={'small'} type={"primary"} onClick={() => {sendInstruct("c_save()")}} >{t('panel.c_save()')}</Button>
-                        <Popconfirm
+                        <ConfirmButton
+                            title={t('panel.c_save()')}
+                            description="确认保存当前游戏数据？"
+                            onConfirm={() => {sendInstruct("c_save()")}}
+                            size="small"
+                            type="primary"
+                        >
+                            {t('panel.c_save()')}
+                        </ConfirmButton>
+                        <ConfirmButton
                             title={t('panel.regenerate')}
                             description="请保存好数据"
-                            onConfirm={()=>{sendInstruct("c_regenerateworld()")}}
-                            onCancel={()=>{}}
-                            okText="Yes"
-                            cancelText="No"
+                            onConfirm={() => {sendInstruct("c_regenerateworld()")}}
+                            size="small"
+                            type="primary"
+                            danger
                         >
-                            <Button size={'small'} type={"primary"} danger>{t('panel.regenerate')}</Button>
-                        </Popconfirm>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(1)") }} >{t('panel.rollback1')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(2)") }} >{t('panel.rollback2')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(3)") }} >{t('panel.rollback3')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(4)") }} >{t('panel.rollback4')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(5)") }} >{t('panel.rollback5')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(6)") }} >{t('panel.rollback6')}</Button>
+                            {t('panel.regenerate')}
+                        </ConfirmButton>
+                        <RollbackButtons
+                            onRollback={(day) => sendInstruct(`c_rollback(${day})`)}
+                            t={t}
+                        />
                     </Space>
             </ProCard>
         </Spin>
