@@ -44,7 +44,7 @@ export default function ItemsManager({
 
     // Fetch online players
     useEffect(() => {
-        setIsLoadingPlayers(true);
+        setIsLoadingPlayers(false);
         getAllOnlinePlayersApi(cluster || '').then(resp => {
             if (resp.code === 200) {
                 setPlayerList(resp.data);

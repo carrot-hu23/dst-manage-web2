@@ -6,6 +6,17 @@
     box-shadow: none;
 }
 
+.dst.ant-card .ant-card-body {
+    padding: 12px;
+}
+
+.ant-list-split .ant-list-item {
+     border-block-end: 0;
+}
+
+.ant-list-split.ant-list-something-after-last-item .ant-spin-container>.ant-list-items>.ant-list-item:last-child {
+    border-block-end: 0;
+}
 /*.ant-pro-layout .ant-layout-sider.ant-pro-sider {*/
 /*    background: #0D0D0D;*/
 /*}*/

@@ -18,9 +18,9 @@ type Color = Extract<GetProp<ColorPickerProps, 'value'>, { cleared: any }>;
 
 const defaultData: ThemeData = {
     borderRadius: 6,
-    colorPrimary: '#1677ff',
+    colorPrimary: '#4850F5',
     Button: {
-        colorPrimary: '#1677ff',
+        colorPrimary: '#4850F5',
     },
 };
 

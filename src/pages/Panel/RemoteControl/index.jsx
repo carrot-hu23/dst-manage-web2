@@ -5,6 +5,7 @@ import {Button, Input, Select, Space, message, Spin, Divider, Tag} from 'antd';
 import {sendCommandApi} from "../../../api/level.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {ProCard} from "@ant-design/pro-components";
+import OtherIOrder from "../../TooManyItemsPlus/OtherIOrder.tsx";
 
 
 const {TextArea} = Input;
@@ -106,6 +107,9 @@ export default () => {
 
     return (
         <ProCard>
+
+            <OtherIOrder />
+            <Divider/>
             <Spin spinning={spin} tip={"正在发送指令"}>
                 <Space size={8}>
                     <Select

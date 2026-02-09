@@ -61,11 +61,6 @@ const Panel = () => {
             children: <TooManyItemsPlus />,
         },
         {
-            key: '4',
-            label: '其他指令',
-            children: <OtherIOrder />,
-        },
-        {
             key: '5',
             label: '自定义指令',
             children: <RenderCustomCommands />,

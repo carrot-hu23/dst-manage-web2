@@ -17,9 +17,9 @@ interface ThemeConfigState {
 
 const defaultData: ThemeData = {
     borderRadius: 6,
-    colorPrimary: '#1677ff',
+    colorPrimary: '#4850F5',
     Button: {
-        colorPrimary: '#1677ff',
+        colorPrimary: '#4850F5',
     },
 };
 
