@@ -4,7 +4,7 @@ import {useParams} from "react-router-dom";
 import React, {useEffect, useState} from "react";
 import {useTranslation} from "react-i18next";
 
-import {Image, Skeleton, Col, Button, Space, Spin, Select, List, Tag} from 'antd';
+import {Image, Skeleton, Col, Button, Space, Spin, Select, List, Tag, Row} from 'antd';
 
 import {dstRoles} from '../../../utils/dst';
 import style from "../../DstServerList/index.module.css";
@@ -13,10 +13,11 @@ import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {getAllOnlinePlayersApi, getOnlinePlayersApi} from "../../../api/onlinPlayerApi";
 import PlayerBtn from "./PlayerBtn.jsx";
+import {ProCard} from "@ant-design/pro-components";
 
 
 const Online = () => {
-    const { t } = useTranslation()
+    const {t} = useTranslation()
 
     const {cluster} = useParams()
     const [loading, setLoading] = useState(true)
@@ -27,7 +28,7 @@ const Online = () => {
     const setPlayerList = usePlayerListStore((state) => state.setPlayerList)
 
     const notHasLevels = levels === undefined || levels === null || levels.length === 0
-    const [levelName, setLevelName] = useState(notHasLevels?"":levels[0].key)
+    const [levelName, setLevelName] = useState(notHasLevels ? "" : levels[0].key)
 
     useEffect(() => {
         setLoading(true)
@@ -51,6 +52,7 @@ const Online = () => {
                 setSpin(false)
             })
     }
+
     function queryAllPlayers() {
         setSpin(true)
         getAllOnlinePlayersApi(cluster)
@@ -67,35 +69,35 @@ const Online = () => {
     }
 
     return (
-        <>
+        <ProCard
+            title={'🎯 玩家列表'}
+            extra={<Space size={8}>
+                <Select
+                    style={{
+                        width: 120,
+                    }}
+                    onChange={handleChange}
+                    defaultValue={notHasLevels ? "" : levels[0].levelName}
+                    options={levels.map(level => ({
+                        value: level.key,
+                        label: level.levelName,
+                    }))}
+                />
+                <Button type={'primary'} size={'small'} onClick={() => {
+                    queryPlayers()
+                }}>{t('panel.query')}</Button>
+                <Button type={'primary'} size={'small'} onClick={() => {
+                    queryAllPlayers()
+                }}>{t('panel.query_all')}</Button>
+                <Tag color={'green'}>{playerList.length}</Tag>
+            </Space>}>
             {notHasLevels && (
                 <span>当前暂无世界</span>
-            ) }
+            )}
 
             {!notHasLevels && (
                 <Spin spinning={spin}>
                     <Skeleton loading={loading} active>
-                        <Space size={8}>
-                            <Select
-                                style={{
-                                    width: 120,
-                                }}
-                                onChange={handleChange}
-                                defaultValue={notHasLevels?"":levels[0].levelName}
-                                options={levels.map(level=>({
-                                        value: level.key,
-                                        label: level.levelName,
-                                    }))}
-                            />
-                            <Button type={'primary'} size={'small'} onClick={() => {
-                                queryPlayers()
-                            }}>{t('panel.query')}</Button>
-                            <Button type={'primary'} size={'small'} onClick={() => {
-                                queryAllPlayers()
-                            }}>{t('panel.query_all')}</Button>
-                            <Tag color={'green'}>{playerList.length}</Tag>
-                        </Space>
-
                         <List
                             pagination={{
                                 position: "bottom",
@@ -107,30 +109,22 @@ const Online = () => {
                             dataSource={playerList}
                             renderItem={(item) => (
                                 <List.Item>
-                                    <Col xs={18} sm={10} md={10} lg={10} xl={10}>
-                                        <Space align="center" size={'middle'}>
-                                            <div>
-                                                <Image preview={false} width={48} src={dstRoles[item.role] || dstRoles.mod} />
-                                            </div>
-                                            <div className={style.icon}>
-                                                {item.name}
-                                            </div>
-                                            <div>
-                        <span style={{ color: '#1677ff' }}>
-                            <HiddenText text={item.kuId} />
-                        </span>
-                                            </div>
-                                        </Space>
-                                    </Col>
-                                    <Col xs={4} sm={1} md={4} lg={4} xl={4}>
-                                        <Space size={'middle'}>
-                                            <span>{item.day}{t('day')}</span>
-                                        </Space>
-
-                                    </Col>
-                                    <Col xs={24} sm={10} md={10} lg={10} xl={10}>
-                                        <PlayerBtn player={item} levelName={levelName} />
-                                    </Col>
+                                    <Space align="center" size={'middle'}>
+                                        <div>
+                                            <Image preview={false} width={48}
+                                                   src={dstRoles[item.role] || dstRoles.mod}/>
+                                        </div>
+                                        <div className={style.icon}>
+                                            {item.name}
+                                        </div>
+                                        <div>
+                                                <span style={{color: '#1677ff'}}>
+                                                    <HiddenText text={item.kuId}/>
+                                                </span>
+                                        </div>
+                                    </Space>
+                                    <div>{item.day}{t('day')}</div>
+                                    <PlayerBtn player={item} levelName={levelName}/>
 
                                 </List.Item>
                             )}
@@ -139,7 +133,7 @@ const Online = () => {
                 </Spin>
             )}
 
-        </>
+        </ProCard>
 
     )
 }

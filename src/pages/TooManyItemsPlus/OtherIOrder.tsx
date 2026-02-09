@@ -1,7 +1,6 @@
 import {sendCommandApi} from "../../api/commdApi.ts";
 import {Button, Divider, Image, Input, InputNumber, message, Select, Space, Typography} from "antd";
 import {useParams} from "react-router-dom";
-import {ProCard} from "@ant-design/pro-components";
 import {useState} from "react";
 import {usePlayerListStore} from "../../store/usePlayerListStore.tsx";
 import {dstRoles} from "../../types/dst.ts";
@@ -44,7 +43,7 @@ export default function OtherIOrder(){
     }
 
     return(
-        <ProCard>
+        <div>
             <Typography.Title level={5}>
                 时间按钮
             </Typography.Title>
@@ -118,6 +117,6 @@ export default function OtherIOrder(){
                     give(prefab||'', amount, kuId||'')
                 }} >发送</Button>
             </Space>
-        </ProCard>
+        </div>
     )
 }
