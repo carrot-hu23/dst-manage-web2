@@ -107,7 +107,13 @@ export default () => {
                         location={{
                             pathname,
                         }}
-                        logo={null}
+                        logo={(
+                            <div onClick={()=>{
+                                window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
+                            }} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                <Tag bordered={false} color={themeConfig.colorPrimary}>v{__APP_VERSION__}</Tag>
+                            </div>
+                        )}
                         token={{
                             bgLayout: theme === 'dark' ? '#000000' : '#F1F2F5',
                             sider: {
@@ -132,16 +138,7 @@ export default () => {
                                 }
                             })
                         }}
-                        title={(
-                            <div onClick={()=>{
-                                window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
-                            }}>
-                                <span style={{paddingRight: 8}}>
-                                    Dst-admin-go
-                                </span>
-                                <Tag bordered={false} color={themeConfig.colorPrimary}>v{__APP_VERSION__}</Tag>
-                            </div>
-                        )}
+                        title="Dst-admin-go"
                         avatarProps={{
                             src: account.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{account?.displayName[0]}</Avatar>,
                             size: 'small',
