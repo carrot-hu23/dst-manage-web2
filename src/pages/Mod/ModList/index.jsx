@@ -161,7 +161,21 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     useEffect(() => {
-        setMod(modList[0] || {})
+        // 去重：根据 modid 去重，保留第一个
+        const uniqueModList = modList.reduce((acc, current) => {
+            const existingMod = acc.find(item => item.modid === current.modid);
+            if (!existingMod) {
+                acc.push(current);
+            }
+            return acc;
+        }, []);
+
+        // 如果去重后的列表和原列表不同，更新列表
+        if (uniqueModList.length !== modList.length) {
+            setModList(uniqueModList);
+        }
+
+        setMod(uniqueModList[0] || {})
     }, [modList])
 
     const updateModSize = modList.filter(mod=>mod.update)
