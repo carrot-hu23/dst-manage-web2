@@ -9,6 +9,8 @@ import {ProCard, ProDescriptions} from "@ant-design/pro-components";
 import HiddenText from "../../Home/HiddenText/HiddenText";
 import type {Cluster} from "../../../api/clusterApi";
 
+import style from "../../DstServerList/index.module.css";
+
 const {Title, Link} = Typography;
 
 type Props = {
@@ -100,7 +102,7 @@ const ClusterCard: React.FC<Props> = ({cluster, showAddBtn, serverList, updateSe
                 <div>
                     <ProDescriptions column={2}>
                         <ProDescriptions.Item editable={false} span={2} valueType="text" label={t('房间名称')}>
-                            {cluster?.gameArchive?.clusterName}
+                            <span className={style.icon}>{cluster?.gameArchive?.clusterName}</span>
                         </ProDescriptions.Item>
                         <ProDescriptions.Item span={2} valueType="text" label={t('游戏天数')}>
               <span>

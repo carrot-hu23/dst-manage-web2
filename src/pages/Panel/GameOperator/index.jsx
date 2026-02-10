@@ -5,13 +5,13 @@ import GameLevels from "../GameLevels/index.jsx";
 import GameArchive from "../GameArchive/index.jsx";
 import ServerLog from "../ServerLog/index.jsx";
 import OnlinePlayers from "../OnlinePlayers/index.jsx";
-import ServerMetrics from "../ServerMetrics.tsx";
+import OS from "../OS/index.jsx";
 
 export default () => {
 
     return (
         <>
-            <ServerMetrics />
+            <OS/>
             <br/>
             <Row gutter={[16,16]}>
                 <Col xs={24} sm={24} md={10} lg={10} xl={10}>
