@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import {StatisticCard} from '@ant-design/pro-components';
 import RcResizeObserver from 'rc-resize-observer';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {Progress, Tooltip} from 'antd';
 import {useTranslation} from "react-i18next";
-import {getSystemInfoApi} from "../../../api/systeminfoApi.jsx";
+import {useSystemInfoStream} from "../../../hooks/useSystemInfoStream";
 
 function formatData(data, num) {
     return data.toFixed(num)
@@ -36,29 +36,19 @@ export default () => {
 
     const diskUsage = formatData((diskTotal - diskFree) / diskTotal * 100, 2);
 
-    useEffect(() => {
-        getSystemInfoApi()
-            .then(resp => {
-                if (resp.code === 200) {
-                    setSysteminfo(resp.data)
-                }
-            })
+    // 使用 SSE 替代轮询获取系统信息
+    useSystemInfoStream({
+        onData: (data) => {
+            setSysteminfo(data)
+        },
+        onError: (err) => {
+            console.error('System info stream error:', err)
+        },
+        onOpen: () => {
+            console.log('System info stream connected')
+        }
+    })
 
-    }, [])
-    useEffect(() => {
-        const timerId = setInterval(() => {
-            getSystemInfoApi()
-                .then(resp => {
-                    if (resp.code === 200) {
-                        setSysteminfo(resp.data)
-                    }
-                })
-        }, 5000)
-
-        return () => {
-            clearInterval(timerId); // 组件卸载时清除定时器
-        };
-    }, [])
     return (
         <>
                 <RcResizeObserver key="resize-observer" onResize={(offset) => {

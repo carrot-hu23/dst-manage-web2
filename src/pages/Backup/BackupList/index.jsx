@@ -16,6 +16,7 @@ import {
 import BackupStatistic from "./Statistic/index.jsx";
 import CreateBackUpBtn from "../../Panel/OpBtnGroup/CreateBackUpBtn.jsx";
 
+import style from "../../DstServerList/index.module.css";
 
 const MyUploadFile = ({reload}) => {
     const {t} = useTranslation()
@@ -255,7 +256,7 @@ const Backup = ({showStatistic}) => {
             title: t('backup.fileName'),
             dataIndex: 'fileName',
             key: 'fileName',
-            render: (text) => <Button type="link">{text}</Button>,
+            render: (text) => <Button type="link" className={style.icon}>{text}</Button>,
             editable: true,
         },
         {
