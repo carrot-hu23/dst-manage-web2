@@ -44,7 +44,7 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, 
     const {t} = useTranslation();
     useEffect(() => {
     }, [level]);
-    const height = '74vh'
+    const height = '64vh'
     const items: any = [
         {
             label: t('level.leveldataoverride'),
@@ -72,7 +72,7 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, 
             key: 3,
             label: t('level.serverIni'),
             children: <div className={'scrollbar'} style={{
-                height: height,
+                height: '54vh',
                 overflowY: 'auto',
             }}><ServerIni levelName={levelName} level={level}
                           changeLevel={changeLevel} has={has}/>
@@ -122,7 +122,7 @@ const Leveldataoverride: React.FC<LevelItemProps> = (props) => {
                 <MonacoEditor2 ref={editorRef}
                                theme={theme === 'dark' ? 'vs-dark' : ''}
                                style={{
-                                   "height": "60vh",
+                                   "height": "54vh",
                                    "width": "100%"
                                }}
                                onChange={value => {
@@ -155,7 +155,7 @@ const Modoverrides: React.FC<LevelItemProps> = (props) => {
             <MonacoEditor2 ref={editorRef}
                            theme={theme === 'dark' ? 'vs-dark' : ''}
                            style={{
-                               "height": "60vh",
+                               "height": "50vh",
                                "width": "100%"
                            }}
                            onChange={value => {
@@ -920,7 +920,7 @@ const Level2 = () => {
             <Tabs
                 tabPosition={'top'}
                 style={{
-                    height: '78vh',
+                    height: '68vh',
                 }}
                 hideAdd
                 type="editable-card"

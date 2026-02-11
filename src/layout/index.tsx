@@ -14,7 +14,7 @@ import {
 import {
     Typography,
     ConfigProvider,
-    Dropdown, Avatar, Tag
+    Dropdown, Avatar, Tag, Space
 } from 'antd';
 import {useEffect, useState} from 'react';
 import defaultProps from './_defaultProps';
@@ -36,15 +36,15 @@ declare const __APP_VERSION__: string;
 export default () => {
 
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
-        // fixSiderbar: true,
-        // layout: 'mix',
-        // splitMenus: false,
-        "fixSiderbar": true,
-        "layout": "side",
-        "splitMenus": false,
-        "navTheme": "light",
-        "contentWidth": "Fluid",
-        "fixedHeader": true
+        fixSiderbar: true,
+        layout: 'mix',
+        splitMenus: false,
+        // "fixSiderbar": true,
+        // "layout": "side",
+        // "splitMenus": false,
+        // "navTheme": "light",
+        // "contentWidth": "Fluid",
+        // "fixedHeader": true
     });
     const firstPagePath = '/panel';
     const location = useLocation()
@@ -190,11 +190,12 @@ export default () => {
                                 <ToggleTheme/>
                             ];
                         }}
-                        headerTitleRender={(_logo, _title, _) => {
+                        headerTitleRender={(logo, title, _) => {
                             const defaultDom = (
-                                <a>
-                                    {t('web.title')}
-                                </a>
+                                <Space wrap>
+                                    {logo}
+                                    {title}
+                                </Space>
                             );
                             if (typeof window === 'undefined') return defaultDom;
                             if (document.body.clientWidth < 1400) {

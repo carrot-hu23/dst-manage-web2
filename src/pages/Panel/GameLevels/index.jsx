@@ -188,7 +188,7 @@ export default () => {
     const {themeConfig} = useThemeConfigStore();
 
     function GetLevelIcon(level) {
-        console.log(level)
+
         const levelObject = getLevelObject(level?.leveldataoverride || '');
         const location = levelObject?.location
         if (location === 'forest') {
