@@ -30,7 +30,6 @@ export default () => {
     useEffect(() => {
         archiveApi(cluster)
             .then(data => {
-                console.log(data.data);
                 setArchive(data.data)
             }).catch(error => console.log(error))
 
