@@ -30,17 +30,18 @@ export interface UseSystemInfoStreamOptions {
     onData: (data: SystemInfo) => void
     onError?: (err: Event) => void
     onOpen?: () => void
+    clusterName: string
 }
 
 export function useSystemInfoStream(options: UseSystemInfoStreamOptions) {
-    const { onData, onError, onOpen } = options
+    const { onData, onError, onOpen, clusterName } = options
 
     // 防止 onData 变化导致重复创建 EventSource
     const onDataRef = useRef(onData)
     onDataRef.current = onData
 
     useEffect(() => {
-        const es = new EventSource('/api/game/system/info/stream')
+        const es = new EventSource('/api/game/system/info/stream'+"?clusterName="+clusterName)
 
         es.addEventListener("open", () => {
             onOpen?.()

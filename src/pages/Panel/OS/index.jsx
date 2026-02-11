@@ -5,6 +5,7 @@ import {useState} from 'react';
 import {Progress, Tooltip} from 'antd';
 import {useTranslation} from "react-i18next";
 import {useSystemInfoStream} from "../../../hooks/useSystemInfoStream";
+import {useParams} from "react-router-dom";
 
 function formatData(data, num) {
     return data.toFixed(num)
@@ -15,6 +16,8 @@ const {Statistic, Divider} = StatisticCard;
 export default () => {
 
     const {t} = useTranslation()
+    const {cluster} = useParams()
+
     const [responsive, setResponsive] = useState(false);
     const [systeminfo, setSysteminfo] = useState({})
 
@@ -38,6 +41,7 @@ export default () => {
 
     // 使用 SSE 替代轮询获取系统信息
     useSystemInfoStream({
+        clusterName: cluster,
         onData: (data) => {
             setSysteminfo(data)
         },

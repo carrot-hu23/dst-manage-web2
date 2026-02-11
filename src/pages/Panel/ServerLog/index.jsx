@@ -1,6 +1,6 @@
 import {Button, Input, message, Popconfirm, Select, Space, Spin} from "antd";
 import {DownloadOutlined} from '@ant-design/icons';
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
@@ -55,13 +55,20 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
 
     const notHasLevels = levels === undefined || levels === null || levels.length === 0
-    const levelNameRef = useRef(notHasLevels ? "" : levels[0].key)
+    const [currentLevelName, setCurrentLevelName] = useState(notHasLevels ? "" : levels[0].key)
     const editorRef = useRef()
+
+    // 当 levels 加载完成后，更新 currentLevelName
+    useEffect(() => {
+        if (levels && levels.length > 0 && !currentLevelName) {
+            console.log('Setting initial level:', levels[0].key)
+            setCurrentLevelName(levels[0].key)
+        }
+    }, [levels])
 
     const [command, setCommand] = useState('');
 
     const onchange = (e) => {
-        console.log("e", e)
         setCommand(e.target.value);
     };
 
@@ -79,9 +86,9 @@ export default () => {
             message.warning("请填写指令在发送")
             return
         }
-        console.log(levelNameRef.current, escapeString(command))
+        console.log(currentLevelName, escapeString(command))
         setSpinLoading(true)
-        sendCommandApi(cluster, levelNameRef.current, escapeString(command))
+        sendCommandApi(cluster, currentLevelName, escapeString(command))
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送指令成功")
@@ -95,9 +102,10 @@ export default () => {
     // 使用 useLogStream 处理实时日志流
     useLogStream({
         clusterName: cluster,
-        levelName: levelNameRef.current,
+        levelName: currentLevelName,
         onLog: (line) => {
             const currentLogs = editorRef?.current?.current?.getValue() || ""
+            console.log(currentLogs)
             editorRef?.current?.current?.setValue(currentLogs + `${line}\n`)
             editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
         },
@@ -110,7 +118,7 @@ export default () => {
     })
 
     const handleChange = (value) => {
-        levelNameRef.current = value
+        setCurrentLevelName(value)
     }
 
     return <>
@@ -133,7 +141,7 @@ export default () => {
                     />
                     <Button style={{float: "right"}}
                             onClick={() => {
-                                window.location.href = `/api/game/level/server/download?fileName=server_log.txt&clusterName=${cluster}&levelName=${levelNameRef.current}`
+                                window.location.href = `/api/game/level/server/download?fileName=server_log.txt&clusterName=${cluster}&levelName=${currentLevelName}`
                             }}
                             icon={<DownloadOutlined/>}
                             type={'primary'}
