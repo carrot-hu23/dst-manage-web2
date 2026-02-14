@@ -105,7 +105,6 @@ export default () => {
         levelName: currentLevelName,
         onLog: (line) => {
             const currentLogs = editorRef?.current?.current?.getValue() || ""
-            console.log(currentLogs)
             editorRef?.current?.current?.setValue(currentLogs + `${line}\n`)
             editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
         },
