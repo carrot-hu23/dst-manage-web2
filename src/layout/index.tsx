@@ -14,7 +14,7 @@ import {
 import {
     Typography,
     ConfigProvider,
-    Dropdown, Avatar, Tag, Space
+    Dropdown, Avatar, Tag, Space, Skeleton
 } from 'antd';
 import {useEffect, useState} from 'react';
 import defaultProps from './_defaultProps';
@@ -28,6 +28,7 @@ import ToggleTheme from "./ToggleTheme.tsx";
 
 import {useTheme} from "../hooks/useTheme";
 import {useThemeConfigStore} from "../store/useThemeConfigStore";
+import {useUserStore} from "../store/useUserStore";
 
 const {Link} = Typography;
 
@@ -57,25 +58,12 @@ export default () => {
     const navigate = useNavigate()
     const {t} = useTranslation()
 
-    const [account, setAcount] = useState({
-        displayName: '',
-        email: '',
-        photoURL: ''
-    })
-    useEffect(() => {
-        const userJson = localStorage.getItem('user') || '{}';
-        let user = JSON.parse(userJson);
-        if (user === null) {
-            user = {
-                displayName: '',
-                email: '',
-                photoURL: ''
-            }
-        }
-        setAcount(user)
-    }, [])
+    const user = useUserStore((state) => state.user)
+    const loading = useUserStore((state) => state.loading)
+    const clearUser = useUserStore((state) => state.clearUser)
 
     const logout = async () => {
+        clearUser()
         localStorage.clear()
         const data = await http.get("/api/logout")
         console.log('logout', data);
@@ -93,6 +81,7 @@ export default () => {
                 overflow: 'auto',
             }}
         >
+            <Skeleton loading={loading}>
             <ProConfigProvider dark={theme == 'dark'}>
                 <ConfigProvider
                     getTargetContainer={() => {
@@ -140,9 +129,9 @@ export default () => {
                         }}
                         title="Dst-admin-go"
                         avatarProps={{
-                            src: account.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{account?.displayName[0]}</Avatar>,
+                            src: user?.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{user?.displayName[0]}</Avatar>,
                             size: 'small',
-                            title: account.displayName,
+                            title: user?.displayName,
                             render: (_props, dom) => {
                                 return (
                                     <Dropdown
@@ -261,6 +250,7 @@ export default () => {
                     </ProLayout>
                 </ConfigProvider>
             </ProConfigProvider>
+            </Skeleton>
         </div>
     );
 };
