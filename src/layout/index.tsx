@@ -60,7 +60,13 @@ export default () => {
 
     const user = useUserStore((state) => state.user)
     const loading = useUserStore((state) => state.loading)
+    const fetchUser = useUserStore((state) => state.fetchUser)
     const clearUser = useUserStore((state) => state.clearUser)
+
+    // Fetch user data when layout mounts
+    useEffect(() => {
+        fetchUser()
+    }, [fetchUser])
 
     const logout = async () => {
         clearUser()

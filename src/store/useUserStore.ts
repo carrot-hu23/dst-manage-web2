@@ -54,6 +54,3 @@ export const useUserStore = create<UserState>((set) => ({
         set({ user: null, loading: false, initialized: false });
     },
 }));
-
-// 自动初始化：在 store 创建后立即获取用户信息
-useUserStore.getState().fetchUser();
