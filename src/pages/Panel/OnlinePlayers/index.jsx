@@ -13,6 +13,7 @@ import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {usePlayerListStore} from "../../../store/usePlayerListStore.tsx";
 import {getAllOnlinePlayersApi, getOnlinePlayersApi} from "../../../api/onlinPlayerApi";
 import PlayerBtn from "./PlayerBtn.jsx";
+import PlayerDetailDrawer from "./PlayerDetailDrawer.jsx";
 import {ProCard} from "@ant-design/pro-components";
 
 
@@ -29,6 +30,7 @@ const Online = () => {
 
     const notHasLevels = levels === undefined || levels === null || levels.length === 0
     const [levelName, setLevelName] = useState(notHasLevels ? "" : levels[0].key)
+    const [detailPlayer, setDetailPlayer] = useState(null)
 
     useEffect(() => {
         setLoading(true)
@@ -124,7 +126,12 @@ const Online = () => {
                                         </div>
                                     </Space>
                                     <div>{item.day}{t('day')}</div>
-                                    <PlayerBtn player={item} levelName={levelName}/>
+                                    <Space>
+                                        <PlayerBtn player={item} levelName={levelName}/>
+                                        <Button type="default" size="small" onClick={() => setDetailPlayer(item)}>
+                                            详情
+                                        </Button>
+                                    </Space>
 
                                 </List.Item>
                             )}
@@ -132,6 +139,13 @@ const Online = () => {
                     </Skeleton>
                 </Spin>
             )}
+
+            <PlayerDetailDrawer
+                player={detailPlayer}
+                visible={!!detailPlayer}
+                onClose={() => setDetailPlayer(null)}
+                levelName={levelName}
+            />
 
         </ProCard>
 
