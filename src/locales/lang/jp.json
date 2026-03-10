@@ -258,6 +258,8 @@
   "mod.tips2": "すべてのモッド構成を更新しますか？",
   "mod.tips3": "Modinfo.luaファイルを手動でアップロードします。サーバーのネットワーク問題により、モッドのダウンロードに失敗することがあります。その場合は、ローカルモジュールのModinfoをサーバーにアップロードしてください。",
   "mod.tips4": "このモッドには構成オプションがありません。",
+  "mod.dismiss.button": "今後表示しない",
+  "mod.dismiss.success": "アラートを非表示にしました",
 
   "backup.BackupList": "バックアップリスト",
   "backup.SnapshotBackup": "スナップショットバックアップ",

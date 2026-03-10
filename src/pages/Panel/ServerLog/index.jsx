@@ -123,7 +123,7 @@ export default () => {
     return <>
         <Spin spinning={spinLoading}>
             <ProCard
-                title={'💻 服务器日志'}
+                title={'服务器日志'}
                 extra={<Space>
                     <Select
                         style={{

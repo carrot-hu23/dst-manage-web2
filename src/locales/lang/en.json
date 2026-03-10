@@ -258,6 +258,12 @@
   "mod.tips2": "Whether to update all mod configurations",
   "mod.tips3": "Manually upload the modifo.lua file. Due to server network problems, mods often fail to download. In this case, you can upload the local module modinfo to the server.",
   "mod.tips4": "This mod dont have configuration options",
+  "mod.dismiss.button": "Don't show again",
+  "mod.dismiss.success": "Alert dismissed",
+  "mod.preference.save": "Save Preference",
+  "mod.preference.save.ok": "Mod preference saved successfully",
+  "mod.preference.save.error": "Failed to save mod preference",
+  "mod.preference.no.config": "This mod has no configuration to save",
 
   "backup.BackupList": "BackupList",
   "backup.SnapshotBackup": "SnapshotBackup",

@@ -80,9 +80,7 @@ export default () => {
     return (
         <>
             <ProCard
-                // style={{borderRadius: 12}}
-                // bordered
-                title="🏛️ 服务器信息"
+                title="服务器信息"
             >
                 <OpBtnGroup/>
                 <br/>
@@ -122,40 +120,40 @@ export default () => {
                         name="gameMode"
                         label="游戏模式"
                     >
-                        ⛺ {getDstMod("", archive.gameMod)}
+                        {getDstMod("", archive.gameMod)}
                     </ProFormText>
                     <ProFormText
                         colProps={{xs: 12, xl: 12, md: 12}}
                         name="modCount"
                         label="模组数量"
                     >
-                        📦 {archive.mods || 0}
+                        {archive.mods || 0}
                     </ProFormText>
                     <ProFormText
                         colProps={{xs: 12, xl: 12, md: 12}}
                         name="daysProgress"
                         label="天数进度"
                     >
-                        📅 {getSeasonInfo()}
+                        {getSeasonInfo()}
                     </ProFormText>
                     <ProFormText
                         colProps={{xs: 12, xl: 12, md: 12}}
                         name="playerCount"
                         label="玩家数量"
                     >
-                        👥 <span>{`${playerList?.length}/${archive.maxPlayers}`}</span>
+                        <span>{`${playerList?.length}/${archive.maxPlayers}`}</span>
                     </ProFormText>
                     <ProFormText
                         colProps={{xs: 12, xl: 12, md: 12}}
                         name="gameVersion"
                         label="游戏版本"
                     >
-                        🎯 {archive.version || "--"} / {archive.lastVersion || "--"}
+                        {archive.version || "--"} / {archive.lastVersion || "--"}
                     </ProFormText>
                     <ProFormText.Password
                         colProps={{xs: 12, xl: 12, md: 12}}
                         name="ipConnect"
-                        label="🔒 IP连接"
+                        label="IP连接"
                     >
                         <Space size={8}>
                             <HiddenText text={archive.ipConnect}/>
@@ -168,7 +166,7 @@ export default () => {
                     <ProFormText.Password
                         colProps={{xs: 12, xl: 12, md: 12}}
                         name="clusterPassword"
-                        label="🏠 房间密码"
+                        label="房间密码"
                     >
                         <HiddenText text={archive?.clusterPassword}/>
                     </ProFormText.Password>

@@ -12,6 +12,7 @@ import ModConfigOptions from "../ModConfigOptions/index.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore";
 import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
 import i18n from "i18next";
+import {useUserPreferences} from "../../../hooks/useUserPreferences.ts";
 
 // eslint-disable-next-line react/prop-types
 export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
@@ -24,9 +25,11 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     const navigate = useNavigate();
     const {cluster} = useParams()
     const lang = i18n.language
+    const {isDismissed, dismissAlert} = useUserPreferences()
 
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [mod, setMod] = useState({})
+    const [showModTips1Alert, setShowModTips1Alert] = useState(true)
 
     const changeMod = (mod) => {
         const _mod = _.cloneDeep(mod);
@@ -178,6 +181,21 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         setMod(uniqueModList[0] || {})
     }, [modList])
 
+    useEffect(() => {
+        // 检查用户是否已关闭提示
+        isDismissed('mod-tips1').then(dismissed => {
+            setShowModTips1Alert(!dismissed)
+        })
+    }, [])
+
+    const handleDismissModTips1 = async () => {
+        const success = await dismissAlert('mod-tips1')
+        if (success) {
+            setShowModTips1Alert(false)
+            message.success(t('mod.dismiss.success'))
+        }
+    }
+
     const updateModSize = modList.filter(mod=>mod.update)
 
     const handleChange = (value) => {
@@ -186,13 +204,25 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     return (
-        <>
+        <div translate="no">
             <Spin spinning={confirmLoading}>
-                <div style={{
-                    paddingBottom: 8
-                }}>
-                    <Alert message={t('mod.tips1')} type={'info'} showIcon closable/>
-                </div>
+                {showModTips1Alert && (
+                    <div style={{
+                        paddingBottom: 8
+                    }}>
+                        <Alert
+                            message={t('mod.tips1')}
+                            type={'info'}
+                            showIcon
+                            closable
+                            action={
+                                <Button size="small" type="link" onClick={handleDismissModTips1}>
+                                    {t('mod.dismiss.button')}
+                                </Button>
+                            }
+                        />
+                    </div>
+                )}
 
                     {updateModSize.length > 0 && <>
                         <div style={{
@@ -272,6 +302,6 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                         </Col>
                     </Row>
             </Spin>
-        </>
+        </div>
 )
 }

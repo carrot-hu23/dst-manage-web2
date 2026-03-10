@@ -29,6 +29,7 @@ import ToggleTheme from "./ToggleTheme.tsx";
 import {useTheme} from "../hooks/useTheme";
 import {useThemeConfigStore} from "../store/useThemeConfigStore";
 import {useUserStore} from "../store/useUserStore";
+import {Ad} from "../pages/Ad";
 
 const {Link} = Typography;
 
@@ -173,10 +174,7 @@ export default () => {
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
-                                <Link target={'_blank'} href={'https://www.lcayun.com/aff/OYXIWEQC'}>
-                                    莱卡云
-                                    <CloudServerOutlined />
-                                </Link>,
+                                <Ad/>,
                                 <div onClick={() => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}>

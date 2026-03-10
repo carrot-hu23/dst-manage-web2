@@ -261,6 +261,12 @@
   "mod.tips2": "是否更新所有mod配置",
   "mod.tips3": "手动上传modinfo.lua文件。由于服务器网络问题，mod常常下载失败，此时可以将本地模块modinfo上传到服务器。",
   "mod.tips4": "该mod没有配置选项",
+  "mod.dismiss.button": "不再提示",
+  "mod.dismiss.success": "已关闭提示",
+  "mod.preference.save": "保存偏好",
+  "mod.preference.save.ok": "模组偏好已保存",
+  "mod.preference.save.error": "保存模组偏好失败",
+  "mod.preference.no.config": "该模组没有可保存的配置",
 
   "backup.BackupList": "备份列表",
   "backup.SnapshotBackup": "快照备份",

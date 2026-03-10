@@ -229,7 +229,7 @@ export default () => {
     }
 
     return (
-        <ProCard title={'🌍 世界列表'}
+        <ProCard title={'世界列表'}
                  extra={<Space wrap>
                      <Popconfirm
                          title={t('panel.start.all')}

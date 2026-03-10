@@ -87,7 +87,7 @@ const ServerMetrics = () => {
                 <ProCard
                     // style={{borderRadius: 12}}
                     // bordered
-                    title="💻 面板"
+                    title="面板"
                     extra={<Tag color="green">{panelMemUsage}</Tag>}
                 >
                     <h3>{panelMemUsage}</h3>

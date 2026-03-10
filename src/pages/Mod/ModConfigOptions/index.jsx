@@ -8,6 +8,7 @@ import {updateModApi} from "../../../api/modApi.jsx";
 
 import OptionSelect from "./OptionsSelect/index.jsx";
 import i18n from "i18next";
+import {useModPreferences} from "../../../hooks/useModPreferences";
 
 const { Paragraph } = Typography;
 
@@ -55,6 +56,9 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
 
     const [open, setOpen] = useState(false);
     const [spinning, setSpinning] = useState(false)
+    const [savePreferenceLoading, setSavePreferenceLoading] = useState(false)
+
+    const {saveModPreference} = useModPreferences()
 
     function updateMod() {
         setSpinning(true)
@@ -81,6 +85,28 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     message.success(t('mod.update.ok'))
                 }
             })
+    }
+
+    async function handleSavePreference() {
+        setSavePreferenceLoading(true)
+        try {
+            const currentConfig = defaultConfigOptionsRef.current.get(mod.modid)
+            if (!currentConfig) {
+                message.warning(t('mod.preference.no.config'))
+                return
+            }
+            const success = await saveModPreference(mod.modid, currentConfig)
+            if (success) {
+                message.success(t('mod.preference.save.ok'))
+            } else {
+                message.error(t('mod.preference.save.error'))
+            }
+        } catch (error) {
+            console.error('Save preference error:', error)
+            message.error(t('mod.preference.save.error'))
+        } finally {
+            setSavePreferenceLoading(false)
+        }
     }
 
     return (
@@ -152,6 +178,15 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     width={860}
                     destroyOnClose
                     footer={null}
+                    extra={
+                        <Button
+                            type="primary"
+                            loading={savePreferenceLoading}
+                            onClick={handleSavePreference}
+                        >
+                            {t('mod.preference.save')}
+                        </Button>
+                    }
                 >
                     <div>
                         {mod?.mod_config?.configuration_options !== undefined && (
