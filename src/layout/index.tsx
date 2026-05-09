@@ -71,7 +71,10 @@ export default () => {
 
     const logout = async () => {
         clearUser()
-        localStorage.clear()
+        // 清除记住的凭证
+        // localStorage.removeItem('remembered-credentials')
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
         const data = await http.get("/api/logout")
         console.log('logout', data);
         navigate('/login', {replace: true});

@@ -13,7 +13,6 @@ import {
     Modal,
     Radio,
     Skeleton,
-    Space,
     Switch,
     Tabs,
     TabsProps,
@@ -44,12 +43,13 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, 
     const {t} = useTranslation();
     useEffect(() => {
     }, [level]);
-    const height = '64vh'
     const items: any = [
         {
             label: t('level.leveldataoverride'),
             children: <div className={'scrollbar'} style={{
-                height: height,
+                height: 'calc(100vh - 280px)',
+                minHeight: '400px',
+                maxHeight: '800px',
                 overflowY: 'auto',
             }}>
                 <Leveldataoverride dstWorldSetting={dstWorldSetting} porklandSetting={porklandSetting}
@@ -61,7 +61,9 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, 
         {
             label: t('level.modoverrides'),
             children: <div className={'scrollbar'} style={{
-                height: height,
+                height: 'calc(100vh - 280px)',
+                minHeight: '400px',
+                maxHeight: '800px',
                 overflowY: 'auto',
             }}><Modoverrides levelName={levelName} level={level}
                              changeLevel={changeLevel} has={has}/>
@@ -72,7 +74,9 @@ const LevelItem: React.FC<LevelItemProps> = ({dstWorldSetting, porklandSetting, 
             key: 3,
             label: t('level.serverIni'),
             children: <div className={'scrollbar'} style={{
-                height: '54vh',
+                height: 'calc(100vh - 340px)',
+                minHeight: '400px',
+                maxHeight: '800px',
                 overflowY: 'auto',
             }}><ServerIni levelName={levelName} level={level}
                           changeLevel={changeLevel} has={has}/>
@@ -122,7 +126,9 @@ const Leveldataoverride: React.FC<LevelItemProps> = (props) => {
                 <MonacoEditor2 ref={editorRef}
                                theme={theme === 'dark' ? 'vs-dark' : ''}
                                style={{
-                                   "height": "54vh",
+                                   "height": "calc(100vh - 340px)",
+                                   "minHeight": "300px",
+                                   "maxHeight": "600px",
                                    "width": "100%"
                                }}
                                onChange={value => {
@@ -155,7 +161,9 @@ const Modoverrides: React.FC<LevelItemProps> = (props) => {
             <MonacoEditor2 ref={editorRef}
                            theme={theme === 'dark' ? 'vs-dark' : ''}
                            style={{
-                               "height": "50vh",
+                               "height": "calc(100vh - 340px)",
+                               "minHeight": "300px",
+                               "maxHeight": "600px",
                                "width": "100%"
                            }}
                            onChange={value => {
@@ -920,7 +928,8 @@ const Level2 = () => {
             <Tabs
                 tabPosition={'top'}
                 style={{
-                    height: '68vh',
+                    height: 'calc(100vh - 240px)',
+                    minHeight: '500px',
                 }}
                 hideAdd
                 type="editable-card"
@@ -930,12 +939,10 @@ const Level2 = () => {
                 items={items}
             />
             <Divider/>
-            <div style={{
-                display: 'flex',
-                justifyContent: 'space-between'
-            }}>
-                <Space size={12} wrap>
-                    <Button type={"primary"} onClick={handleSave}>{t('level.save')}</Button>
+            <div className="level-buttons-container">
+                <Button type={"primary"} onClick={handleSave} className="level-save-btn">{t('level.save')}</Button>
+
+                <div className="level-other-buttons-wrapper">
                     {has('allowAddLevel') &&
                         <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
                     }
@@ -943,7 +950,7 @@ const Level2 = () => {
                         <Button type={'primary'}>导入</Button>
                     </Upload>
                     <Button type={'primary'} onClick={handleDownload}>下载</Button>
-                </Space>
+                </div>
             </div>
         {/* Add Level Modal */}
         <Modal

@@ -153,7 +153,7 @@ export default () => {
                     className={style.icon}
                     ref={editorRef}
                     style={{
-                        "height": "370px",
+                        "height": "304px",
                         "width": "100%",
                     }}
                     options={{

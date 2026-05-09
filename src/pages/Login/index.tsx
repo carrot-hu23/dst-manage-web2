@@ -10,9 +10,30 @@ import {useEffect, useState} from "react";
 import {useTheme} from "../../hooks/useTheme";
 import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
 import ToggleTheme from "../../layout/ToggleTheme";
-import {isFirstApi} from "../../api/InitApi.jsx";
+import {isFirstApi} from "../../api/InitApi";
+import type {ApiResponse} from "../../types";
 
 const {Title} = Typography;
+
+// 登录表单值类型
+interface LoginFormValues {
+    username: string;
+    password: string;
+    remember?: boolean;
+}
+
+// 登录 API 响应数据类型
+interface LoginResponseData {
+    username: string;
+    displayName?: string;
+    photoURL?: string;
+}
+
+// 记住的凭证类型
+interface RememberedCredentials {
+    username: string;
+    password: string;
+}
 
 const StyledContent = {
     maxWidth: 380,
@@ -20,16 +41,32 @@ const StyledContent = {
     height: '100vh',
     display: 'flex',
     justifyContent: 'center',
-    flexDirection: 'column',
-    // textAlign: 'center',
+    flexDirection: 'column' as const,
     alignItems: 'center'
 }
 
-const Login = () => {
+// Base64 编码函数
+const encodeCredentials = (credentials: RememberedCredentials): string => {
+    return btoa(JSON.stringify(credentials));
+}
+
+// Base64 解码函数
+const decodeCredentials = (encoded: string): RememberedCredentials | null => {
+    try {
+        return JSON.parse(atob(encoded));
+    } catch (error) {
+        console.error('Failed to decode credentials:', error);
+        return null;
+    }
+}
+
+const Login: React.FC = () => {
     const {t} = useTranslation()
     const navigate = useNavigate()
+    const [form] = Form.useForm<LoginFormValues>();
 
-    const [isFirstTime, setIsFirstTime] = useState(false);
+    const [isFirstTime, setIsFirstTime] = useState<boolean>(false);
+
     useEffect(() => {
         isFirstApi().then(data => {
             if (data.code === 200) {
@@ -41,16 +78,50 @@ const Login = () => {
         setIsFirstTime(false)
     }, [])
 
-    const onFinish = async (values) => {
+    // 加载记住的凭证
+    useEffect(() => {
+        try {
+            const remembered = localStorage.getItem('remembered-credentials');
+            if (remembered) {
+                const credentials = decodeCredentials(remembered);
+                if (credentials) {
+                    form.setFieldsValue({
+                        username: credentials.username,
+                        password: credentials.password,
+                        remember: true
+                    });
+                }
+            }
+        } catch (error) {
+            console.error('Failed to load remembered credentials:', error);
+            localStorage.removeItem('remembered-credentials');
+        }
+    }, [form]);
+
+    const onFinish = async (values: LoginFormValues) => {
         // 2.登录
-        const loginResponse = await http.post("/api/login", values)
+        const loginResponse = await http.post<ApiResponse<LoginResponseData>>("/api/login", {
+            username: values.username,
+            password: values.password
+        })
         const loginResponseData = loginResponse.data
         if (loginResponseData.code !== 200) {
             message.error("登录失败")
             return
         }
+        console.log("values", values)
+        // 处理记住密码
+        if (values.remember) {
+            const credentials: RememberedCredentials = {
+                username: values.username,
+                password: values.password
+            };
+            localStorage.setItem('remembered-credentials', encodeCredentials(credentials));
+        } else {
+            localStorage.removeItem('remembered-credentials');
+        }
 
-        localStorage.setItem("token", loginResponseData.data.username)
+        localStorage.setItem("token", loginResponseData.data!.username)
         localStorage.setItem("user", JSON.stringify(loginResponseData.data))
         // 3.跳转
         navigate('/')
@@ -87,7 +158,7 @@ const Login = () => {
                     <Title level={3}>{t('loginTitle')}</Title>
                     <br/>
                     <Form
-                        // name="normal_login"
+                        form={form}
                         onFinish={onFinish}
                     >
                         <Form.Item
@@ -116,13 +187,16 @@ const Login = () => {
                                 placeholder="Password"
                             />
                         </Form.Item>
-                        {/*
-                        <Form.Item name="remember" valuePropName="checked" label={null}>
-                            <Tooltip title={'七天内免登录'}>
-                                <Checkbox>{t('login.remember.me')}</Checkbox>
-                            </Tooltip>
+                        <Form.Item
+                            name="remember"
+                            valuePropName="checked"
+                        >
+                            <Checkbox>
+                                <Tooltip title={'记住账号密码，下次自动填充'}>
+                                    <span>{t('login.remember.me')}</span>
+                                </Tooltip>
+                            </Checkbox>
                         </Form.Item>
-                        */}
                         <Form.Item>
                             <div
                                 style={{

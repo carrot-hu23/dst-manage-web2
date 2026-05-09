@@ -272,7 +272,8 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                     <Row gutter={24}>
                         <Col span={10} xs={24} md={10} lg={10}>
                             <div className={'scrollbar'} style={{
-                                height: '60vh',
+                                height: 'calc(100vh - 320px)',
+                                minHeight: '400px',
                                 overflowY: 'auto',
                                 overflowX: 'auto'
                             }}>

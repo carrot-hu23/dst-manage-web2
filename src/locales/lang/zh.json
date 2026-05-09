@@ -2,7 +2,7 @@
   "loginTitle": "饥荒联机版管理面板",
   "web.title": "饥荒联机版控制台",
   "web.login": "登录",
-  "login.remember.me": "自动登录",
+  "login.remember.me": "记住密码",
 
   "init.previous": "上一步",
   "init.next": "下一步",
@@ -178,7 +178,7 @@
 
   "level.worldSettings": "世界设置",
   "level.worldGeneration": "世界生成",
-  "level.save": "保存",
+  "level.save": "保存世界",
   "level.add": "添加世界",
   "level.name": "世界名称",
   "level.filename": "世界文件名",

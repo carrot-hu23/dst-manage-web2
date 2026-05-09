@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {Alert, message, Select, Space, Tabs} from "antd";
+import {Alert, Col, message, Row, Select, Tabs} from "antd";
 import {parse, format} from "lua-json";
 import './index.css';
 import {useTranslation} from "react-i18next";
@@ -37,7 +37,7 @@ const Group: React.FC<GroupProps> = ({
                                          isWorldGen
                                      }) => {
 
-    console.log(leveldataoverride, data, url, leveldataoverrideObject);
+    // console.log(leveldataoverride, data, url, leveldataoverrideObject);
 
     function getWebp(key: string, key2: string) {
         if (type === 'porkland' && key === 'global' && isWorldGen) {
@@ -61,47 +61,50 @@ const Group: React.FC<GroupProps> = ({
             {Object.keys(data)
                 .sort((a, b) => data[a].order - data[b].order)
                 .map(key =>
-                    <div key={key}>
+                    <div key={key} style={{ overflow: 'hidden' }}>
                         <h3>{data[key].text}</h3>
-                        <Space size={[32, 8]} wrap>
+                        <Row gutter={[16, 16]}>
                             {Object.entries(data[key].items)
                                 .map(([key2, value]) =>
-                                    <Space key={key2} align="center" size={'middle'}>
-                                        <div style={{
-                                            width: '64px',
-                                            height: '64px',
-                                            backgroundImage: `url(${getWebp(key, key2)})`,
-                                            // @ts-ignore
-                                            backgroundPosition: `-${Math.round(value?.image?.x * data[key].atlas.width / data[key].atlas.item_size) * 100}% -${Math.round(value.image.y * data[key].atlas.height / data[key].atlas.item_size) * 100}%`
-                                        }}/>
-                                        <div>
-                                            <span>{value.text}</span>
-                                            <Item
+                                    <Col key={key2} xs={24} sm={12} md={8} lg={8} xl={4}>
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                                            <div style={{
+                                                width: '64px',
+                                                height: '64px',
+                                                flexShrink: 0,
+                                                backgroundImage: `url(${getWebp(key, key2)})`,
                                                 // @ts-ignore
-                                                options={
+                                                backgroundPosition: `-${Math.round(value?.image?.x * data[key].atlas.width / data[key].atlas.item_size) * 100}% -${Math.round(value.image.y * data[key].atlas.height / data[key].atlas.item_size) * 100}%`
+                                            }}/>
+                                            <div style={{ flex: 1, minWidth: 0 }}>
+                                                <span>{value.text}</span>
+                                                <Item
                                                     // @ts-ignore
-                                                    ((value.desc !== undefined && value.desc !== null) && Object.entries(value.desc).map(([k, v]) => ({
-                                                        value: k,
-                                                        label: v,
-                                                    }))) || (data[key].desc !== undefined &&
-                                                        data[key].desc !== null) &&
-                                                    Object.entries(data[key].desc).map(([k, v]) => ({
-                                                        value: k,
-                                                        label: v,
-                                                    }))
-                                                }
-                                                currentValue={leveldataoverrideObject[key2]}
-                                                // @ts-ignore
-                                                defaultValue={value.value}
-                                                name={key2}
-                                                leveldataoverride={leveldataoverride}
-                                                onStateChange={onStateChange}
-                                                changeValue={changeValue}
-                                            />
+                                                    options={
+                                                        // @ts-ignore
+                                                        ((value.desc !== undefined && value.desc !== null) && Object.entries(value.desc).map(([k, v]) => ({
+                                                            value: k,
+                                                            label: v,
+                                                        }))) || (data[key].desc !== undefined &&
+                                                            data[key].desc !== null) &&
+                                                        Object.entries(data[key].desc).map(([k, v]) => ({
+                                                            value: k,
+                                                            label: v,
+                                                        }))
+                                                    }
+                                                    currentValue={leveldataoverrideObject[key2]}
+                                                    // @ts-ignore
+                                                    defaultValue={value.value}
+                                                    name={key2}
+                                                    leveldataoverride={leveldataoverride}
+                                                    onStateChange={onStateChange}
+                                                    changeValue={changeValue}
+                                                />
+                                            </div>
                                         </div>
-                                    </Space>)
+                                    </Col>)
                             }
-                        </Space>
+                        </Row>
                     </div>
                 )}
         </>
@@ -152,7 +155,7 @@ const Item: React.FC<ItemProps> = ({
     return (
         <div>
             <Select
-                style={{width: 120}}
+                style={{width: '100%'}}
                 value={currentValue}
                 defaultValue={defaultValue}
                 onChange={handleChange}
@@ -319,7 +322,8 @@ const LevelViewEditor: React.FC<{
     return (
         <>
             <div className={'scrollbar'} style={{
-                "height": "50vh",
+                "height": "calc(100vh - 420px)",
+                "minHeight": "300px",
                 overflowY: 'auto',
             }}>
                 {levelType === 'forest' && <Tabs items={forestItems}/>}

@@ -1,6 +1,6 @@
 import {Navigate, useRoutes} from 'react-router-dom';
 
-import Login from './pages/Login/index.jsx';
+import Login from './pages/Login/index.tsx';
 
 import Backup from './pages/Backup/index.jsx';
 import Setting from './pages/System/index.jsx';
