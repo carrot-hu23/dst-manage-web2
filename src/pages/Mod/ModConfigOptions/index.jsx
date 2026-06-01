@@ -178,15 +178,15 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                     width={860}
                     destroyOnClose
                     footer={null}
-                    extra={
-                        <Button
-                            type="primary"
-                            loading={savePreferenceLoading}
-                            onClick={handleSavePreference}
-                        >
-                            {t('mod.preference.save')}
-                        </Button>
-                    }
+                    // extra={
+                    //     <Button
+                    //         type="primary"
+                    //         loading={savePreferenceLoading}
+                    //         onClick={handleSavePreference}
+                    //     >
+                    //         {t('mod.preference.save')}
+                    //     </Button>
+                    // }
                 >
                     <div>
                         {mod?.mod_config?.configuration_options !== undefined && (
