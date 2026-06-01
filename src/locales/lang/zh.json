@@ -139,8 +139,8 @@
   "cluster.save.error": "保存失败",
   "cluster.fetch.error": "获取房间配置失败",
 
-  "cluster.BaseSetting": "基础设置",
-  "cluster.ShardSetting": "多世界设置",
+  "cluster.BaseSetting": "房间设置",
+  "cluster.ShardSetting": "网络设置",
   "cluster.SteamSetting": "Steam设置",
 
   "cluster.cluster_name": "名称",
@@ -178,7 +178,7 @@
 
   "level.worldSettings": "世界设置",
   "level.worldGeneration": "世界生成",
-  "level.save": "保存世界",
+  "level.save": "保存",
   "level.add": "添加世界",
   "level.name": "世界名称",
   "level.filename": "世界文件名",

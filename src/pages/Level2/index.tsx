@@ -12,10 +12,11 @@ import {
     message,
     Modal,
     Radio,
-    Skeleton,
+    Skeleton, Space,
     Switch,
     Tabs,
     TabsProps,
+    Tag,
     Upload
 } from "antd";
 import type {MenuProps} from 'antd';
@@ -29,6 +30,21 @@ import LevelViewer from "./LevelViewer.tsx";
 import {getLevelListApi, createLevelApi, deleteLevelApi, updateLevelsApi} from "../../api/levelApi";
 import type {LevelData, LevelServerIni} from "../../type";
 import {cave, forest, porkland} from "../../utils/dst";
+
+// 世界标签组件
+interface LevelTagsProps {
+    isMaster?: boolean;
+    serverPort?: number;
+}
+
+const LevelTags: React.FC<LevelTagsProps> = ({isMaster, serverPort}) => {
+    return (
+        <>
+            {isMaster && <Tag color="blue" bordered={false}>主</Tag>}
+            {serverPort && <Tag color="green" bordered={true}>{serverPort}</Tag>}
+        </>
+    );
+};
 
 interface LevelItemProps {
     dstWorldSetting?: Record<string, object>
@@ -185,7 +201,9 @@ const ServerIni: React.FC<LevelItemProps> = (props) => {
 
     function onValuesChange(_changedValues: object, allValues: Record<string, object>) {
         if (props.changeLevel) {
-            props.changeLevel(props.levelName || '', {server_ini: allValues})
+            // 确保 allValues 包含完整的 server_ini 数据
+            const serverIni = allValues as unknown as LevelServerIni
+            props.changeLevel(props.levelName || '', {server_ini: serverIni})
         }
     }
 
@@ -349,6 +367,7 @@ const Level2 = () => {
 
     const levelListRef = useRef<LevelData[]>([]);
     const [items, setItems] = useState<TabsProps['items']>([])
+    const itemsRef = useRef<TabsProps['items']>([])
     const [activeKey, setActiveKey] = useState('');
 
     // Modal states
@@ -379,6 +398,64 @@ const Level2 = () => {
             }
             return level
         })
+
+        // 如果修改了 server_ini，更新对应标签的 label
+        if (changeValue.server_ini && itemsRef.current && itemsRef.current.length > 0) {
+            const updatedLevel = levelListRef.current.find(l => l.levelName === levelName)
+            if (!updatedLevel) {
+                return
+            }
+
+            const newItems = itemsRef.current.map(item => {
+                // 只更新匹配的 item
+                if (item.key === updatedLevel.uuid) {
+                    const closable = (updatedLevel.uuid !== "Master" && has('allowAddLevel'))
+                    const menuItems: MenuProps['items'] = [
+                        {
+                            key: 'rename',
+                            label: '重命名',
+                            icon: <EditOutlined/>,
+                            onClick: () => {
+                                setRenameLevelUuid(updatedLevel.uuid)
+                                setRenameLevelOldName(updatedLevel.levelName)
+                                renameForm.setFieldsValue({newLevelName: updatedLevel.levelName})
+                                setOpenRename(true)
+                            }
+                        }
+                    ];
+
+                    // 只更新 label，保持 children 不变以避免重新渲染
+                    return {
+                        ...item,
+                        closable: closable,
+                        label: (
+                            <Dropdown menu={{items: menuItems}} trigger={['contextMenu']}>
+                                <div
+                                    onDoubleClick={() => {
+                                        setRenameLevelUuid(updatedLevel.uuid)
+                                        setRenameLevelOldName(updatedLevel.levelName)
+                                        renameForm.setFieldsValue({newLevelName: updatedLevel.levelName})
+                                        setOpenRename(true)
+                                    }}
+                                    style={{cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '8px'}}
+                                >
+                                    <span>{updatedLevel.levelName}</span>
+                                    <LevelTags
+                                        isMaster={updatedLevel.server_ini?.is_master}
+                                        serverPort={updatedLevel.server_ini?.server_port}
+                                    />
+                                </div>
+                            </Dropdown>
+                        ),
+                    }
+                }
+                // 其他 item 保持不变
+                return item
+            })
+
+            itemsRef.current = newItems
+            setItems(newItems)
+        }
     }
 
     useEffect(() => {
@@ -438,9 +515,13 @@ const Level2 = () => {
                                             renameForm.setFieldsValue({newLevelName: level.levelName})
                                             setOpenRename(true)
                                         }}
-                                        style={{cursor: 'pointer', userSelect: 'none'}}
+                                        style={{cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '8px'}}
                                     >
-                                        {level.levelName}
+                                        <span>{level.levelName}</span>
+                                        <LevelTags
+                                            isMaster={level.server_ini?.is_master}
+                                            serverPort={level.server_ini?.server_port}
+                                        />
                                     </div>
                                 </Dropdown>
                             ),
@@ -456,6 +537,7 @@ const Level2 = () => {
                             closable: closable,
                         }
                     })
+                    itemsRef.current = items2
                     setItems(items2)
                     if (levels.length === 0) {
                         setActiveKey("")
@@ -604,9 +686,13 @@ const Level2 = () => {
                                             renameForm.setFieldsValue({newLevelName: level.levelName})
                                             setOpenRename(true)
                                         }}
-                                        style={{cursor: 'pointer', userSelect: 'none'}}
+                                        style={{cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '8px'}}
                                     >
-                                        {level.levelName}
+                                        <span>{level.levelName}</span>
+                                        <LevelTags
+                                            isMaster={level.server_ini?.is_master}
+                                            serverPort={level.server_ini?.server_port}
+                                        />
                                     </div>
                                 </Dropdown>
                             ),
@@ -623,6 +709,7 @@ const Level2 = () => {
                             closable: closable,
                         }
                     });
+                    itemsRef.current = items2
                     setItems(items2);
                     message.success("导入成功")
                 } catch (error) {
@@ -675,9 +762,13 @@ const Level2 = () => {
                             renameForm.setFieldsValue({newLevelName: levelName})
                             setOpenRename(true)
                         }}
-                        style={{cursor: 'pointer', userSelect: 'none'}}
+                        style={{cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '8px'}}
                     >
-                        {levelName}
+                        <span>{levelName}</span>
+                        <LevelTags
+                            isMaster={server_ini?.is_master}
+                            serverPort={server_ini?.server_port}
+                        />
                     </div>
                 </Dropdown>
             ),
@@ -692,6 +783,7 @@ const Level2 = () => {
             key: uuid,
             closable: has('allowAddLevel'),
         })
+        itemsRef.current = newPanes
         setItems(newPanes);
         setActiveKey(uuid);
     }
@@ -721,6 +813,7 @@ const Level2 = () => {
                 newActiveKey = newPanes[0].key as string;
             }
         }
+        itemsRef.current = newPanes
         setItems(newPanes);
         setActiveKey(newActiveKey);
 
@@ -872,9 +965,13 @@ const Level2 = () => {
                                             renameForm.setFieldsValue({newLevelName: level.levelName})
                                             setOpenRename(true)
                                         }}
-                                        style={{cursor: 'pointer', userSelect: 'none'}}
+                                        style={{cursor: 'pointer', userSelect: 'none', display: 'flex', alignItems: 'center', gap: '8px'}}
                                     >
-                                        {newLevelName}
+                                        <span>{newLevelName}</span>
+                                        <LevelTags
+                                            isMaster={level.server_ini?.is_master}
+                                            serverPort={level.server_ini?.server_port}
+                                        />
                                     </div>
                                 </Dropdown>
                             ),
@@ -891,6 +988,7 @@ const Level2 = () => {
                 }
                 return item
             })
+            itemsRef.current = newItems
             setItems(newItems)
 
             message.success(`世界名称已修改为: ${newLevelName}`)
@@ -939,19 +1037,16 @@ const Level2 = () => {
                 items={items}
             />
             <Divider/>
-            <div className="level-buttons-container">
-                <Button type={"primary"} onClick={handleSave} className="level-save-btn">{t('level.save')}</Button>
-
-                <div className="level-other-buttons-wrapper">
-                    {has('allowAddLevel') &&
-                        <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
-                    }
-                    <Upload beforeUpload={handleUpload} showUploadList={false}>
-                        <Button type={'primary'}>导入</Button>
-                    </Upload>
-                    <Button type={'primary'} onClick={handleDownload}>下载</Button>
-                </div>
-            </div>
+            <Space size={8} wrap>
+                <Button type={"primary"} onClick={handleSave}>{t('level.save')}</Button>
+                {has('allowAddLevel') &&
+                    <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
+                }
+                <Upload beforeUpload={handleUpload} showUploadList={false}>
+                    <Button type={'primary'}>导入</Button>
+                </Upload>
+                <Button type={'primary'} onClick={handleDownload}>下载</Button>
+            </Space>
         {/* Add Level Modal */}
         <Modal
             title={t('level.add')}
