@@ -5,7 +5,7 @@ import {Card, Switch, Popconfirm, Row, Col, Button, message, Spin, Badge} from '
 import './mod.css';
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {deleteModInfo, getModInfo} from "../../../../api/modApi.jsx";
+import {getModInfo} from "../../../../api/modApi.jsx";
 
 function subscribeMod(lang, t, modid, modList, setModList, setStartLoading) {
     setStartLoading(true)
@@ -105,12 +105,7 @@ const ModItem = (props) => {
                                         okText="Yes"
                                         cancelText="No"
                                         onConfirm={() => {
-                                            deleteModInfo(cluster, mod.modid)
-                                                .then(resp => {
-                                                    if (resp.code === 200) {
-                                                        removeMod(mod.modid)
-                                                    }
-                                                })
+                                            removeMod(mod.modid)
                                         }}
                                     >
                                         <Button type="text" danger onClick={(event) => {
@@ -167,12 +162,7 @@ const ModItem = (props) => {
                                     okText="Yes"
                                     cancelText="No"
                                     onConfirm={() => {
-                                        deleteModInfo(cluster, mod.modid)
-                                            .then(resp => {
-                                                if (resp.code === 200) {
-                                                    removeMod(mod.modid)
-                                                }
-                                            })
+                                        removeMod(mod.modid)
                                     }}
                                 >
                                     <Button type="text" danger onClick={(event) => {

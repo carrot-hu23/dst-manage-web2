@@ -20,6 +20,7 @@ export default () => {
 
     const [modoverrides, setmodoverrides] = useState("")
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('1')
 
     // 模组列表展示数据
     const [modList, setmodList] = useState([])
@@ -28,6 +29,7 @@ export default () => {
     const defaultConfigOptionsRef = useRef(new Map())
     // 模组配置项
     const modConfigOptionsRef = useRef({})
+    const saveOnLeaveRef = useRef(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -180,6 +182,9 @@ export default () => {
                                defaultConfigOptionsRef={defaultConfigOptionsRef}
                                modConfigOptionsRef={modConfigOptionsRef}
                                changeLevel={changeLevel}
+                               registerSaveOnLeave={(handler) => {
+                                   saveOnLeaveRef.current = handler
+                               }}
             />,
         },
         {
@@ -197,7 +202,12 @@ export default () => {
     return (
         <>
             <Skeleton loading={loading}>
-                <Tabs defaultActiveKey="1" items={items}/>
+                <Tabs activeKey={activeTab} items={items} onChange={(key) => {
+                    if (activeTab === '1' && key !== '1' && saveOnLeaveRef.current) {
+                        saveOnLeaveRef.current()
+                    }
+                    setActiveTab(key)
+                }}/>
             </Skeleton>
         </>
     )

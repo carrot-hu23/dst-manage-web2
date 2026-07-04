@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import _ from "lodash";
 import {Row, Col, Button, Space, Tooltip, message, Alert, Popconfirm, Spin, Select} from 'antd';
 import {useNavigate, useParams} from "react-router-dom";
@@ -13,7 +13,7 @@ import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
 import i18n from "i18next";
 
 // eslint-disable-next-line react/prop-types
-export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
+export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel, registerSaveOnLeave}) => {
 
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
@@ -26,6 +26,9 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
 
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [mod, setMod] = useState({})
+    const modListRef = useRef(modList)
+    const levelsRef = useRef(levels)
+    const pendingDeleteSyncRef = useRef(false)
 
     const changeMod = (mod) => {
         const _mod = _.cloneDeep(mod);
@@ -92,30 +95,42 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         }
     }
 
-    function saveModConfig() {
-        const modoverrides = formatModOverride()
+    function saveModConfig(options = {}) {
+        const {silent = false, onlyIfPendingDelete = false} = options
+        if (onlyIfPendingDelete && !pendingDeleteSyncRef.current) {
+            return Promise.resolve(false)
+        }
+        const modoverrides = formatModOverride(modListRef.current)
         if (modoverrides === "return { error }") {
             message.warning(t('mod.parse.error'))
-            return
+            return Promise.resolve(false)
         }
-        const newLevels = levels.map(item => ({
+        const newLevels = levelsRef.current.map(item => ({
             ...item,
             modoverrides,
         }))
         console.log("save all levels modoverrides", newLevels)
-        updateLevelsApi({levels: newLevels})
+        return updateLevelsApi({levels: newLevels})
             .then(resp => {
                 if (resp.code === 200) {
-                    message.info(t('mod.save.ok'))
+                    pendingDeleteSyncRef.current = false
+                    if (!silent) {
+                        message.info(t('mod.save.ok'))
+                    }
                     reFlushLevels(cluster)
+                    return true
                 } else {
                     message.warning(t('level.save.error'))
                     message.warning(resp.msg)
+                    return false
                 }
             })
             .catch(error => {
                 console.log(error);
-                message.error(t('mod.save.error'))
+                if (!silent) {
+                    message.error(t('mod.save.error'))
+                }
+                return false
             })
     }
 
@@ -160,37 +175,42 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         const newModList = modList.filter(mod => mod.modid !== modId)
         defaultConfigOptionsRef.current.delete(modId)
         delete modConfigOptionsRef.current[modId]
+        modListRef.current = newModList
+        pendingDeleteSyncRef.current = true
         setModList([...newModList])
-
-        const modoverrides = formatModOverride(newModList)
-        if (modoverrides === "return { error }") {
-            message.warning(t('mod.parse.error'))
-            return
-        }
-        const newLevels = levels.map(item => ({
-            ...item,
-            modoverrides,
-        }))
-        console.log("delete mod and save all levels modoverrides", modId, newLevels)
-        updateLevelsApi({levels: newLevels})
-            .then(resp => {
-                if (resp.code === 200) {
-                    message.success(t('mod.delete.ok'))
-                    reFlushLevels(cluster)
-                } else {
-                    message.warning(t('level.save.error'))
-                    message.warning(resp.msg)
-                }
-            })
-            .catch(error => {
-                console.log(error)
-                message.error(t('mod.save.error'))
-            })
+        message.success(t('mod.delete.ok'))
     }
 
     useEffect(() => {
+        modListRef.current = modList
         setMod(modList[0] || {})
     }, [modList])
+
+    useEffect(() => {
+        levelsRef.current = levels
+    }, [levels])
+
+    useEffect(() => {
+        if (registerSaveOnLeave) {
+            registerSaveOnLeave(() => saveModConfig({silent: true, onlyIfPendingDelete: true}))
+        }
+        const savePendingDelete = () => saveModConfig({silent: true, onlyIfPendingDelete: true})
+        const onVisibilityChange = () => {
+            if (document.hidden) {
+                savePendingDelete()
+            }
+        }
+        window.addEventListener('blur', savePendingDelete)
+        document.addEventListener('visibilitychange', onVisibilityChange)
+        return () => {
+            savePendingDelete()
+            window.removeEventListener('blur', savePendingDelete)
+            document.removeEventListener('visibilitychange', onVisibilityChange)
+            if (registerSaveOnLeave) {
+                registerSaveOnLeave(null)
+            }
+        }
+    }, [registerSaveOnLeave])
 
     const updateModSize = modList.filter(mod=>mod.update)
 
