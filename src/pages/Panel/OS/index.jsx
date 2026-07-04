@@ -15,6 +15,11 @@ function formatData(data, num) {
     return toNumber(data).toFixed(num)
 }
 
+function roundTo(value, digits = 1) {
+    const factor = 10 ** digits;
+    return Math.round(toNumber(value) * factor) / factor;
+}
+
 function bytesToGB(bytes) {
     return toNumber(bytes) / 1024 / 1024 / 1024;
 }
@@ -57,11 +62,11 @@ export default () => {
     }, [])
 
     const hasSystemInfo = Boolean(systeminfo)
-    const cpuUsedPercent = clampPercent(systeminfo?.cpu?.cpuUsedPercent);
+    const cpuUsedPercent = roundTo(clampPercent(systeminfo?.cpu?.cpuUsedPercent), 1);
     const cpuPercent = Array.isArray(systeminfo?.cpu?.cpuPercent) ? systeminfo.cpu.cpuPercent : []
     const cpuCores = systeminfo?.cpu?.cores ?? '--'
     const memTotalGB = bytesToGB(systeminfo?.mem?.total);
-    const memUsedPercent = clampPercent(systeminfo?.mem?.usedPercent);
+    const memUsedPercent = roundTo(clampPercent(systeminfo?.mem?.usedPercent), 1);
     const memUsedGB = bytesToGB(systeminfo?.mem?.used);
     const memAvailableGB = bytesToGB(systeminfo?.mem?.available);
 
@@ -85,7 +90,7 @@ export default () => {
         return total - (total * usage * 0.01)
     }).reduce((prev, curr) => prev + curr, 0) / 1024
 
-    const diskUsage = diskTotal > 0 ? clampPercent((diskTotal - diskFree) / diskTotal * 100) : 0;
+    const diskUsage = roundTo(diskTotal > 0 ? clampPercent((diskTotal - diskFree) / diskTotal * 100) : 0, 1);
     const panelMemUsageMB = toNumber(systeminfo?.panelMemUsage) / 1024;
     const panelDescription = hasSystemInfo
         ? `${systeminfo?.host?.os || '--'} /${systeminfo?.host?.kernelArch || '--'}-${systeminfo?.host?.platform || '--'}`
@@ -136,7 +141,7 @@ export default () => {
                         <StatisticCard statistic={
                             {
                                 title: t('panel.cpuUsage'),
-                                value: hasSystemInfo ? `${formatData(cpuUsedPercent, 2)} %` : '--',
+                                value: hasSystemInfo ? `${formatData(cpuUsedPercent, 1)} %` : '--',
 
                                 description: <Statistic title={t('panel.cpuCores')}
                                                         value={`${cpuCores} `}/>,
@@ -149,8 +154,8 @@ export default () => {
                                         {cpuPercent.map((value, index) =>
                                             // eslint-disable-next-line react/jsx-key
                                             <div>
-                                                {`核心${index}`}: {formatData(value, 2)}%<Progress
-                                                percent={clampPercent(value)} size="small" strokeColor={'#5BD171'}
+                                                {`核心${index}`}: {formatData(value, 1)}%<Progress
+                                                percent={roundTo(clampPercent(value), 1)} size="small" strokeColor={'#5BD171'}
                                                 status="active"/>
                                             </div>)}
                                     </div>)}>

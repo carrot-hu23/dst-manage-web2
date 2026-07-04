@@ -11,7 +11,15 @@ import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 
 
 function formatData(data, num) {
-    return data.toFixed(num)
+    const numValue = Number(data)
+    return Number.isFinite(numValue) ? numValue.toFixed(num) : (0).toFixed(num)
+}
+
+function roundTo(value, digits = 1) {
+    const numValue = Number(value)
+    if (!Number.isFinite(numValue)) return 0
+    const factor = 10 ** digits
+    return Math.round(numValue * factor) / factor
 }
 
 
@@ -20,9 +28,8 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
     const setLevels = useLevelsStore((state) => state.setLevels)
 
-    useEffect(() => {
-        const timerId = setInterval(() => {
-            getLevelStatusApi()
+    const refreshLevelStatus = () => {
+        return getLevelStatusApi()
                 .then(resp => {
                     if (resp.code === 200) {
                         const levels = resp.data
@@ -48,6 +55,12 @@ export default () => {
                         setLevels(items)
                     }
                 })
+    }
+
+    useEffect(() => {
+        refreshLevelStatus()
+        const timerId = setInterval(() => {
+            refreshLevelStatus()
         }, 3000)
 
         return () => {
@@ -74,6 +87,7 @@ export default () => {
                 message.success(`${prefix} ${levelName}`)
             }
             setSpin(false)
+            setTimeout(refreshLevelStatus, 800)
         })
     }
 
@@ -92,10 +106,10 @@ export default () => {
                                          <span>{`内存: ${formatData((record.Ps !== undefined ? record.Ps.RSS : 0) / 1024, 2)}MB`}</span>
                                          <span>{`虚拟内存: ${formatData((record.Ps !== undefined ? record.Ps.VSZ : 0) / 1024, 2)}MB`}</span>
                                      </Space>
-                                     <Progress percent={record.Ps.memUage} size={'small'}/>
+                                     <Progress percent={roundTo(record.Ps.memUage, 1)} size={'small'}/>
                                  </div>
                                  <div>
-                                     cpu: <Progress type="circle" percent={record.Ps.cpuUage} size={40}/>
+                                     cpu: <Progress type="circle" percent={roundTo(record.Ps.cpuUage, 1)} size={40}/>
                                  </div>
                              </div>)}>
                         {record.status && <Tag color={'green'}>{text}</Tag>}
@@ -175,9 +189,10 @@ export default () => {
                                 if (resp.code === 200) {
                                     message.success("启动成功")
                                 } else {
-                                    message.error("启动成功")
+                                    message.error("启动失败")
                                 }
                                 setSpin(false)
+                                setTimeout(refreshLevelStatus, 800)
                             })
                     }}
                     onCancel={() => {
@@ -205,6 +220,7 @@ export default () => {
                                     message.error("关闭失败")
                                 }
                                 setSpin(false)
+                                setTimeout(refreshLevelStatus, 800)
                             })
                     }}
                     onCancel={() => {

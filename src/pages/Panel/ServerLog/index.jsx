@@ -1,6 +1,6 @@
 import {Button, Input, message, Popconfirm, Select, Space, Spin, Switch} from "antd";
 import {DownloadOutlined} from '@ant-design/icons';
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
@@ -20,7 +20,12 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
 
     const notHasLevels = levels === undefined || levels === null || levels.length === 0
-    const levelNameRef = useRef(notHasLevels?"":levels[0].key)
+    const defaultLevelName = useMemo(() => {
+        if (notHasLevels) return ""
+        return (levels.find(level => level.status)?.key) || levels[0].key
+    }, [levels, notHasLevels])
+    const [levelName, setLevelName] = useState(defaultLevelName)
+    const levelNameRef = useRef(defaultLevelName)
     const editorRef = useRef()
     const inputRef = useRef(null);
 
@@ -57,8 +62,17 @@ export default () => {
     }
 
     useEffect(() => {
+        if (!levelName && defaultLevelName) {
+            levelNameRef.current = defaultLevelName
+            setLevelName(defaultLevelName)
+        }
+    }, [defaultLevelName, levelName])
 
-        readLevelServerLogApi(cluster, levelNameRef.current, 100)
+    const pullLog = useCallback((lineCount) => {
+        const currentLevelName = levelNameRef.current
+        if (!currentLevelName) return
+        const linesCount = lineCount ?? inputRef.current?.input?.value ?? 100
+        readLevelServerLogApi(cluster, currentLevelName, linesCount)
             .then(resp => {
                 if (resp.code === 200) {
                     let logs = ""
@@ -73,42 +87,25 @@ export default () => {
                     editorRef?.current?.current?.setValue("")
                 }
             })
-    }, [])
+    }, [cluster])
+
+    useEffect(() => {
+        pullLog(100)
+    }, [pullLog, levelName])
 
     useEffect(()=>{
         const id = setInterval(() => {
-            pullLog(); // 每次请求最新的100行日志
+            pullLog(); // 每次请求最新日志
         }, 3000)
         return()=>{
             clearInterval(id)
         }
-    }, [])
+    }, [pullLog])
 
-
-    function pullLog() {
-        if (!inputRef.current) return
-        const lines = inputRef.current.input.value
-        readLevelServerLogApi(cluster, levelNameRef.current, lines)
-            .then(resp => {
-                if (resp.code === 200) {
-                    let logs = ""
-                    const lines = resp.data || []
-                    lines.reverse()
-                    lines.forEach(line => {
-                        logs += `${line}\n`
-                    })
-                    if (logs !== editorRef?.current?.current?.getValue()) {
-                        editorRef?.current?.current?.setValue(logs)
-                        editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
-                    }
-                }else {
-                    editorRef?.current?.current?.setValue("")
-                }
-            })
-    }
 
     const handleChange = (value) => {
         levelNameRef.current = value
+        setLevelName(value)
     }
 
     return <>
@@ -120,7 +117,7 @@ export default () => {
                                 width: 120,
                             }}
                             onChange={handleChange}
-                            defaultValue={notHasLevels?"":levels[0].levelName}
+                            value={levelName}
                             options={levels.map(level=>{
                                 return {
                                     value: level.key,
