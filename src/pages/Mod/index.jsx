@@ -4,7 +4,6 @@ import {useTranslation} from "react-i18next";
 import {message, Skeleton, Tabs} from "antd";
 import {parse} from "lua-json";
 
-import {getHomeConfigApi} from "../../api/gameApi.jsx";
 import {getMyModInfoList} from "../../api/modApi.jsx";
 import ModList from "./ModList/index.jsx";
 
@@ -18,9 +17,9 @@ export default () => {
     const {cluster} = useParams()
     const { t } = useTranslation()
 
-    const [modoverrides, setmodoverrides] = useState("")
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('1')
+    const [selectedLevelUuid, setSelectedLevelUuid] = useState('')
 
     // 模组列表展示数据
     const [modList, setmodList] = useState([])
@@ -33,14 +32,6 @@ export default () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
-            const modoverridesResp = await getHomeConfigApi(cluster)
-            if (modoverridesResp.code !== 200) {
-                message.warning(t('mod.fetch.error'))
-                return
-            }
-            const modoverrides = modoverridesResp.data.modData
-            setmodoverrides(modoverrides)
-
             const modInfoListResp = await getMyModInfoList(cluster)
             if (modInfoListResp.code !== 200) {
                 message.warning(t('mod.fetch.error'))
@@ -53,9 +44,14 @@ export default () => {
             setmodList([...modList])
             setModDataList([...modList])
             // modInfoListResp.data
-            initModConfigList(modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
-
-            await reFlushLevels(cluster)
+            const loadedLevels = await reFlushLevels(cluster)
+            const defaultLevel = findDefaultLevel(loadedLevels)
+            if (defaultLevel) {
+                setSelectedLevelUuid(defaultLevel.uuid)
+                initModConfigList(defaultLevel.modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
+            } else {
+                setmodList([])
+            }
             setLoading(false)
         }
         fetchData()
@@ -65,8 +61,21 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
 
+    function findDefaultLevel(levelList) {
+        if (!Array.isArray(levelList) || levelList.length === 0) {
+            return null
+        }
+        return levelList.find(level => level.uuid === 'Master') || levelList[0]
+    }
+
     function changeLevel(newLevel) {
-        const modoverrides = levels.filter(level=>level.uuid === newLevel)[0].modoverrides
+        const selectedLevel = levels.find(level=>level.uuid === newLevel)
+        if (!selectedLevel) {
+            message.warning(t('level.fetch.error'))
+            return
+        }
+        setSelectedLevelUuid(newLevel)
+        const modoverrides = selectedLevel.modoverrides
         const newModDataList = modDataList.map(a=>{
             return {...a}
         })
@@ -176,6 +185,7 @@ export default () => {
                                defaultConfigOptionsRef={defaultConfigOptionsRef}
                                modConfigOptionsRef={modConfigOptionsRef}
                                changeLevel={changeLevel}
+                               selectedLevelUuid={selectedLevelUuid}
             />,
         },
         {

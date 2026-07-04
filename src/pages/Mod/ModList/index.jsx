@@ -13,12 +13,10 @@ import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
 import i18n from "i18next";
 
 // eslint-disable-next-line react/prop-types
-export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
+export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel, selectedLevelUuid}) => {
 
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
-    const [level, setLevel] = useState(levels[0])
-
     const { t } = useTranslation()
     const navigate = useNavigate();
     const {cluster} = useParams()
@@ -125,9 +123,13 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     function saveLevelMod() {
+        if (!selectedLevelUuid) {
+            message.warning(t('level.fetch.error'))
+            return
+        }
         const modoverrides = formatModOverride()
         const newLevels = levels.map(item=>{
-            if (item.uuid === level.uuid) {
+            if (item.uuid === selectedLevelUuid) {
                 return {...item, modoverrides}
             }
             return item
@@ -173,7 +175,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
             return Promise.resolve(false)
         }
         const newLevels = levelsRef.current.map(item => {
-            if (item.uuid === level.uuid) {
+            if (item.uuid === selectedLevelUuid) {
                 return {...item, modoverrides}
             }
             return item
@@ -216,10 +218,10 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }, [modList])
 
     const updateModSize = modList.filter(mod=>mod.update)
+    const selectedLevel = levels.find(item => item.uuid === selectedLevelUuid) || levels[0] || {}
 
     const handleChange = (value) => {
         changeLevel(value)
-        setLevel(levels.filter(level=>level.uuid === value)[0])
     }
 
     return (
@@ -259,11 +261,11 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                                 width: 120,
                             }}
                             onChange={handleChange}
-                            defaultValue={levels[0].levelName}
+                            value={selectedLevelUuid || undefined}
                             options={levels.map(level=>{
                                 return {
                                     value: level.uuid,
-                                    label: level.levelName,
+                                    label: level.levelName || level.uuid,
                                 }
                             })}
                         />
@@ -273,7 +275,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                                 backgroundColor: '#00B96B'
                             }}
                             onClick={()=>saveLevelMod()}
-                        >保存到{level?.levelName}</Button>
+                        >保存到{selectedLevel?.levelName || selectedLevel?.uuid || ''}</Button>
                     </Space>
                     <br/><br/>
                     <Row gutter={24}>
