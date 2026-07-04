@@ -14,7 +14,7 @@ import {
 import {
     Typography,
     ConfigProvider,
-    Dropdown,
+    Dropdown, Avatar, Tag, Space, Skeleton
 } from 'antd';
 import {useEffect, useState} from 'react';
 import defaultProps from './_defaultProps';
@@ -22,23 +22,31 @@ import {Outlet, useLocation} from "react-router";
 import {useNavigate} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-expect-error
 import {http} from '../utils/http';
 import {ToggleLanguage} from "./Language.tsx";
 import ToggleTheme from "./ToggleTheme.tsx";
-// @ts-ignore
+
 import {useTheme} from "../hooks/useTheme";
+import {useThemeConfigStore} from "../store/useThemeConfigStore";
+import {useUserStore} from "../store/useUserStore";
+import {Ad} from "../pages/Ad";
 
 const {Link} = Typography;
 
+declare const __APP_VERSION__: string;
+
 export default () => {
 
-    // @ts-ignore
     const [settings, setSetting] = useState<Partial<ProSettings> | undefined>({
         fixSiderbar: true,
         layout: 'mix',
         splitMenus: false,
+        // "fixSiderbar": true,
+        // "layout": "side",
+        // "splitMenus": false,
+        // "navTheme": "light",
+        // "contentWidth": "Fluid",
+        // "fixedHeader": true
     });
     const firstPagePath = '/panel';
     const location = useLocation()
@@ -51,26 +59,22 @@ export default () => {
     const navigate = useNavigate()
     const {t} = useTranslation()
 
-    const [account, setAcount] = useState({
-        displayName: '',
-        email: '',
-        photoURL: ''
-    })
+    const user = useUserStore((state) => state.user)
+    const loading = useUserStore((state) => state.loading)
+    const fetchUser = useUserStore((state) => state.fetchUser)
+    const clearUser = useUserStore((state) => state.clearUser)
+
+    // Fetch user data when layout mounts
     useEffect(() => {
-        const userJson = localStorage.getItem('user') || '{}';
-        let user = JSON.parse(userJson);
-        if (user === null) {
-            user = {
-                displayName: '',
-                email: '',
-                photoURL: ''
-            }
-        }
-        setAcount(user)
-    }, [])
+        fetchUser()
+    }, [fetchUser])
 
     const logout = async () => {
-        localStorage.clear()
+        clearUser()
+        // 清除记住的凭证
+        // localStorage.removeItem('remembered-credentials')
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
         const data = await http.get("/api/logout")
         console.log('logout', data);
         navigate('/login', {replace: true});
@@ -78,20 +82,23 @@ export default () => {
     };
 
     const {theme} = useTheme()
+    const {themeConfig} = useThemeConfigStore();
 
-    // @ts-ignore
     return (
         <div
             id="test-pro-layout"
             style={{
-                // height: '100vh',
                 overflow: 'auto',
             }}
         >
+            <Skeleton loading={loading}>
             <ProConfigProvider dark={theme == 'dark'}>
                 <ConfigProvider
                     getTargetContainer={() => {
                         return document.getElementById('test-pro-layout') || document.body;
+                    }}
+                    theme={{
+                        "token": themeConfig
                     }}
                 >
                     <ProLayout
@@ -99,10 +106,18 @@ export default () => {
                         location={{
                             pathname,
                         }}
-                        logo={null}
+                        logo={(
+                            <div onClick={()=>{
+                                window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
+                            }} style={{cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '8px'}}>
+                                <Tag bordered={false} color={themeConfig.colorPrimary}>v{__APP_VERSION__}</Tag>
+                            </div>
+                        )}
                         token={{
-                            header: {
-                                colorBgMenuItemSelected: 'rgba(0,0,0,0.04)',
+                            bgLayout: theme === 'dark' ? '#000000' : '#F1F2F5',
+                            sider: {
+                                colorMenuBackground: theme === 'dark'? '#000000' : '#FFFFFF',
+                                colorBgMenuItemSelected: theme === 'dark'? '#383838' : '#F1F2F5',
                             },
                         }}
                         // siderMenuType="group"
@@ -122,10 +137,11 @@ export default () => {
                                 }
                             })
                         }}
+                        title="Dst-admin-go"
                         avatarProps={{
-                            src: account.photoURL,
+                            src: user?.photoURL || <Avatar style={{ backgroundColor: themeConfig.colorPrimary }}>{user?.displayName[0]}</Avatar>,
                             size: 'small',
-                            title: account.displayName,
+                            title: user?.displayName,
                             render: (_props, dom) => {
                                 return (
                                     <Dropdown
@@ -157,35 +173,25 @@ export default () => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}><GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
-                                <div style={{
-                                    paddingTop: 16
-                                }}>
-                                    <ToggleTheme/>
-                                </div>
+                                <ToggleTheme/>
                             ];
                             if (typeof window === 'undefined') return [];
                             return [
-                                <Link target={'_blank'} href={'https://www.lcayun.com/aff/OYXIWEQC'}>
-                                    莱卡云
-                                    <CloudServerOutlined />
-                                </Link>,
+                                <Ad/>,
                                 <div onClick={() => {
                                     window.open('https://github.com/carrot-hu23/dst-admin-go', '_blank');
                                 }}>
                                     <GithubFilled key="GithubFilled"/></div>,
                                 <ToggleLanguage/>,
-                                <div style={{
-                                    paddingTop: 16
-                                }}>
-                                    <ToggleTheme/>
-                                </div>
+                                <ToggleTheme/>
                             ];
                         }}
-                        headerTitleRender={(_logo, _title, _) => {
+                        headerTitleRender={(logo, title, _) => {
                             const defaultDom = (
-                                <a>
-                                    {t('web.title')}
-                                </a>
+                                <Space wrap>
+                                    {logo}
+                                    {title}
+                                </Space>
                             );
                             if (typeof window === 'undefined') return defaultDom;
                             if (document.body.clientWidth < 1400) {
@@ -251,6 +257,7 @@ export default () => {
                     </ProLayout>
                 </ConfigProvider>
             </ProConfigProvider>
+            </Skeleton>
         </div>
     );
 };

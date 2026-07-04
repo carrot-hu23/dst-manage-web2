@@ -11,6 +11,7 @@ import ModList from "./ModList/index.jsx";
 import Workshop from "./Workshop/index.jsx";
 import UgcAcf from "./UgcAcf/index.jsx";
 import {useLevelsStore} from "../../store/useLevelsStore";
+import {useModPreferences} from "../../hooks/useModPreferences";
 
 
 export default () => {
@@ -28,6 +29,8 @@ export default () => {
     const defaultConfigOptionsRef = useRef(new Map())
     // 模组配置项
     const modConfigOptionsRef = useRef({})
+
+    const {getAllPreferences, applyPreference} = useModPreferences()
 
     useEffect(() => {
         const fetchData = async () => {
@@ -52,7 +55,7 @@ export default () => {
             setmodList([...modList])
             setModDataList([...modList])
             // modInfoListResp.data
-            initModConfigList(modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
+            await initModConfigList(modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
 
             await reFlushLevels(cluster)
             setLoading(false)
@@ -64,15 +67,15 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
 
-    function changeLevel(newLevel) {
+    async function changeLevel(newLevel) {
         const modoverrides = levels.filter(level=>level.uuid === newLevel)[0].modoverrides
         const newModDataList = modDataList.map(a=>{
             return {...a}
         })
-        initModConfigList(modoverrides, newModDataList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
+        await initModConfigList(modoverrides, newModDataList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
     }
 
-    function initModConfigList(modoverrides, subscribeModList, setModList, defaultConfigOptionsRef, modConfigOptionsRef) {
+    async function initModConfigList(modoverrides, subscribeModList, setModList, defaultConfigOptionsRef, modConfigOptionsRef) {
         const workshopMap = parseModoverrides(modoverrides);
         //console.log("workshopMap", workshopMap)
 
@@ -116,6 +119,29 @@ export default () => {
                 workshopMap.set(modid, modOptions[modid])
             }
         });
+
+        // 一次性获取所有模组的偏好配置
+        const allPreferences = await getAllPreferences()
+
+        if (allPreferences) {
+            // 遍历所有模组，仅对未启用的模组应用已保存的偏好配置
+            subscribeModList.forEach((mod) => {
+                const {modid} = mod
+
+                // 只有模组未启用时，才应用保存的偏好配置
+                // 已启用的模组使用 workshopMap 中当前的配置（即实际生效的配置）
+                if (!mod.enable) {
+                    const defaultConfig = modOptions[modid] || {}
+                    const savedPreference = allPreferences[modid]
+
+                    if (savedPreference) {
+                        // 智能合并：保留新增的配置项，同时应用已保存的偏好
+                        const mergedConfig = applyPreference(modid, defaultConfig, savedPreference)
+                        workshopMap.set(modid, mergedConfig)
+                    }
+                }
+            })
+        }
 
         const subscribeModMap = subscribeModList.reduce((acc, item) => {
             acc.set(item.modid, item);

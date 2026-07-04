@@ -7,7 +7,7 @@ import TimedTask from "./TimedTask/index.jsx";
 import AutoGameUpdate from "./AutoGameUpdate/index.jsx";
 import AutoGameDown from "./AutoGameDown/index.jsx";
 import AutoModUpdate from "./AutoModUpdate/index.jsx";
-import WebLinkSetting from "./WebLinkSetting/index.jsx";
+import ThemeSetting from "./ThemeSetting/index";
 
 
 const System = () => {
@@ -41,9 +41,9 @@ const System = () => {
             children: <AutoModUpdate />,
         },
         {
-            key: '7',
-            label: t('setting.webLinkSetting'),
-            children: <WebLinkSetting />,
+            key: '6',
+            label: '主题设置',
+            children: <ThemeSetting />,
         },
     ];
     return (

@@ -18,3 +18,10 @@ export type Level = {
     uuid: string;
     location: "forest" | "cave" | "porkland" | string; // 从 leveldataoverride 解析出来
 };
+
+export interface AdData {
+    title: string;
+    description: string;
+    image: string;
+    link: string;
+}

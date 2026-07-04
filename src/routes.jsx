@@ -1,6 +1,6 @@
 import {Navigate, useRoutes} from 'react-router-dom';
 
-import Login from './pages/Login/index.jsx';
+import Login from './pages/Login/index.tsx';
 
 import Backup from './pages/Backup/index.jsx';
 import Setting from './pages/System/index.jsx';
@@ -19,12 +19,12 @@ import Layout from "./layout/index";
 import Dashboard from "./pages/Dashboard/index.jsx";
 import Preinstall from "./pages/Tool/Preinstall/index.jsx";
 import Assembly from "./pages/Tool/Assembly/index.jsx";
-import ClusterIni from "./pages/Home/ClusterIni/index.jsx";
+import ClusterIni from "./pages/Home/ClusterIni/index";
 import Page404 from "./pages/Page404/index";
 import DstMapData from "./pages/DstData/DstMapData";
-import Adminlist from "./pages/Home/Adminlist.jsx";
-import Whitelist from "./pages/Home/Whitelist.jsx";
-import Blacklist from "./pages/Home/Blacklist.jsx";
+import Adminlist from "./pages/Home/Adminlist.tsx";
+import Whitelist from "./pages/Home/Whitelist.tsx";
+import Blacklist from "./pages/Home/Blacklist.tsx";
 import UserProfile from "./layout/UserProfile.jsx";
 import TooManyItemsPlus from "./pages/TooManyItemsPlus";
 import AddMod from "./pages/Mod/AddMod/index.jsx";
@@ -55,7 +55,7 @@ export default function Routes() {
                 {
                     path: 'levels',
                     children: [
-                        {path: 'levels', element: <Levels/>},
+                        {path: 'levels', element: <Level2/>},
                         {path: 'selectorMod', element: <Assembly/>},
                         {path: 'preinstall', element: <Preinstall/>},
                         {path: 'genMap', element: <DstMapData/>},

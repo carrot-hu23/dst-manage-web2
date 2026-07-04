@@ -1,10 +1,36 @@
-import {Image, Space} from "antd";
+import {Image, Space, Typography} from "antd";
 import aliPayImage from './alipay.jpg';
 import wechatpayImage from './wechatpay.png';
 import qqgroup from './qqgroup.png'
-import TengxuCloudAd1 from "../Ad/TengxunCloudAd1.jsx";
+import {useEffect, useState} from "react";
+import {base64ToUtf8} from "../../utils/encoding";
+import axios from "axios";
+
+const {Link, Paragraph} = Typography;
 
 export default () => {
+
+    const [adData, setAdData] = useState({
+        title: '',
+        description: '',
+        image: '',
+        link: ''
+    });
+
+    useEffect(() => {
+        axios.get('/api/dst-static/ad/ad.json')
+            .then(response => {
+                return JSON.parse(base64ToUtf8(response.data))
+            })
+            .then(data => {
+                setAdData(data)
+            })
+            .catch(error => {
+                console.error('无法加载配置文件', error);
+            }).finally(() => {
+            setLoading(false)
+        })
+    }, []);
 
     return (
         <div>
@@ -33,7 +59,28 @@ export default () => {
             </div>
             <br/>
             <div>
-                <TengxuCloudAd1/>
+                <h2>赞助商广告</h2>
+                {adData && (
+                    <div>
+                        <div style={{maxWidth: 300}}>
+                            <Image
+                                src={adData.image}
+                                alt={adData.title}
+                                preview={false}
+                                style={{marginBottom: 8}}
+                            />
+                            <Paragraph style={{margin: 0}}>{adData.description}</Paragraph>
+                            <a
+                                href={adData.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                了解更多 →
+                            </a>
+                        </div>
+                    </div>
+                )}
             </div>
             <br/>
             <div>

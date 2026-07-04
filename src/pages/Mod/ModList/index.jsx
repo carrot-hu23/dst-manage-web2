@@ -12,6 +12,7 @@ import ModConfigOptions from "../ModConfigOptions/index.jsx";
 import {useLevelsStore} from "../../../store/useLevelsStore";
 import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
 import i18n from "i18next";
+import {useUserPreferences} from "../../../hooks/useUserPreferences.ts";
 
 // eslint-disable-next-line react/prop-types
 export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
@@ -24,9 +25,11 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     const navigate = useNavigate();
     const {cluster} = useParams()
     const lang = i18n.language
+    const {isDismissed, dismissAlert} = useUserPreferences()
 
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [mod, setMod] = useState({})
+    const [showModTips1Alert, setShowModTips1Alert] = useState(true)
 
     const changeMod = (mod) => {
         const _mod = _.cloneDeep(mod);
@@ -161,8 +164,37 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     useEffect(() => {
-        setMod(modList[0] || {})
+        // 去重：根据 modid 去重，保留第一个
+        const uniqueModList = modList.reduce((acc, current) => {
+            const existingMod = acc.find(item => item.modid === current.modid);
+            if (!existingMod) {
+                acc.push(current);
+            }
+            return acc;
+        }, []);
+
+        // 如果去重后的列表和原列表不同，更新列表
+        if (uniqueModList.length !== modList.length) {
+            setModList(uniqueModList);
+        }
+
+        setMod(uniqueModList[0] || {})
     }, [modList])
+
+    useEffect(() => {
+        // 检查用户是否已关闭提示
+        isDismissed('mod-tips1').then(dismissed => {
+            setShowModTips1Alert(!dismissed)
+        })
+    }, [])
+
+    const handleDismissModTips1 = async () => {
+        const success = await dismissAlert('mod-tips1')
+        if (success) {
+            setShowModTips1Alert(false)
+            message.success(t('mod.dismiss.success'))
+        }
+    }
 
     const updateModSize = modList.filter(mod=>mod.update)
 
@@ -172,13 +204,25 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     return (
-        <>
+        <div translate="no">
             <Spin spinning={confirmLoading}>
-                <div style={{
-                    paddingBottom: 8
-                }}>
-                    <Alert message={t('mod.tips1')} type={'info'} showIcon closable/>
-                </div>
+                {showModTips1Alert && (
+                    <div style={{
+                        paddingBottom: 8
+                    }}>
+                        <Alert
+                            message={t('mod.tips1')}
+                            type={'info'}
+                            showIcon
+                            closable
+                            action={
+                                <Button size="small" type="link" onClick={handleDismissModTips1}>
+                                    {t('mod.dismiss.button')}
+                                </Button>
+                            }
+                        />
+                    </div>
+                )}
 
                     {updateModSize.length > 0 && <>
                         <div style={{
@@ -228,7 +272,8 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                     <Row gutter={24}>
                         <Col span={10} xs={24} md={10} lg={10}>
                             <div className={'scrollbar'} style={{
-                                height: '60vh',
+                                height: 'calc(100vh - 320px)',
+                                minHeight: '400px',
                                 overflowY: 'auto',
                                 overflowX: 'auto'
                             }}>
@@ -258,6 +303,6 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                         </Col>
                     </Row>
             </Spin>
-        </>
+        </div>
 )
 }
