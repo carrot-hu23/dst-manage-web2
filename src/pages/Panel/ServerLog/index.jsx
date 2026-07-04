@@ -1,4 +1,4 @@
-import {Button, Input, message, Popconfirm, Select, Space, Spin, Switch} from "antd";
+import {Button, Input, message, Popconfirm, Select, Space, Spin, Typography} from "antd";
 import {DownloadOutlined} from '@ant-design/icons';
 import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
@@ -10,6 +10,29 @@ import {useTheme} from "../../../hooks/useTheme";
 import style from "../../DstServerList/index.module.css";
 import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {ProCard} from "@ant-design/pro-components";
+
+const formatRuntime = (totalSeconds) => {
+    if (!Number.isFinite(totalSeconds)) return "未知"
+    const seconds = Math.max(0, Math.floor(totalSeconds))
+    const hours = Math.floor(seconds / 3600)
+    const minutes = Math.floor((seconds % 3600) / 60)
+    const remainSeconds = seconds % 60
+    const pad = (value) => String(value).padStart(2, '0')
+    return `${pad(hours)}:${pad(minutes)}:${pad(remainSeconds)}`
+}
+
+const extractLatestRuntimeSeconds = (lines) => {
+    let latest = null
+    lines.forEach(line => {
+        const match = /^\[(\d+):(\d+):(\d+)\]/.exec(line)
+        if (!match) return
+        const totalSeconds = Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])
+        if (latest === null || totalSeconds > latest) {
+            latest = totalSeconds
+        }
+    })
+    return latest
+}
 
 export default () => {
     const { t } = useTranslation()
@@ -28,6 +51,9 @@ export default () => {
     const levelNameRef = useRef(defaultLevelName)
     const editorRef = useRef()
     const inputRef = useRef(null);
+    const [runtimeSeconds, setRuntimeSeconds] = useState(null)
+    const currentLevel = useMemo(() => levels.find(level => level.key === levelName), [levels, levelName])
+    const processElapsed = currentLevel?.Ps?.elapsed || currentLevel?.ps?.elapsed
 
     const [command, setCommand] = useState('');
 
@@ -77,6 +103,8 @@ export default () => {
                 if (resp.code === 200) {
                     let logs = ""
                     const lines = resp.data || []
+                    const latestRuntime = extractLatestRuntimeSeconds(lines)
+                    setRuntimeSeconds(latestRuntime)
                     lines.reverse()
                     lines.forEach(line => {
                         logs += `${line}\n`
@@ -84,6 +112,7 @@ export default () => {
                     editorRef?.current?.current?.setValue(logs)
                     editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount());
                 } else {
+                    setRuntimeSeconds(null)
                     editorRef?.current?.current?.setValue("")
                 }
             })
@@ -128,6 +157,9 @@ export default () => {
                         <Input defaultValue="100" ref={inputRef}/>
                         <Button type="primary" onClick={() => pullLog()}>{t('panel.pull')}</Button>
                     </Space.Compact>
+                    <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
+                        日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}；日志最新时间：{formatRuntime(runtimeSeconds)}
+                    </Typography.Text>
                     <br/>
                     <MonacoEditor
                         className={style.icon}

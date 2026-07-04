@@ -121,9 +121,9 @@ async function startLevelApi(cluster,levelName,checked) {
     let url = ""
     // 启动
     if(checked) {
-        url = `/api/game/8level/start?levelName=${levelName}`
+        url = `/api/game/8level/start?levelName=${encodeURIComponent(levelName)}`
     } else {
-        url = `/api/game/8level/stop?levelName=${levelName}`
+        url = `/api/game/8level/stop?levelName=${encodeURIComponent(levelName)}`
     }
 
     // const url = '/api/dashboard'
