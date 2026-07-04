@@ -19,6 +19,7 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
     const [loading, setLoading] = useState(false)
     const workshopUrl = `https://steamcommunity.com/sharedfiles/filedetails/?id=${modinfo.id}`
     const openWorkshop = () => window.open(workshopUrl, '_blank', 'noopener,noreferrer')
+    const favoriteCount = modinfo?.vote?.num ?? modinfo?.favorited ?? modinfo?.favorite ?? 0
     return (<>
         <Card
             key={modinfo.id}
@@ -58,7 +59,7 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
                 fontSize: '12px',
                 paddingBottom: '2px'
             }}>
-                {t('mod.subscriptions')}:&nbsp;{fShortenNumber(modinfo.sub)}</div>
+                {t('mod.subscriptions')}:&nbsp;{fShortenNumber(modinfo.sub)}&nbsp;&nbsp;⭐&nbsp;{t('mod.favorites')}:&nbsp;{fShortenNumber(favoriteCount)}</div>
             <Button
                 loading={loading}
                 type="primary"

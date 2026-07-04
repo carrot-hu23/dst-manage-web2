@@ -232,6 +232,7 @@
   "mod.subscribe.error": "订阅失败",
   "mod.search": "搜索中",
   "mod.subscriptions": "订阅",
+  "mod.favorites": "收藏",
   "mod.subscribe": "订阅",
   "mod.install": "安装",
   "mod.delete": "删除",

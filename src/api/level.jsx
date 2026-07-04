@@ -121,9 +121,9 @@ async function startLevelApi(cluster,levelName,checked) {
     let url = ""
     // 启动
     if(checked) {
-        url = `api/game/8level/start?levelName=${levelName}`
+        url = `/api/game/8level/start?levelName=${levelName}`
     } else {
-        url = `api/game/8level/stop?levelName=${levelName}`
+        url = `/api/game/8level/stop?levelName=${levelName}`
     }
 
     // const url = '/api/dashboard'
@@ -179,9 +179,9 @@ async function startAllLevelApi(cluster,checked) {
     let url = ""
     // 启动
     if(checked) {
-        url = `api/game/8level/start/all`
+        url = `/api/game/8level/start/all`
     } else {
-        url = `api/game/8level/stop/all`
+        url = `/api/game/8level/stop/all`
     }
 
     // const url = '/api/dashboard'

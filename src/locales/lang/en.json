@@ -231,6 +231,7 @@
   "mod.subscribe.error": "subscribe fail",
   "mod.search": "Searching",
   "mod.subscriptions": "sub",
+  "mod.favorites": "favorites",
   "mod.subscribe": "Subscribe",
   "mod.install": "install",
   "mod.delete": "delete",
