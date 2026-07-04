@@ -249,7 +249,7 @@
   "mod.author": "author",
   "mod.version": "version",
   "mod.lasttime": "lasttime",
-  "mod.tips1": "Please start the world first, the mod will be automatically downloaded, and the ugc module will be read first.",
+  "mod.tips1": "Please start the world first; mods will be downloaded automatically and the UGC module will be preferred. The mod card delete button removes the mod from the current world. Click Save to sync the current list to all worlds, including deleted mods.",
   "mod.tips2": "Whether to update all mod configurations",
   "mod.tips3": "Manually upload the modifo.lua file. Due to server network problems, mods often fail to download. In this case, you can upload the local module modinfo to the server.",
   "mod.tips4": "This mod dont have configuration options",

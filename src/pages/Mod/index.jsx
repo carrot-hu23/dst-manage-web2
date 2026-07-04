@@ -29,7 +29,6 @@ export default () => {
     const defaultConfigOptionsRef = useRef(new Map())
     // 模组配置项
     const modConfigOptionsRef = useRef({})
-    const saveOnLeaveRef = useRef(null)
 
     useEffect(() => {
         const fetchData = async () => {
@@ -97,8 +96,11 @@ export default () => {
         //
         // })
         const modOptions = {}
+        const visibleModList = []
+        const subscribeModMap = new Map()
         subscribeModList.forEach(mod => {
             const {modid} = mod
+            subscribeModMap.set(modid, mod)
             const options = mod.mod_config.configuration_options
             if (typeof options === 'object' && options !== undefined && options !== null) {
                 const defaultOptions = {}
@@ -112,23 +114,15 @@ export default () => {
             if (workshopMap.has(modid)) {
                 mod.enable = true
                 mod.installed = true
-            } else {
-                mod.enable = false
-                mod.installed = true
-                workshopMap.set(modid, modOptions[modid])
+                visibleModList.push(mod)
             }
         });
 
-        const subscribeModMap = subscribeModList.reduce((acc, item) => {
-            acc.set(item.modid, item);
-            return acc;
-        }, new Map());
-
-        // 如果没有订阅mod
+        // 如果当前世界的 modoverrides 中有未订阅/未安装的 mod，仍显示出来用于编辑或删除。
         workshopMap.forEach((value, key) => {
             if (subscribeModMap.get(key) === undefined) {
                 console.log("not subscribe mod: ", key)
-                subscribeModList.push({
+                visibleModList.push({
                     mod_config: {
                         author: "unknown",
                         name: "unknown"
@@ -142,7 +136,7 @@ export default () => {
             }
         });
 
-        subscribeModList.sort((a, b) => {
+        visibleModList.sort((a, b) => {
             if (a.enable === b.enable) {
                 return 0;
             }
@@ -152,7 +146,7 @@ export default () => {
             return 1; // b在前
         });
 
-        setModList(subscribeModList || [])
+        setModList(visibleModList || [])
         defaultConfigOptionsRef.current = workshopMap
         modConfigOptionsRef.current = modOptions
     }
@@ -182,9 +176,6 @@ export default () => {
                                defaultConfigOptionsRef={defaultConfigOptionsRef}
                                modConfigOptionsRef={modConfigOptionsRef}
                                changeLevel={changeLevel}
-                               registerSaveOnLeave={(handler) => {
-                                   saveOnLeaveRef.current = handler
-                               }}
             />,
         },
         {
@@ -203,9 +194,6 @@ export default () => {
         <>
             <Skeleton loading={loading}>
                 <Tabs activeKey={activeTab} items={items} onChange={(key) => {
-                    if (activeTab === '1' && key !== '1' && saveOnLeaveRef.current) {
-                        saveOnLeaveRef.current()
-                    }
                     setActiveTab(key)
                 }}/>
             </Skeleton>

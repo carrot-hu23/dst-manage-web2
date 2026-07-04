@@ -13,7 +13,7 @@ import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
 import i18n from "i18next";
 
 // eslint-disable-next-line react/prop-types
-export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel, registerSaveOnLeave}) => {
+export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
 
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
@@ -28,7 +28,6 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     const [mod, setMod] = useState({})
     const modListRef = useRef(modList)
     const levelsRef = useRef(levels)
-    const pendingDeleteSyncRef = useRef(false)
 
     const changeMod = (mod) => {
         const _mod = _.cloneDeep(mod);
@@ -95,11 +94,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         }
     }
 
-    function saveModConfig(options = {}) {
-        const {silent = false, onlyIfPendingDelete = false} = options
-        if (onlyIfPendingDelete && !pendingDeleteSyncRef.current) {
-            return Promise.resolve(false)
-        }
+    function saveModConfig() {
         const modoverrides = formatModOverride(modListRef.current)
         if (modoverrides === "return { error }") {
             message.warning(t('mod.parse.error'))
@@ -113,10 +108,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         return updateLevelsApi({levels: newLevels})
             .then(resp => {
                 if (resp.code === 200) {
-                    pendingDeleteSyncRef.current = false
-                    if (!silent) {
-                        message.info(t('mod.save.ok'))
-                    }
+                    message.info(t('mod.save.ok'))
                     reFlushLevels(cluster)
                     return true
                 } else {
@@ -127,20 +119,18 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
             })
             .catch(error => {
                 console.log(error);
-                if (!silent) {
-                    message.error(t('mod.save.error'))
-                }
+                message.error(t('mod.save.error'))
                 return false
             })
     }
 
     function saveLevelMod() {
         const modoverrides = formatModOverride()
-        const newLevels = levels
-        newLevels.forEach(item=>{
+        const newLevels = levels.map(item=>{
             if (item.uuid === level.uuid) {
-                item.modoverrides = modoverrides;
+                return {...item, modoverrides}
             }
+            return item
         })
         updateLevelsApi({levels: newLevels})
             .then(resp => {
@@ -154,6 +144,10 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                     message.warning(t('level.save.error'))
                     message.warning(resp.msg)
                 }
+            })
+            .catch(error => {
+                console.log(error)
+                message.error(t('level.save.error'))
             })
         console.log(newLevels)
     }
@@ -173,12 +167,39 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
 
     const removeMod = (modId) => {
         const newModList = modList.filter(mod => mod.modid !== modId)
-        defaultConfigOptionsRef.current.delete(modId)
-        delete modConfigOptionsRef.current[modId]
-        modListRef.current = newModList
-        pendingDeleteSyncRef.current = true
-        setModList([...newModList])
-        message.success(t('mod.delete.ok'))
+        const modoverrides = formatModOverride(newModList)
+        if (modoverrides === "return { error }") {
+            message.warning(t('mod.parse.error'))
+            return Promise.resolve(false)
+        }
+        const newLevels = levelsRef.current.map(item => {
+            if (item.uuid === level.uuid) {
+                return {...item, modoverrides}
+            }
+            return item
+        })
+        return updateLevelsApi({levels: newLevels})
+            .then(resp => {
+                if (resp.code === 200) {
+                    defaultConfigOptionsRef.current.delete(modId)
+                    delete modConfigOptionsRef.current[modId]
+                    modListRef.current = newModList
+                    setModList([...newModList])
+                    setMod(current => current?.modid === modId ? (newModList[0] || {}) : current)
+                    message.success(t('mod.delete.ok'))
+                    reFlushLevels(cluster)
+                    return true
+                } else {
+                    message.warning(t('level.save.error'))
+                    message.warning(resp.msg)
+                    return false
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                message.error(t('mod.delete.error'))
+                return false
+            })
     }
 
     useEffect(() => {
@@ -191,26 +212,8 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }, [levels])
 
     useEffect(() => {
-        if (registerSaveOnLeave) {
-            registerSaveOnLeave(() => saveModConfig({silent: true, onlyIfPendingDelete: true}))
-        }
-        const savePendingDelete = () => saveModConfig({silent: true, onlyIfPendingDelete: true})
-        const onVisibilityChange = () => {
-            if (document.hidden) {
-                savePendingDelete()
-            }
-        }
-        window.addEventListener('blur', savePendingDelete)
-        document.addEventListener('visibilitychange', onVisibilityChange)
-        return () => {
-            savePendingDelete()
-            window.removeEventListener('blur', savePendingDelete)
-            document.removeEventListener('visibilitychange', onVisibilityChange)
-            if (registerSaveOnLeave) {
-                registerSaveOnLeave(null)
-            }
-        }
-    }, [registerSaveOnLeave])
+        modListRef.current = modList
+    }, [modList])
 
     const updateModSize = modList.filter(mod=>mod.update)
 

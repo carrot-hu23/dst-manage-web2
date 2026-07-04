@@ -104,9 +104,7 @@ const ModItem = (props) => {
                                         title={t('mod.delete.title')}
                                         okText="Yes"
                                         cancelText="No"
-                                        onConfirm={() => {
-                                            removeMod(mod.modid)
-                                        }}
+                                        onConfirm={() => removeMod(mod.modid)}
                                     >
                                         <Button type="text" danger onClick={(event) => {
                                             event.stopPropagation()
@@ -161,9 +159,7 @@ const ModItem = (props) => {
                                     title={t('mod.delete.title')}
                                     okText="Yes"
                                     cancelText="No"
-                                    onConfirm={() => {
-                                        removeMod(mod.modid)
-                                    }}
+                                    onConfirm={() => removeMod(mod.modid)}
                                 >
                                     <Button type="text" danger onClick={(event) => {
                                         event.stopPropagation()
