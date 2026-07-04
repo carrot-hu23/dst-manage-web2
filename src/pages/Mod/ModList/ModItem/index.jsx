@@ -86,6 +86,7 @@ const ModItem = (props) => {
                                 {mod?.update && <Badge count={1}>
                                     <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
                                             checked={mod?.enable}
+                                            onClick={(checked, event) => event.stopPropagation()}
                                             onChange={() => {
                                                 props.changeEnable(mod?.modid)
                                             }}
@@ -107,13 +108,13 @@ const ModItem = (props) => {
                                             deleteModInfo(cluster, mod.modid)
                                                 .then(resp => {
                                                     if (resp.code === 200) {
-                                                        message.success(t('mod.delete.ok'))
                                                         removeMod(mod.modid)
                                                     }
                                                 })
                                         }}
                                     >
-                                        <Button type="text" danger onClick={() => {
+                                        <Button type="text" danger onClick={(event) => {
+                                            event.stopPropagation()
                                             setMod(props.mod)
                                         }}>
                                             {t('mod.delete')}
@@ -154,7 +155,8 @@ const ModItem = (props) => {
                                         subscribeMod(lang, t, mod?.modid, modList, setModList, setStartLoading)
                                     }}
                                 >
-                                    <Button type="primary" onClick={() => {
+                                    <Button type="primary" onClick={(event) => {
+                                        event.stopPropagation()
                                         setMod(props.mod)
                                     }}>
                                         {t('mod.install')}
@@ -168,13 +170,13 @@ const ModItem = (props) => {
                                         deleteModInfo(cluster, mod.modid)
                                             .then(resp => {
                                                 if (resp.code === 200) {
-                                                    message.success(t('mod.delete.ok'))
                                                     removeMod(mod.modid)
                                                 }
                                             })
                                     }}
                                 >
-                                    <Button type="text" danger onClick={() => {
+                                    <Button type="text" danger onClick={(event) => {
+                                        event.stopPropagation()
                                         setMod(props.mod)
                                     }}>
                                         {t('mod.delete')}

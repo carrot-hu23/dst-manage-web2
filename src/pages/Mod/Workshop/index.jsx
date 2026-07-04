@@ -17,22 +17,37 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
     const { t } = useTranslation()
 
     const [loading, setLoading] = useState(false)
+    const workshopUrl = `https://steamcommunity.com/sharedfiles/filedetails/?id=${modinfo.id}`
+    const openWorkshop = () => window.open(workshopUrl, '_blank', 'noopener,noreferrer')
     return (<>
         <Card
             key={modinfo.id}
             hoverable
+            onClick={openWorkshop}
             style={{
                 width: 156,
+                cursor: 'pointer',
             }}
             cover={<a
                 target={'_blank'}
-                href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${modinfo.id}`} rel="noreferrer">
+                href={workshopUrl} rel="noreferrer" onClick={(event) => event.stopPropagation()}>
                 <img alt="example" style={{
                     height: 160
                 }} src={modinfo.img}/>
             </a>}
         >
             <Meta title={modinfo.name}/>
+
+            <div style={{
+                fontSize: '12px',
+                paddingTop: '2px',
+                paddingBottom: '2px',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+                whiteSpace: 'nowrap'
+            }}>
+                {t('mod.author')}:&nbsp;{modinfo.author || '-'}
+            </div>
 
             <div style={{
                 fontSize: '12px',
@@ -48,7 +63,10 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
                 loading={loading}
                 type="primary"
                 size={'small'}
-                onClick={() => subscribe(modinfo.id, modinfo.name, addModList, setLoading)}>{t('mod.subscribe')}</Button>
+                onClick={(event) => {
+                    event.stopPropagation()
+                    subscribe(modinfo.id, modinfo.name, addModList, setLoading)
+                }}>{t('mod.subscribe')}</Button>
         </Card>
         <br/>
     </>)

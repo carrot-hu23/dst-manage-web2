@@ -5,7 +5,6 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {format} from "lua-json";
 
-import {getHomeConfigApi, saveHomeConfigApi} from '../../../api/gameApi.jsx';
 import {updateModinfosApi} from '../../../api/modApi.jsx';
 import ModItem from "./ModItem/index.jsx";
 import ModConfigOptions from "../ModConfigOptions/index.jsx";
@@ -44,9 +43,9 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         return /^[0-9]+$/.test(str);
     }
 
-    function formatModOverride() {
+    function formatModOverride(targetModList = modList) {
         try {
-            const chooses = modList.filter(mod => mod.enable)
+            const chooses = targetModList.filter(mod => mod.enable)
             const modids = chooses.map(mod => mod.modid)
             const object = _.pick(modConfigOptionsRef.current, modids)
             const object1 = {}
@@ -94,21 +93,29 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     function saveModConfig() {
-        getHomeConfigApi(cluster)
-            .then(data => {
-                const homeConfig = data.data
-                homeConfig.modData = formatModOverride()
-                if (homeConfig.modData !== "return { error }") {
-                    console.log(homeConfig)
-                    saveHomeConfigApi(cluster, homeConfig).then(() => {
-                        message.info(t('mod.save.ok'))
-                    }).catch(error => {
-                        console.log(error);
-                        message.error(t('mod.save.error'))
-                    })
+        const modoverrides = formatModOverride()
+        if (modoverrides === "return { error }") {
+            message.warning(t('mod.parse.error'))
+            return
+        }
+        const newLevels = levels.map(item => ({
+            ...item,
+            modoverrides,
+        }))
+        console.log("save all levels modoverrides", newLevels)
+        updateLevelsApi({levels: newLevels})
+            .then(resp => {
+                if (resp.code === 200) {
+                    message.info(t('mod.save.ok'))
+                    reFlushLevels(cluster)
                 } else {
-                    message.warning(t('mod.parse.error'))
+                    message.warning(t('level.save.error'))
+                    message.warning(resp.msg)
                 }
+            })
+            .catch(error => {
+                console.log(error);
+                message.error(t('mod.save.error'))
             })
     }
 
@@ -150,14 +157,35 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     const removeMod = (modId) => {
-        const newModList = []
-        // eslint-disable-next-line no-restricted-syntax
-        for (const mod of modList) {
-            if (mod.modid !== modId) {
-                newModList.push(mod)
-            }
-        }
+        const newModList = modList.filter(mod => mod.modid !== modId)
+        defaultConfigOptionsRef.current.delete(modId)
+        delete modConfigOptionsRef.current[modId]
         setModList([...newModList])
+
+        const modoverrides = formatModOverride(newModList)
+        if (modoverrides === "return { error }") {
+            message.warning(t('mod.parse.error'))
+            return
+        }
+        const newLevels = levels.map(item => ({
+            ...item,
+            modoverrides,
+        }))
+        console.log("delete mod and save all levels modoverrides", modId, newLevels)
+        updateLevelsApi({levels: newLevels})
+            .then(resp => {
+                if (resp.code === 200) {
+                    message.success(t('mod.delete.ok'))
+                    reFlushLevels(cluster)
+                } else {
+                    message.warning(t('level.save.error'))
+                    message.warning(resp.msg)
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                message.error(t('mod.save.error'))
+            })
     }
 
     useEffect(() => {
