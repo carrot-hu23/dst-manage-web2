@@ -128,9 +128,9 @@ const Online = () => {
                                     <div>{item.day}{t('day')}</div>
                                     <Space>
                                         <PlayerBtn player={item} levelName={levelName}/>
-                                        {/*<Button type="default" size="small" onClick={() => setDetailPlayer(item)}>*/}
-                                        {/*    详情*/}
-                                        {/*</Button>*/}
+                                        <Button type="default" size="small" onClick={() => setDetailPlayer(item)}>
+                                            详情
+                                        </Button>
                                     </Space>
 
                                 </List.Item>

@@ -15,10 +15,10 @@ export default () => {
     const [open, setOpen] = useState(false);
     const {t} = useTranslation()
 
-    const updateGameOnclick = () => {
+    const updateGameOnclick = (isDelete = false) => {
         message.success(t('panel.updating.game'))
         setUpdateStatus(true)
-        updateGameApi(cluster)
+        updateGameApi(cluster, isDelete)
             .then(response => {
                 if (response.code === 200) {
                     message.success(t('panel.update.success'))
@@ -50,16 +50,23 @@ export default () => {
     return <>
         <Row gutter={[16,16]}>
             <Col xs={12} sm={6} md={6} lg={6} xl={6}>
-                <Button
-                    block
-                    type="primary"
-                        onClick={() => {
-                            updateGameOnclick()
-                        }}
-                        loading={updateGameStatus}
+                <Popconfirm
+                    title="请选择更新方式"
+                    description="删除并更新会清理旧文件后重新下载"
+                    okText="删除并更新"
+                    cancelText="仅更新"
+                    okButtonProps={{danger: true}}
+                    onConfirm={() => updateGameOnclick(true)}
+                    onCancel={() => updateGameOnclick(false)}
                 >
-                    {t('panel.updateGame')}
-                </Button>
+                    <Button
+                        block
+                        type="primary"
+                        loading={updateGameStatus}
+                    >
+                        {t('panel.updateGame')}
+                    </Button>
+                </Popconfirm>
             </Col>
             <Col xs={12} sm={6} md={6} lg={6} xl={6}>
                 <CreateBackUpBtn block={true} />
