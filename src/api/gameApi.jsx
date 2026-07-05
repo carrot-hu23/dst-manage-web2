@@ -1,7 +1,7 @@
 import { http } from "../utils/http";
 
-async function updateGameApi(cluster) {
-    const url = '/api/game/update'
+async function updateGameApi(cluster, isDelete) {
+    const url = '/api/game/update?isDelete=' + isDelete
     const response = await http.get(url, {
         timeout: 1000*60*10,
         headers: {

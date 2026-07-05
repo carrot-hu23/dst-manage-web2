@@ -168,6 +168,12 @@
   "cluster.steam_group_only": "스팀 그룹 전용",
   "cluster.steam_group_admins": "스팀 그룹 관리자",
 
+  "cluster.alert.console_enabled.disabled": "패널은 콘솔 기능에 의존합니다. 비활성화하면 패널 콘솔 기능을 사용할 수 없습니다",
+  "cluster.alert.master_port.info": "월드 통신 포트, 마스터와 슬레이브 서버는 동일한 값을 설정해야 합니다. 포트가 사용 중이지 않은지 확인하십시오",
+  "cluster.alert.shard_enabled.disabled": "비활성화하면 단일 월드 모드만 활성화할 수 있으며, 지상과 지하와 같은 다중 월드 연결을 구현할 수 없습니다",
+  "cluster.alert.bind_ip.info": "슬레이브 서버 IP, 마스터와 슬레이브 서버가 동일한 컴퓨터에 있는 경우 127.0.0.1, 그렇지 않은 경우 0.0.0.0을 입력하십시오",
+  "cluster.alert.master_ip.info": "마스터 서버 IP, 마스터와 슬레이브 서버가 동일한 컴퓨터에 있는 경우 127.0.0.1, 그렇지 않은 경우 마스터 서버 IP를 입력하십시오",
+
   "level.worldSettings": "월드 설정",
   "level.worldGeneration": "월드 생성",
   "level.save": "저장",
@@ -253,6 +259,8 @@
   "mod.tips2": "모든 모드 구성을 업데이트하시겠습니까?",
   "mod.tips3": "modinfo.lua 파일을 수동으로 업로드합니다. 서버 네트워크 문제로 인해 모드 다운로드가 실패하는 경우 로컬 모듈의 modinfo를 서버로 업로드할 수 있습니다.",
   "mod.tips4": "이 모드에는 구성 옵션이 없습니다.",
+  "mod.dismiss.button": "다시 표시하지 않음",
+  "mod.dismiss.success": "알림이 닫혔습니다",
 
   "backup.BackupList": "백업 목록",
   "backup.SnapshotBackup": "스냅샷 백업",

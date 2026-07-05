@@ -35,6 +35,7 @@ function Select2({item, defaultValue}) {
                         {JSON.stringify(defaultValue)}
                     </span>
                 </Form.Item>
+                <span>{item.hover}</span>
             </>
         )}
         {typeof item.default !== 'object' && (

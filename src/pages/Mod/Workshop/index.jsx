@@ -1,16 +1,23 @@
 /* eslint-disable react/prop-types */
 import {useEffect, useState} from 'react';
-import {Row, Col, Card, Input, Pagination, Button, message} from 'antd';
+import {Row, Col, Card, Input, Pagination, Button, message, Empty, Spin} from 'antd';
+import {StarFilled} from '@ant-design/icons';
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
 import {getModInfo, searchMod} from '../../../api/modApi.jsx';
-import {timestampToString} from "../../../utils/dateUitls";
+import {format} from "../../../utils/dateUitls";
 import {fShortenNumber} from "../../../utils/formatNumber";
 
 
 const {Search} = Input;
 const {Meta} = Card;
+
+const extractAuthorId = (authorUrl) => {
+    if (!authorUrl) return '';
+    const match = authorUrl.match(/profiles\/(\d+)/);
+    return match ? match[1] : '';
+};
 
 const ModCard2 = ({modinfo, addModList, subscribe}) => {
 
@@ -19,58 +26,110 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
     const [loading, setLoading] = useState(false)
     const workshopUrl = `https://steamcommunity.com/sharedfiles/filedetails/?id=${modinfo.id}`
     const openWorkshop = () => window.open(workshopUrl, '_blank', 'noopener,noreferrer')
+    const authorId = extractAuthorId(modinfo.author);
+    const authorText = authorId || modinfo.author || '-'
     const favoriteCount = modinfo?.vote?.num ?? modinfo?.favorited ?? modinfo?.favorite ?? 0
-    return (<>
+
+    return (
         <Card
             key={modinfo.id}
             hoverable
             onClick={openWorkshop}
             style={{
-                width: 156,
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
                 cursor: 'pointer',
             }}
-            cover={<a
-                target={'_blank'}
-                href={workshopUrl} rel="noreferrer" onClick={(event) => event.stopPropagation()}>
-                <img alt="example" style={{
-                    height: 160
-                }} src={modinfo.img}/>
-            </a>}
+            cover={<div style={{padding: '12px 12px 0 12px'}}>
+                <a
+                    target={'_blank'}
+                    href={workshopUrl}
+                    rel="noreferrer"
+                    onClick={(event) => event.stopPropagation()}>
+                    <img alt="example" style={{
+                        height: 160,
+                        objectFit: 'cover',
+                        width: '100%'
+                    }} src={modinfo.img} onError={(e) => {
+                        e.target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="160" height="160"%3E%3Crect fill="%23f0f0f0" width="160" height="160"/%3E%3Ctext x="50%25" y="50%25" text-anchor="middle" fill="%23999"%3ENo Image%3C/text%3E%3C/svg%3E';
+                    }}/>
+                </a>
+            </div>}
         >
-            <Meta title={modinfo.name}/>
+            <Meta
+                title={<div style={{
+                    fontSize: '14px',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                }}>{modinfo.name}</div>}
+                style={{marginBottom: 8}}
+            />
 
             <div style={{
                 fontSize: '12px',
-                paddingTop: '2px',
-                paddingBottom: '2px',
+                color: '#999',
+                marginBottom: 4,
+                whiteSpace: 'nowrap',
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
             }}>
-                {t('mod.author')}:&nbsp;{modinfo.author || '-'}
+                {t('mod.author') || 'Author'}: {authorText}
+            </div>
+
+            {modinfo.vote && (
+                <div style={{
+                    fontSize: '12px',
+                    color: '#999',
+                    marginBottom: 4,
+                }}>
+                    <StarFilled style={{color: '#faad14', marginRight: 4, fontSize: '10px'}}/>
+                    {modinfo.vote.star} <span style={{marginLeft: 4}}>({fShortenNumber(modinfo.vote.num)})</span>
+                </div>
+            )}
+
+            <div style={{
+                fontSize: '12px',
+                color: '#999',
+                marginBottom: 4,
+            }}>
+                {t('mod.subscriptions')}: {fShortenNumber(modinfo.sub)}
             </div>
 
             <div style={{
                 fontSize: '12px',
-                paddingTop: '2px',
-                paddingBottom: '2px'
-            }}>{timestampToString(modinfo.time * 1000)}</div>
+                color: '#999',
+                marginBottom: 4,
+            }}>
+                ⭐ {t('mod.favorites')}: {fShortenNumber(favoriteCount)}
+            </div>
+
             <div style={{
                 fontSize: '12px',
-                paddingBottom: '2px'
+                color: '#999',
+                marginBottom: 12,
             }}>
-                {t('mod.subscriptions')}:&nbsp;{fShortenNumber(modinfo.sub)}&nbsp;&nbsp;⭐&nbsp;{t('mod.favorites')}:&nbsp;{fShortenNumber(favoriteCount)}</div>
-            <Button
-                loading={loading}
-                type="primary"
-                size={'small'}
-                onClick={(event) => {
-                    event.stopPropagation()
-                    subscribe(modinfo.id, modinfo.name, addModList, setLoading)
-                }}>{t('mod.subscribe')}</Button>
+                {format(modinfo.time * 1000)}
+            </div>
+
+            <div style={{marginTop: 'auto'}}>
+                <Button
+                    loading={loading}
+                    type="primary"
+                    size={'small'}
+                    block
+                    onClick={(event) => {
+                        event.stopPropagation()
+                        subscribe(modinfo.id, modinfo.name, addModList, setLoading)
+                    }}
+                >
+                    {t('mod.subscribe')}
+                </Button>
+            </div>
         </Card>
-        <br/>
-    </>)
+    )
 }
 
 export default ({addModList}) => {
@@ -84,10 +143,11 @@ export default ({addModList}) => {
     const [page, setPage] = useState(1)
     const [total, setTotal] = useState(0)
     const [text, setText] = useState("")
+    const [searching, setSearching] = useState(false)
 
     const [messageApi, contextHolder] = message.useMessage();
     const {cluster} = useParams()
-    
+
     useEffect(() => {
         updateModList("", page, pageSize)
     }, [])
@@ -126,7 +186,7 @@ export default ({addModList}) => {
     }
 
     const updateModList = (text, page, pageSize) => {
-        message.info(t('mod.search'))
+        setSearching(true)
         searchMod(lang, cluster, text, page, pageSize).then(data => {
             setModList(data.data.data)
             setPage(data.data.page)
@@ -134,6 +194,8 @@ export default ({addModList}) => {
             setTotal(data.data.total)
         }).catch(error => {
             console.log(error)
+        }).finally(() => {
+            setSearching(false)
         })
     }
 
@@ -154,29 +216,52 @@ export default ({addModList}) => {
     return (
         <>
             {contextHolder}
+
             <Search
-                placeholder="input search text"
+                placeholder={t('mod.search.placeholder') || 'input search text'}
+                allowClear
+                enterButton
+                // size="large"
+                loading={searching}
                 onSearch={onSearch}
                 style={{
-                    width: 200,
+                    // width: '300px',
+                    marginBottom: '24px',
                 }}
             />
-            <br/>
-            <br/>
-            <Row>
-                {modList.map(modinfo => (
-                    <Col key={modinfo.id} xs={12} sm={8} md={6} lg={4} xl={4}>
-                        <ModCard2 modinfo={modinfo} addModList={addModList} subscribe={subscribe}/>
-                    </Col>
-                ))}
-            </Row>
-            <br/><br/>
-            <Pagination
-                onShowSizeChange={onShowSizeChange}
-                current={page}
-                pageSize={pageSize}
-                onChange={(i) => onChange(i)}
-                total={total}/>
+
+            <Spin spinning={searching}>
+                {modList.length === 0 && !searching ? (
+                    <Empty
+                        description={t('mod.empty') || 'No mods found'}
+                        style={{marginTop: '100px'}}
+                    />
+                ) : (
+                    <>
+                        <Row gutter={[16, 16]}>
+                            {modList.map(modinfo => (
+                                <Col key={modinfo.id} xs={24} sm={8} md={8} lg={4} xl={4}>
+                                    <ModCard2 modinfo={modinfo} addModList={addModList} subscribe={subscribe}/>
+                                </Col>
+                            ))}
+                        </Row>
+
+                        {modList.length > 0 && (
+                            <Pagination
+                                onShowSizeChange={onShowSizeChange}
+                                current={page}
+                                pageSize={pageSize}
+                                pageSizeOptions={['10', '20', '50', '100']}
+                                showSizeChanger
+                                showQuickJumper
+                                onChange={onChange}
+                                total={total}
+                                style={{marginTop: '32px', marginBottom: '24px'}}
+                            />
+                        )}
+                    </>
+                )}
+            </Spin>
         </>
     );
 };

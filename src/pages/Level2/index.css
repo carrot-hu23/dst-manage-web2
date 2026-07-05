@@ -2,3 +2,41 @@
     background:#583D23;
     color: #fff;
 }
+
+/* 按钮容器 */
+.level-buttons-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 其他按钮容器 - 移动端居中 */
+.level-other-buttons-wrapper {
+    display: flex;
+    gap: 6px;
+    justify-content: normal;
+    align-items: center;
+    flex-wrap: nowrap;
+}
+
+/* 保存按钮 - 移动端全宽 */
+.level-save-btn {
+    width: 100%;
+}
+
+/* 桌面端 - 768px 及以上 */
+@media (min-width: 768px) {
+    .level-buttons-container {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .level-other-buttons-wrapper {
+        gap: 12px;
+        justify-content: flex-start;
+    }
+
+    .level-save-btn {
+        width: auto;
+    }
+}

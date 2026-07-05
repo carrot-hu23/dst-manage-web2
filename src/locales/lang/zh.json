@@ -2,7 +2,7 @@
   "loginTitle": "饥荒联机版管理面板",
   "web.title": "饥荒联机版控制台",
   "web.login": "登录",
-  "login.remember.me": "自动登录",
+  "login.remember.me": "记住密码",
 
   "init.previous": "上一步",
   "init.next": "下一步",
@@ -139,8 +139,8 @@
   "cluster.save.error": "保存失败",
   "cluster.fetch.error": "获取房间配置失败",
 
-  "cluster.BaseSetting": "基础设置",
-  "cluster.ShardSetting": "多世界设置",
+  "cluster.BaseSetting": "房间设置",
+  "cluster.ShardSetting": "网络设置",
   "cluster.SteamSetting": "Steam设置",
 
   "cluster.cluster_name": "名称",
@@ -168,6 +168,12 @@
   "cluster.steam_group_id": "Steam组ID",
   "cluster.steam_group_only": "仅限Steam组",
   "cluster.steam_group_admins": "Steam组管理员",
+
+  "cluster.alert.console_enabled.disabled": "面板依赖控制台功能，关闭后面板控制台功能将不可用",
+  "cluster.alert.master_port.info": "世界通信端口，主从服务器应设为相同值，请确保端口未被占用",
+  "cluster.alert.shard_enabled.disabled": "关闭后只能启用单世界模式，无法实现地上地下等多世界串联",
+  "cluster.alert.bind_ip.info": "从服务器IP，主从服务器都在同一计算机上时填127.0.0.1，否则填0.0.0.0",
+  "cluster.alert.master_ip.info": "主服务器IP，主从服务器都在同一计算机上时填127.0.0.1，否则填主服务器IP",
 
 
   "level.worldSettings": "世界设置",
@@ -256,6 +262,12 @@
   "mod.tips2": "是否更新所有mod配置",
   "mod.tips3": "手动上传modinfo.lua文件。由于服务器网络问题，mod常常下载失败，此时可以将本地模块modinfo上传到服务器。",
   "mod.tips4": "该mod没有配置选项",
+  "mod.dismiss.button": "不再提示",
+  "mod.dismiss.success": "已关闭提示",
+  "mod.preference.save": "保存偏好",
+  "mod.preference.save.ok": "模组偏好已保存",
+  "mod.preference.save.error": "保存模组偏好失败",
+  "mod.preference.no.config": "该模组没有可保存的配置",
 
   "backup.BackupList": "备份列表",
   "backup.SnapshotBackup": "快照备份",

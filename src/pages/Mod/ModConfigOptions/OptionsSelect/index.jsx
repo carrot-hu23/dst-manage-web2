@@ -1,4 +1,4 @@
-import {Button, Divider, Form, Space} from "antd";
+import {Button, Divider, Form, Space, Tooltip} from "antd";
 import {useEffect, useState} from "react";
 import _ from "lodash";
 import { FixedSizeList as List } from 'react-window';
@@ -109,14 +109,16 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                             }
 
                             let defaultValue
-                            if (defaultConfigOptions.get(`${mod.modid}`) !== undefined) {
+                            if (defaultConfigOptions.get(`${mod.modid}`) !== undefined && defaultConfigOptions.get(`${mod.modid}`) !== null) {
                                 defaultValue = defaultConfigOptions.get(`${mod.modid}`)[`${item.name}`]
                             } else {
                                 defaultValue = undefined
                             }
-                            return <div style={style}>
-                                <Select2 key={generateUUID()} item={item} defaultValue={defaultValue}/>
-                            </div>
+                            return <Tooltip title={item?.hover}>
+                                <div style={style}>
+                                    <Select2 key={generateUUID()} item={item} defaultValue={defaultValue}/>
+                                </div>
+                            </Tooltip>
                         }}
                     </List>
                 )}
@@ -135,7 +137,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                                     }}>{item.label || item.name}</span></Divider>
                                 }
                                 // TODO 还不知道哪些mod是这样的作为标题的,我目前没有发现
-                                if (item.name === 'Title' || item.name === '') {
+                                if (item.name === 'Title' || item.name === '' || item.name === null || item.name === undefined) {
                                     if (item.label === '') {
                                         return ""
                                     }
@@ -144,12 +146,18 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                                 }
 
                                 let defaultValue
-                                if (defaultConfigOptions.get(`${mod.modid}`) !== undefined) {
+                                if (defaultConfigOptions.get(`${mod.modid}`) !== undefined && defaultConfigOptions.get(`${mod.modid}`) !== null) {
+                                    console.log(defaultConfigOptions.get(`${mod.modid}`))
                                     defaultValue = defaultConfigOptions.get(`${mod.modid}`)[`${item.name}`]
                                 } else {
                                     defaultValue = undefined
                                 }
-                                return <Select2 key={generateUUID()} item={item} defaultValue={defaultValue}/>;
+                                return <Tooltip title={item?.hover}>
+                                    <div>
+                                        <Select2 key={generateUUID()} item={item} defaultValue={defaultValue}/>
+                                    </div>
+                                </Tooltip>
+
                             }
                         )
                 )}

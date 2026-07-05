@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import {StatisticCard} from '@ant-design/pro-components';
 import RcResizeObserver from 'rc-resize-observer';
-import {useCallback, useEffect, useState} from 'react';
-import {Progress, Tooltip, message} from 'antd';
+import {useState} from 'react';
+import {Progress, Tooltip} from 'antd';
 import {useTranslation} from "react-i18next";
-import {getSystemInfoApi} from "../../../api/systeminfoApi.jsx";
+import {useSystemInfoStream} from "../../../hooks/useSystemInfoStream";
 
 function toNumber(value, fallback = 0) {
     const num = Number(value);
@@ -37,29 +37,6 @@ export default () => {
     const [responsive, setResponsive] = useState(false);
     const [systeminfo, setSysteminfo] = useState(null)
     const [loadError, setLoadError] = useState('')
-
-    const loadSystemInfo = useCallback(async (silent = false) => {
-        try {
-            const resp = await getSystemInfoApi()
-            const payload = resp?.data ?? resp;
-            if (resp?.code === 200 && payload) {
-                setSysteminfo(payload)
-                setLoadError('')
-                return
-            }
-            const msg = resp?.msg || '获取系统监控失败'
-            setLoadError(msg)
-            if (!silent) {
-                message.warning(msg)
-            }
-        } catch (error) {
-            const msg = error?.message || '获取系统监控失败'
-            setLoadError(msg)
-            if (!silent) {
-                message.warning(msg)
-            }
-        }
-    }, [])
 
     const hasSystemInfo = Boolean(systeminfo)
     const cpuUsedPercent = roundTo(clampPercent(systeminfo?.cpu?.cpuUsedPercent), 1);
@@ -96,18 +73,22 @@ export default () => {
         ? `${systeminfo?.host?.os || '--'} /${systeminfo?.host?.kernelArch || '--'}-${systeminfo?.host?.platform || '--'}`
         : (loadError || '加载中...')
 
-    useEffect(() => {
-        loadSystemInfo(false)
-    }, [loadSystemInfo])
-    useEffect(() => {
-        const timerId = setInterval(() => {
-            loadSystemInfo(true)
-        }, 5000)
+    // 使用 SSE 替代轮询获取系统信息
+    useSystemInfoStream({
+        onData: (data) => {
+            setSysteminfo(data)
+            setLoadError('')
+        },
+        onError: (err) => {
+            console.error('System info stream error:', err)
+            setLoadError(err?.message || '获取系统监控失败')
+        },
+        onOpen: () => {
+            console.log('System info stream connected')
+        }
+    })
 
-        return () => {
-            clearInterval(timerId); // 组件卸载时清除定时器
-        };
-    }, [loadSystemInfo])
+
     return (
         <>
                 <RcResizeObserver key="resize-observer" onResize={(offset) => {

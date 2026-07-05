@@ -5,11 +5,46 @@ import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
 import {MonacoEditor} from "../../NewEditor/index.jsx";
-import {readLevelServerLogApi, sendCommandApi} from "../../../api/level.jsx";
+import {sendCommandApi} from "../../../api/level.jsx";
 import {useTheme} from "../../../hooks/useTheme";
 import style from "../../DstServerList/index.module.css";
 import {useLevelsStore} from "../../../store/useLevelsStore.tsx";
 import {ProCard} from "@ant-design/pro-components";
+import {useLogStream} from "../../../hooks/useLogStream";
+
+const ConfirmButton = ({title, description, onConfirm, children, ...buttonProps}) => {
+    return (
+        <Popconfirm
+            title={title}
+            description={description}
+            onConfirm={onConfirm}
+            okText="Yes"
+            cancelText="No"
+        >
+            <Button {...buttonProps}>{children}</Button>
+        </Popconfirm>
+    );
+};
+
+const RollbackButtons = ({onRollback, t}) => {
+    const rollbackDays = [1, 2, 3, 4, 5, 6];
+
+    return (
+        <Space size={8} wrap>
+            {rollbackDays.map(day => (
+                <ConfirmButton
+                    key={day}
+                    title={t('panel.rollback')}
+                    description={`确认回档 ${day} 天？请先保存数据`}
+                    onConfirm={() => onRollback(day)}
+                    size="small"
+                >
+                    {t(`panel.rollback${day}`)}
+                </ConfirmButton>
+            ))}
+        </Space>
+    );
+};
 
 const formatRuntime = (totalSeconds) => {
     if (!Number.isFinite(totalSeconds)) return "未知"
@@ -35,7 +70,7 @@ const extractLatestRuntimeSeconds = (lines) => {
 }
 
 export default () => {
-    const { t } = useTranslation()
+    const {t} = useTranslation()
     const {theme} = useTheme();
     const {cluster} = useParams()
     const [spinLoading, setSpinLoading] = useState(false)
@@ -47,20 +82,25 @@ export default () => {
         if (notHasLevels) return ""
         return (levels.find(level => level.status)?.key) || levels[0].key
     }, [levels, notHasLevels])
-    const [levelName, setLevelName] = useState(defaultLevelName)
-    const levelNameRef = useRef(defaultLevelName)
+    const [currentLevelName, setCurrentLevelName] = useState(defaultLevelName)
     const editorRef = useRef()
-    const inputRef = useRef(null);
     const [runtimeSeconds, setRuntimeSeconds] = useState(null)
-    const currentLevel = useMemo(() => levels.find(level => level.key === levelName), [levels, levelName])
+    const currentLevel = useMemo(() => levels.find(level => level.key === currentLevelName), [levels, currentLevelName])
     const processElapsed = currentLevel?.Ps?.elapsed || currentLevel?.ps?.elapsed
+
+    // 当 levels 加载完成后，默认选择正在运行的世界，否则选择第一个世界
+    useEffect(() => {
+        if (!currentLevelName && defaultLevelName) {
+            setCurrentLevelName(defaultLevelName)
+        }
+    }, [currentLevelName, defaultLevelName])
 
     const [command, setCommand] = useState('');
 
     const onchange = (e) => {
-        console.log("e", e)
         setCommand(e.target.value);
     };
+
     function escapeString(str) {
         return str.replace(/\\/g, '\\\\')
             .replace(/"/g, '\\"')
@@ -69,14 +109,15 @@ export default () => {
             .replace(/\r/g, '\\r')
             .replace(/\t/g, '\\t');
     }
+
     function sendInstruct(command) {
         if (command === "") {
             message.warning("请填写指令在发送")
             return
         }
-        console.log(levelNameRef.current, escapeString(command))
+        console.log(currentLevelName, escapeString(command))
         setSpinLoading(true)
-        sendCommandApi(cluster, levelNameRef.current, escapeString(command))
+        sendCommandApi(cluster, currentLevelName, escapeString(command))
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送指令成功")
@@ -87,131 +128,117 @@ export default () => {
             })
     }
 
-    useEffect(() => {
-        if (!levelName && defaultLevelName) {
-            levelNameRef.current = defaultLevelName
-            setLevelName(defaultLevelName)
+    // 使用 useLogStream 处理实时日志流
+    useLogStream({
+        clusterName: cluster || 'Cluster_1',
+        levelName: currentLevelName,
+        onLog: (line) => {
+            const currentLogs = editorRef?.current?.current?.getValue() || ""
+            editorRef?.current?.current?.setValue(currentLogs + `${line}\n`)
+            editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
+            const latestRuntime = extractLatestRuntimeSeconds([line])
+            if (latestRuntime !== null) {
+                setRuntimeSeconds(latestRuntime)
+            }
+        },
+        onError: (err) => {
+            console.error('Log stream error:', err)
+        },
+        onOpen: () => {
+            console.log('Log stream connected')
         }
-    }, [defaultLevelName, levelName])
-
-    const pullLog = useCallback((lineCount) => {
-        const currentLevelName = levelNameRef.current
-        if (!currentLevelName) return
-        const linesCount = lineCount ?? inputRef.current?.input?.value ?? 100
-        readLevelServerLogApi(cluster, currentLevelName, linesCount)
-            .then(resp => {
-                if (resp.code === 200) {
-                    let logs = ""
-                    const lines = resp.data || []
-                    const latestRuntime = extractLatestRuntimeSeconds(lines)
-                    setRuntimeSeconds(latestRuntime)
-                    lines.reverse()
-                    lines.forEach(line => {
-                        logs += `${line}\n`
-                    })
-                    editorRef?.current?.current?.setValue(logs)
-                    editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount());
-                } else {
-                    setRuntimeSeconds(null)
-                    editorRef?.current?.current?.setValue("")
-                }
-            })
-    }, [cluster])
-
-    useEffect(() => {
-        pullLog(100)
-    }, [pullLog, levelName])
-
-    useEffect(()=>{
-        const id = setInterval(() => {
-            pullLog(); // 每次请求最新日志
-        }, 3000)
-        return()=>{
-            clearInterval(id)
-        }
-    }, [pullLog])
-
+    })
 
     const handleChange = (value) => {
-        levelNameRef.current = value
-        setLevelName(value)
+        setCurrentLevelName(value)
+        setRuntimeSeconds(null)
+        editorRef?.current?.current?.setValue("")
     }
 
     return <>
         <Spin spinning={spinLoading}>
-            <ProCard>
-                    <Space.Compact style={{width: '100%', marginBottom: 12}}>
-                        <Select
-                            style={{
-                                width: 120,
-                            }}
-                            onChange={handleChange}
-                            value={levelName}
-                            options={levels.map(level=>{
-                                return {
-                                    value: level.key,
-                                    label: level.levelName,
-                                }
-                            })}
-                        />
-                        <Input defaultValue="100" ref={inputRef}/>
-                        <Button type="primary" onClick={() => pullLog()}>{t('panel.pull')}</Button>
-                    </Space.Compact>
-                    <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
-                        日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}；日志最新时间：{formatRuntime(runtimeSeconds)}
-                    </Typography.Text>
-                    <br/>
-                    <MonacoEditor
-                        className={style.icon}
-                        ref={editorRef}
+            <ProCard
+                title={'服务器日志'}
+                extra={<Space>
+                    <Select
                         style={{
-                            "height": "370px",
-                            "width": "100%",
+                            width: 120,
                         }}
-                        options={{
-                            readOnly: true,
-                            language: 'java',
-                            theme: theme === 'dark'?'vs-dark':''
-                        }}
+                        onChange={handleChange}
+                        defaultValue={notHasLevels ? "" : levels[0].levelName}
+                        options={levels.map(level => {
+                            return {
+                                value: level.key,
+                                label: level.levelName,
+                            }
+                        })}
                     />
-                    <br/>
-                    <Space align={"baseline"} size={16} wrap>
-                        <Button onClick={()=>{
-                            window.location.href = `/api/game/level/server/download?fileName=server_log.txt&levelName=${levelNameRef.current}`
-                        }}
-                                icon={<DownloadOutlined />} type={'link'}>
-                            {t('panel.download.log')}
-                        </Button>
-                    </Space>
-                    <br/>
-                    <Space.Compact
-                        style={{
-                            width: '100%',
-                            marginBottom: 12
-                        }}
+                    <Button style={{float: "right"}}
+                            onClick={() => {
+                                window.location.href = `/api/game/level/server/download?fileName=server_log.txt&clusterName=${cluster}&levelName=${currentLevelName}`
+                            }}
+                            icon={<DownloadOutlined/>}
+                            type={'primary'}
                     >
-                        <Input defaultValue="" onChange={onchange} />
-                        <Button type="primary" onClick={() => sendInstruct(command)}>{t('panel.send')}</Button>
-                    </Space.Compact>
-                    <Space size={8} wrap>
-                        <Button size={'small'} type={"primary"} onClick={() => {sendInstruct("c_save()")}} >{t('panel.c_save()')}</Button>
-                        <Popconfirm
-                            title={t('panel.regenerate')}
-                            description="请保存好数据"
-                            onConfirm={()=>{sendInstruct("c_regenerateworld()")}}
-                            onCancel={()=>{}}
-                            okText="Yes"
-                            cancelText="No"
-                        >
-                            <Button size={'small'} type={"primary"} danger>{t('panel.regenerate')}</Button>
-                        </Popconfirm>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(1)") }} >{t('panel.rollback1')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(2)") }} >{t('panel.rollback2')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(3)") }} >{t('panel.rollback3')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(4)") }} >{t('panel.rollback4')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(5)") }} >{t('panel.rollback5')}</Button>
-                        <Button size={'small'} onClick={() => { sendInstruct("c_rollback(6)") }} >{t('panel.rollback6')}</Button>
-                    </Space>
+                        {t('panel.download.log')}
+                    </Button>
+                </Space>}
+            >
+                <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
+                    日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}；日志最新时间：{formatRuntime(runtimeSeconds)}
+                </Typography.Text>
+                <MonacoEditor
+                    className={style.icon}
+                    ref={editorRef}
+                    style={{
+                        "height": "304px",
+                        "width": "100%",
+                    }}
+                    options={{
+                        readOnly: true,
+                        language: 'java',
+                        theme: theme === 'dark' ? 'vs-dark' : ''
+                    }}
+                />
+                <br/>
+                <Space.Compact
+                    style={{
+                        width: '100%',
+                        marginBottom: 12
+                    }}
+                >
+                    <Input defaultValue="" onChange={onchange}/>
+                    <Button type="primary" onClick={() => sendInstruct(command)}>{t('panel.send')}</Button>
+                </Space.Compact>
+                <Space size={8} wrap>
+                    <ConfirmButton
+                        title={t('panel.c_save()')}
+                        description="确认保存当前游戏数据？"
+                        onConfirm={() => {
+                            sendInstruct("c_save()")
+                        }}
+                        size="small"
+                        type="primary"
+                    >
+                        {t('panel.c_save()')}
+                    </ConfirmButton>
+                    <ConfirmButton
+                        title={t('panel.regenerate')}
+                        description="请保存好数据"
+                        onConfirm={() => {
+                            sendInstruct("c_regenerateworld()")
+                        }}
+                        size="small"
+                        type="primary"
+                        danger
+                    >
+                        {t('panel.regenerate')}
+                    </ConfirmButton>
+                    <RollbackButtons
+                        onRollback={(day) => sendInstruct(`c_rollback(${day})`)}
+                        t={t}
+                    />
+                </Space>
             </ProCard>
         </Spin>
     </>

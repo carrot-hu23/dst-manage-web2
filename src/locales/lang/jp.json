@@ -168,6 +168,12 @@
   "cluster.steam_group_only": "Steamグループのみ",
   "cluster.steam_group_admins": "Steamグループ管理者",
 
+  "cluster.alert.console_enabled.disabled": "パネルはコンソール機能に依存しています。無効にすると、パネルのコンソール機能が使用できなくなります",
+  "cluster.alert.master_port.info": "世界通信ポート、マスターとスレーブサーバーは同じ値を設定する必要があります。ポートが使用されていないことを確認してください",
+  "cluster.alert.shard_enabled.disabled": "無効にすると、単一世界モードのみが有効になり、地上と地下などの複数世界接続を実装できません",
+  "cluster.alert.bind_ip.info": "スレーブサーバーIP、マスターとスレーブサーバーが同じコンピューター上にある場合は127.0.0.1、それ以外の場合は0.0.0.0を入力してください",
+  "cluster.alert.master_ip.info": "マスターサーバーIP、マスターとスレーブサーバーが同じコンピューター上にある場合は127.0.0.1、それ以外の場合はマスターサーバーIPを入力してください",
+
   "level.worldSettings": "ワールド設定",
   "level.worldGeneration": "ワールド生成",
   "level.save": "保存",
@@ -253,6 +259,8 @@
   "mod.tips2": "すべてのモッド構成を更新しますか？",
   "mod.tips3": "Modinfo.luaファイルを手動でアップロードします。サーバーのネットワーク問題により、モッドのダウンロードに失敗することがあります。その場合は、ローカルモジュールのModinfoをサーバーにアップロードしてください。",
   "mod.tips4": "このモッドには構成オプションがありません。",
+  "mod.dismiss.button": "今後表示しない",
+  "mod.dismiss.success": "アラートを非表示にしました",
 
   "backup.BackupList": "バックアップリスト",
   "backup.SnapshotBackup": "スナップショットバックアップ",
