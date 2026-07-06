@@ -146,7 +146,7 @@ export default () => {
                 </Space>}
             >
                 <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
-                    日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}
+                    进程运行时长：{processElapsed || '未运行/未知'}
                 </Typography.Text>
                 <MonacoEditor
                     className={style.icon}
