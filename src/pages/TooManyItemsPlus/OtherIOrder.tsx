@@ -31,7 +31,7 @@ export default function OtherIOrder(){
     const [levelName, setLevelName] = useState(notHasLevels?"":levels[0].key)
 
     function give(prefab: string, amount: number, kuId: string) {
-        const command = `ThePlayer = UserToPlayer(\\"${kuId}\\")   c_give(\\"${prefab}\\", ${amount}) ThePlayer = nil`
+        const command = `ThePlayer = UserToPlayer(\"${kuId}\")   c_give(\"${prefab}\", ${amount}) ThePlayer = nil`
         sendCommandApi(cluster || "", levelName, command)
             .then(resp =>{
                 if (resp.code === 200) {
@@ -48,24 +48,24 @@ export default function OtherIOrder(){
                 时间按钮
             </Typography.Title>
             <Space wrap size={16}>
-                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\\"ms_nextcycle\\")')}>跳过一天</Button>
-                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\\"ms_nextphase\\")')}>跳过时钟</Button>
+                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\"ms_nextcycle\")')}>跳过一天</Button>
+                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\"ms_nextphase\")')}>跳过时钟</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_setseason\\", \\"summer\\")')}>进入夏季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"summer\")')}>进入夏季</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_setseason\\", \\"winter\\")')}>进入冬季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"winter\")')}>进入冬季</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_setseason\\", \\"spring\\")')}>进入春季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"spring\")')}>进入春季</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_setseason\\", \\"autumn\\")')}>进人秋季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"autumn\")')}>进人秋季</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_forceprecipitation\\")')}>开始下雨</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_forceprecipitation\")')}>开始下雨</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_forceprecipitation\\", false)')}>停止下雨</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_forceprecipitation\", false)')}>停止下雨</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_startthemoonstorms\\")')}>开启月亮裂隙</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_startthemoonstorms\")')}>开启月亮裂隙</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\\"ms_stopthemoonstorms\\")')}>关闭月亮裂隙</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_stopthemoonstorms\")')}>关闭月亮裂隙</Button>
             </Space>
             <Divider />
             <Typography.Title level={5}>

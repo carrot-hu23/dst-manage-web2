@@ -61,7 +61,7 @@ export default () => {
         console.log(levelName, command)
         setSpin(true)
         addHistory(command)
-        sendCommandApi("", levelName, escapeString(command))
+        sendCommandApi("", levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送指令成功")
@@ -81,7 +81,7 @@ export default () => {
         setSpin(true)
         const cmd = `c_announce"${command2}"`
         addHistory(command2)
-        sendCommandApi("", levelName, escapeString(cmd))
+        sendCommandApi("", levelName, cmd)
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送指令成功")
@@ -90,15 +90,6 @@ export default () => {
                 }
                 setSpin(false)
             })
-    }
-
-    function escapeString(str) {
-        return str.replace(/\\/g, '\\\\')
-            .replace(/"/g, '\\"')
-            .replace(/'/g, "\\'")
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r')
-            .replace(/\t/g, '\\t');
     }
 
     const handleChange = (value) => {
