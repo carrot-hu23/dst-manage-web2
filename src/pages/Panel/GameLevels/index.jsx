@@ -26,7 +26,15 @@ import {useThemeConfigStore} from "../../../store/useThemeConfigStore.tsx";
 
 
 function formatData(data, num) {
-    return data.toFixed(num)
+    const numValue = Number(data)
+    return Number.isFinite(numValue) ? numValue.toFixed(num) : (0).toFixed(num)
+}
+
+function roundTo(value, digits = 1) {
+    const numValue = Number(value)
+    if (!Number.isFinite(numValue)) return 0
+    const factor = 10 ** digits
+    return Math.round(numValue * factor) / factor
 }
 
 
@@ -35,34 +43,48 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
     const setLevels = useLevelsStore((state) => state.setLevels)
 
-    useEffect(() => {
-        const timerId = setInterval(() => {
-            getLevelStatusApi()
+    const normalizeLevels = (data) => {
+        return data.map(level => {
+            const item = {
+                key: level.uuid,
+                uuid: level.uuid,
+                levelName: level.levelName,
+                location: '未知',
+                ps: level.ps,
+                Ps: level.Ps,
+                status: level.status
+            }
+            try {
+                const parsed = parse(level.leveldataoverride)
+                item.location = parsed.location
+            } catch (error) {
+                console.log(error)
+            }
+            return item
+        })
+    }
+
+    const refreshLevelStatus = () => {
+        return getLevelStatusApi()
                 .then(resp => {
                     if (resp.code === 200) {
-                        const levels = resp.data
-                        const items = []
-                        levels.forEach(level => {
-                            const item = {
-                                key: level.uuid,
-                                uuid: level.uuid,
-                                levelName: level.levelName,
-                                location: '未知',
-                                ps: level.ps,
-                                Ps: level.Ps,
-                                status: level.status
-                            }
-                            try {
-                                const data = parse(level.leveldataoverride)
-                                item.location = data.location
-                            } catch (error) {
-                                console.log(error)
-                            }
-                            items.push(item)
-                        })
+                        const items = normalizeLevels(resp.data)
                         setLevels(items)
+                        return items
                     }
+                    return []
                 })
+                .catch(error => {
+                    console.log(error)
+                    message.error('刷新世界状态失败')
+                    return []
+                })
+    }
+
+    useEffect(() => {
+        refreshLevelStatus()
+        const timerId = setInterval(() => {
+            refreshLevelStatus()
         }, 3000)
 
         return () => {
@@ -72,24 +94,57 @@ export default () => {
 
     const {cluster} = useParams()
     const [spin, setSpin] = useState(false)
+    const [pendingActions, setPendingActions] = useState({})
     const {t} = useTranslation()
 
-    const statusOnClick = (checked, event, levelName, uuid) => {
-        let prefix
-        if (checked) {
-            prefix = t('panel.start.up')
-        } else {
-            prefix = t('panel.start.down')
-        }
-        setSpin(true)
-        startLevelApi("", uuid, checked).then(resp => {
-            if (resp.code !== 200) {
-                message.error(`${prefix} ${levelName}失败${resp.msg}`)
+    const setLevelPending = (uuid, action) => {
+        setPendingActions(prev => {
+            const next = {...prev}
+            if (action) {
+                next[uuid] = action
             } else {
-                message.success(`${prefix} ${levelName}`)
+                delete next[uuid]
             }
-            setSpin(false)
+            return next
         })
+    }
+
+    const waitForLevelStatus = async (uuid, expectedStatus, attempts = 12) => {
+        for (let i = 0; i < attempts; i++) {
+            const items = await refreshLevelStatus()
+            const level = items.find(item => item.uuid === uuid)
+            if (level && level.status === expectedStatus) {
+                return true
+            }
+            await new Promise(resolve => setTimeout(resolve, 1000))
+        }
+        return false
+    }
+
+    const statusOnClick = async (checked, event, levelName, uuid) => {
+        const prefix = checked ? t('panel.start.up') : t('panel.start.down')
+        setLevelPending(uuid, checked ? 'starting' : 'stopping')
+        try {
+            const resp = await startLevelApi(cluster || "", uuid, checked)
+            if (resp.code !== 200) {
+                message.error(`${prefix} ${levelName}失败 ${resp.msg || ''}`)
+                await refreshLevelStatus()
+                return
+            }
+
+            const ok = await waitForLevelStatus(uuid, checked)
+            if (ok) {
+                message.success(`${prefix} ${levelName}`)
+            } else {
+                message.error(`${prefix} ${levelName}失败：进程状态未确认`)
+            }
+        } catch (error) {
+            console.log(error)
+            message.error(`${prefix} ${levelName}失败`)
+            await refreshLevelStatus()
+        } finally {
+            setLevelPending(uuid, null)
+        }
     }
 
     const columns = [
@@ -107,10 +162,10 @@ export default () => {
                                          <span>{`内存: ${formatData((record.Ps !== undefined ? record.Ps.RSS : 0) / 1024, 2)}MB`}</span>
                                          <span>{`虚拟内存: ${formatData((record.Ps !== undefined ? record.Ps.VSZ : 0) / 1024, 2)}MB`}</span>
                                      </Space>
-                                     <Progress percent={record.Ps.memUage} size={'small'}/>
+                                     <Progress percent={roundTo(record.Ps.memUage, 1)} size={'small'}/>
                                  </div>
                                  <div>
-                                     cpu: <Progress type="circle" percent={record.Ps.cpuUage} size={40}/>
+                                     cpu: <Progress type="circle" percent={roundTo(record.Ps.cpuUage, 1)} size={40}/>
                                  </div>
                              </div>)}>
                         {record.status && <Tag color={'green'}>{text}</Tag>}
@@ -163,9 +218,11 @@ export default () => {
                         <Button icon={<ClearOutlined/>} danger size={'small'}>{t('panel.clear')}</Button>
                     </Popconfirm>
 
-                    <Switch checked={record.status}
-                            checkedChildren={t('panel.run')}
-                            unCheckedChildren={t('panel.stop')}
+                    <Switch checked={pendingActions[record.uuid] === 'starting' ? true : pendingActions[record.uuid] === 'stopping' ? false : record.status}
+                            loading={Boolean(pendingActions[record.uuid])}
+                            disabled={Boolean(pendingActions[record.uuid])}
+                            checkedChildren={pendingActions[record.uuid] === 'starting' ? '启动中' : t('panel.run')}
+                            unCheckedChildren={pendingActions[record.uuid] === 'stopping' ? '停止中' : t('panel.stop')}
                             onClick={(checked, event) => {
                                 statusOnClick(checked, event, record.levelName, record.uuid)
                             }}
@@ -240,9 +297,16 @@ export default () => {
                                      if (resp.code === 200) {
                                          message.success("启动成功")
                                      } else {
-                                         message.error("启动成功")
+                                         message.error("启动失败")
                                      }
                                      setSpin(false)
+                                     setTimeout(refreshLevelStatus, 800)
+                                 })
+                                 .catch(error => {
+                                     console.log(error)
+                                     message.error("启动失败")
+                                     setSpin(false)
+                                     setTimeout(refreshLevelStatus, 800)
                                  })
                          }}
                          onCancel={() => {
@@ -270,6 +334,13 @@ export default () => {
                                          message.error("关闭失败")
                                      }
                                      setSpin(false)
+                                     setTimeout(refreshLevelStatus, 800)
+                                 })
+                                 .catch(error => {
+                                     console.log(error)
+                                     message.error("关闭失败")
+                                     setSpin(false)
+                                     setTimeout(refreshLevelStatus, 800)
                                  })
                          }}
                          onCancel={() => {
@@ -366,9 +437,11 @@ export default () => {
                                                             type={'text'}>{t('panel.clear')}</Button>
                                                 </Popconfirm>
 
-                                                <Switch checked={record.status}
-                                                        checkedChildren={t('panel.run')}
-                                                        unCheckedChildren={t('panel.stop')}
+                                                <Switch checked={pendingActions[record.uuid] === 'starting' ? true : pendingActions[record.uuid] === 'stopping' ? false : record.status}
+                                                        loading={Boolean(pendingActions[record.uuid])}
+                                                        disabled={Boolean(pendingActions[record.uuid])}
+                                                        checkedChildren={pendingActions[record.uuid] === 'starting' ? '启动中' : t('panel.run')}
+                                                        unCheckedChildren={pendingActions[record.uuid] === 'stopping' ? '停止中' : t('panel.stop')}
                                                         onClick={(checked, event) => {
                                                             statusOnClick(checked, event, record.levelName, record.uuid)
                                                         }}

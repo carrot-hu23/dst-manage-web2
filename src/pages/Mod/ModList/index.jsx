@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import _ from "lodash";
 import {Row, Col, Button, Space, Tooltip, message, Alert, Popconfirm, Spin, Select} from 'antd';
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 import {format} from "lua-json";
 
-import {getHomeConfigApi, saveHomeConfigApi} from '../../../api/gameApi.jsx';
 import {updateModinfosApi} from '../../../api/modApi.jsx';
 import ModItem from "./ModItem/index.jsx";
 import ModConfigOptions from "../ModConfigOptions/index.jsx";
@@ -15,12 +14,10 @@ import i18n from "i18next";
 import {useUserPreferences} from "../../../hooks/useUserPreferences.ts";
 
 // eslint-disable-next-line react/prop-types
-export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel}) => {
+export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel, selectedLevelUuid}) => {
 
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
-    const [level, setLevel] = useState(levels[0])
-
     const { t } = useTranslation()
     const navigate = useNavigate();
     const {cluster} = useParams()
@@ -29,6 +26,8 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
 
     const [confirmLoading, setConfirmLoading] = useState(false);
     const [mod, setMod] = useState({})
+    const modListRef = useRef(modList)
+    const levelsRef = useRef(levels)
     const [showModTips1Alert, setShowModTips1Alert] = useState(true)
 
     const changeMod = (mod) => {
@@ -47,9 +46,9 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         return /^[0-9]+$/.test(str);
     }
 
-    function formatModOverride() {
+    function formatModOverride(targetModList = modList) {
         try {
-            const chooses = modList.filter(mod => mod.enable)
+            const chooses = targetModList.filter(mod => mod.enable)
             const modids = chooses.map(mod => mod.modid)
             const object = _.pick(modConfigOptionsRef.current, modids)
             const object1 = {}
@@ -97,31 +96,46 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     function saveModConfig() {
-        getHomeConfigApi(cluster)
-            .then(data => {
-                const homeConfig = data.data
-                homeConfig.modData = formatModOverride()
-                if (homeConfig.modData !== "return { error }") {
-                    console.log(homeConfig)
-                    saveHomeConfigApi(cluster, homeConfig).then(() => {
-                        message.info(t('mod.save.ok'))
-                    }).catch(error => {
-                        console.log(error);
-                        message.error(t('mod.save.error'))
-                    })
+        const modoverrides = formatModOverride(modListRef.current)
+        if (modoverrides === "return { error }") {
+            message.warning(t('mod.parse.error'))
+            return Promise.resolve(false)
+        }
+        const newLevels = levelsRef.current.map(item => ({
+            ...item,
+            modoverrides,
+        }))
+        console.log("save all levels modoverrides", newLevels)
+        return updateLevelsApi({levels: newLevels})
+            .then(resp => {
+                if (resp.code === 200) {
+                    message.info(t('mod.save.ok'))
+                    reFlushLevels(cluster)
+                    return true
                 } else {
-                    message.warning(t('mod.parse.error'))
+                    message.warning(t('level.save.error'))
+                    message.warning(resp.msg)
+                    return false
                 }
+            })
+            .catch(error => {
+                console.log(error);
+                message.error(t('mod.save.error'))
+                return false
             })
     }
 
     function saveLevelMod() {
+        if (!selectedLevelUuid) {
+            message.warning(t('level.fetch.error'))
+            return
+        }
         const modoverrides = formatModOverride()
-        const newLevels = levels
-        newLevels.forEach(item=>{
-            if (item.uuid === level.uuid) {
-                item.modoverrides = modoverrides;
+        const newLevels = levels.map(item=>{
+            if (item.uuid === selectedLevelUuid) {
+                return {...item, modoverrides}
             }
+            return item
         })
         updateLevelsApi({levels: newLevels})
             .then(resp => {
@@ -135,6 +149,10 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                     message.warning(t('level.save.error'))
                     message.warning(resp.msg)
                 }
+            })
+            .catch(error => {
+                console.log(error)
+                message.error(t('level.save.error'))
             })
         console.log(newLevels)
     }
@@ -153,14 +171,40 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     const removeMod = (modId) => {
-        const newModList = []
-        // eslint-disable-next-line no-restricted-syntax
-        for (const mod of modList) {
-            if (mod.modid !== modId) {
-                newModList.push(mod)
-            }
+        const newModList = modList.filter(mod => mod.modid !== modId)
+        const modoverrides = formatModOverride(newModList)
+        if (modoverrides === "return { error }") {
+            message.warning(t('mod.parse.error'))
+            return Promise.resolve(false)
         }
-        setModList([...newModList])
+        const newLevels = levelsRef.current.map(item => {
+            if (item.uuid === selectedLevelUuid) {
+                return {...item, modoverrides}
+            }
+            return item
+        })
+        return updateLevelsApi({levels: newLevels})
+            .then(resp => {
+                if (resp.code === 200) {
+                    defaultConfigOptionsRef.current.delete(modId)
+                    delete modConfigOptionsRef.current[modId]
+                    modListRef.current = newModList
+                    setModList([...newModList])
+                    setMod(current => current?.modid === modId ? (newModList[0] || {}) : current)
+                    message.success(t('mod.delete.ok'))
+                    reFlushLevels(cluster)
+                    return true
+                } else {
+                    message.warning(t('level.save.error'))
+                    message.warning(resp.msg)
+                    return false
+                }
+            })
+            .catch(error => {
+                console.log(error)
+                message.error(t('mod.delete.error'))
+                return false
+            })
     }
 
     useEffect(() => {
@@ -175,18 +219,25 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
 
         // 如果去重后的列表和原列表不同，更新列表
         if (uniqueModList.length !== modList.length) {
+            modListRef.current = uniqueModList
             setModList(uniqueModList);
+            return
         }
 
-        setMod(uniqueModList[0] || {})
-    }, [modList])
+        modListRef.current = uniqueModList
+        setMod(current => uniqueModList.find(item => item.modid === current?.modid) || uniqueModList[0] || {})
+    }, [modList, setModList])
+
+    useEffect(() => {
+        levelsRef.current = levels
+    }, [levels])
 
     useEffect(() => {
         // 检查用户是否已关闭提示
         isDismissed('mod-tips1').then(dismissed => {
             setShowModTips1Alert(!dismissed)
         })
-    }, [])
+    }, [isDismissed])
 
     const handleDismissModTips1 = async () => {
         const success = await dismissAlert('mod-tips1')
@@ -197,10 +248,10 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     const updateModSize = modList.filter(mod=>mod.update)
+    const selectedLevel = levels.find(item => item.uuid === selectedLevelUuid) || levels[0] || {}
 
     const handleChange = (value) => {
         changeLevel(value)
-        setLevel(levels.filter(level=>level.uuid === value)[0])
     }
 
     return (
@@ -252,11 +303,11 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                                 width: 120,
                             }}
                             onChange={handleChange}
-                            defaultValue={levels[0].levelName}
+                            value={selectedLevelUuid || undefined}
                             options={levels.map(level=>{
                                 return {
                                     value: level.uuid,
-                                    label: level.levelName,
+                                    label: level.levelName || level.uuid,
                                 }
                             })}
                         />
@@ -266,7 +317,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                                 backgroundColor: '#00B96B'
                             }}
                             onClick={()=>saveLevelMod()}
-                        >保存到{level?.levelName}</Button>
+                        >保存到{selectedLevel?.levelName || selectedLevel?.uuid || ''}</Button>
                     </Space>
                     <br/><br/>
                     <Row gutter={24}>

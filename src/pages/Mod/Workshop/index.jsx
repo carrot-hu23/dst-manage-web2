@@ -24,23 +24,30 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
     const { t } = useTranslation()
 
     const [loading, setLoading] = useState(false)
-
+    const workshopUrl = `https://steamcommunity.com/sharedfiles/filedetails/?id=${modinfo.id}`
+    const openWorkshop = () => window.open(workshopUrl, '_blank', 'noopener,noreferrer')
     const authorId = extractAuthorId(modinfo.author);
+    const authorText = authorId || modinfo.author || '-'
+    const favoriteCount = modinfo?.vote?.num ?? modinfo?.favorited ?? modinfo?.favorite ?? 0
 
     return (
         <Card
             key={modinfo.id}
             hoverable
+            onClick={openWorkshop}
             style={{
                 width: '100%',
                 height: '100%',
                 display: 'flex',
                 flexDirection: 'column',
+                cursor: 'pointer',
             }}
             cover={<div style={{padding: '12px 12px 0 12px'}}>
                 <a
                     target={'_blank'}
-                    href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${modinfo.id}`} rel="noreferrer">
+                    href={workshopUrl}
+                    rel="noreferrer"
+                    onClick={(event) => event.stopPropagation()}>
                     <img alt="example" style={{
                         height: 160,
                         objectFit: 'cover',
@@ -61,18 +68,16 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
                 style={{marginBottom: 8}}
             />
 
-            {authorId && (
-                <div style={{
-                    fontSize: '12px',
-                    color: '#999',
-                    marginBottom: 4,
-                    whiteSpace: 'nowrap',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                }}>
-                    {t('mod.author') || 'Author'}: {authorId}
-                </div>
-            )}
+            <div style={{
+                fontSize: '12px',
+                color: '#999',
+                marginBottom: 4,
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+            }}>
+                {t('mod.author') || 'Author'}: {authorText}
+            </div>
 
             {modinfo.vote && (
                 <div style={{
@@ -96,6 +101,14 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
             <div style={{
                 fontSize: '12px',
                 color: '#999',
+                marginBottom: 4,
+            }}>
+                ⭐ {t('mod.favorites')}: {fShortenNumber(favoriteCount)}
+            </div>
+
+            <div style={{
+                fontSize: '12px',
+                color: '#999',
                 marginBottom: 12,
             }}>
                 {format(modinfo.time * 1000)}
@@ -107,7 +120,10 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
                     type="primary"
                     size={'small'}
                     block
-                    onClick={() => subscribe(modinfo.id, modinfo.name, addModList, setLoading)}
+                    onClick={(event) => {
+                        event.stopPropagation()
+                        subscribe(modinfo.id, modinfo.name, addModList, setLoading)
+                    }}
                 >
                     {t('mod.subscribe')}
                 </Button>

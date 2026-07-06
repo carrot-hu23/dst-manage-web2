@@ -5,7 +5,7 @@ import {Card, Switch, Popconfirm, Row, Col, Button, message, Spin, Badge} from '
 import './mod.css';
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {deleteModInfo, getModInfo} from "../../../../api/modApi.jsx";
+import {getModInfo} from "../../../../api/modApi.jsx";
 
 function subscribeMod(lang, t, modid, modList, setModList, setStartLoading) {
     setStartLoading(true)
@@ -86,6 +86,7 @@ const ModItem = (props) => {
                                 {mod?.update && <Badge count={1}>
                                     <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
                                             checked={mod?.enable}
+                                            onClick={(checked, event) => event.stopPropagation()}
                                             onChange={() => {
                                                 props.changeEnable(mod?.modid)
                                             }}
@@ -103,17 +104,10 @@ const ModItem = (props) => {
                                         title={t('mod.delete.title')}
                                         okText="Yes"
                                         cancelText="No"
-                                        onConfirm={() => {
-                                            deleteModInfo(cluster, mod.modid)
-                                                .then(resp => {
-                                                    if (resp.code === 200) {
-                                                        message.success(t('mod.delete.ok'))
-                                                        removeMod(mod.modid)
-                                                    }
-                                                })
-                                        }}
+                                        onConfirm={() => removeMod(mod.modid)}
                                     >
-                                        <Button type="text" danger onClick={() => {
+                                        <Button type="text" danger onClick={(event) => {
+                                            event.stopPropagation()
                                             setMod(props.mod)
                                         }}>
                                             {t('mod.delete')}
@@ -154,7 +148,8 @@ const ModItem = (props) => {
                                         subscribeMod(lang, t, mod?.modid, modList, setModList, setStartLoading)
                                     }}
                                 >
-                                    <Button type="primary" onClick={() => {
+                                    <Button type="primary" onClick={(event) => {
+                                        event.stopPropagation()
                                         setMod(props.mod)
                                     }}>
                                         {t('mod.install')}
@@ -164,17 +159,10 @@ const ModItem = (props) => {
                                     title={t('mod.delete.title')}
                                     okText="Yes"
                                     cancelText="No"
-                                    onConfirm={() => {
-                                        deleteModInfo(cluster, mod.modid)
-                                            .then(resp => {
-                                                if (resp.code === 200) {
-                                                    message.success(t('mod.delete.ok'))
-                                                    removeMod(mod.modid)
-                                                }
-                                            })
-                                    }}
+                                    onConfirm={() => removeMod(mod.modid)}
                                 >
-                                    <Button type="text" danger onClick={() => {
+                                    <Button type="text" danger onClick={(event) => {
+                                        event.stopPropagation()
                                         setMod(props.mod)
                                     }}>
                                         {t('mod.delete')}
