@@ -262,6 +262,11 @@
   "mod.dismiss.button": "今後表示しない",
   "mod.dismiss.success": "アラートを非表示にしました",
 
+  "mod.preference.save": "設定を保存",
+  "mod.preference.save.ok": "Mod設定を保存しました",
+  "mod.preference.save.error": "Mod設定の保存に失敗しました",
+  "mod.preference.no.config": "このModには保存可能な設定がありません",
+
   "backup.BackupList": "バックアップリスト",
   "backup.SnapshotBackup": "スナップショットバックアップ",
   "backup.delete.ok": "バックアップ削除成功",

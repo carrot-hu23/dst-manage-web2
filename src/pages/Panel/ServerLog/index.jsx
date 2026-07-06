@@ -46,29 +46,6 @@ const RollbackButtons = ({onRollback, t}) => {
     );
 };
 
-const formatRuntime = (totalSeconds) => {
-    if (!Number.isFinite(totalSeconds)) return "未知"
-    const seconds = Math.max(0, Math.floor(totalSeconds))
-    const hours = Math.floor(seconds / 3600)
-    const minutes = Math.floor((seconds % 3600) / 60)
-    const remainSeconds = seconds % 60
-    const pad = (value) => String(value).padStart(2, '0')
-    return `${pad(hours)}:${pad(minutes)}:${pad(remainSeconds)}`
-}
-
-const extractLatestRuntimeSeconds = (lines) => {
-    let latest = null
-    lines.forEach(line => {
-        const match = /^\[(\d+):(\d+):(\d+)\]/.exec(line)
-        if (!match) return
-        const totalSeconds = Number(match[1]) * 3600 + Number(match[2]) * 60 + Number(match[3])
-        if (latest === null || totalSeconds > latest) {
-            latest = totalSeconds
-        }
-    })
-    return latest
-}
-
 export default () => {
     const {t} = useTranslation()
     const {theme} = useTheme();
@@ -84,7 +61,6 @@ export default () => {
     }, [levels, notHasLevels])
     const [currentLevelName, setCurrentLevelName] = useState(defaultLevelName)
     const editorRef = useRef()
-    const [runtimeSeconds, setRuntimeSeconds] = useState(null)
     const currentLevel = useMemo(() => levels.find(level => level.key === currentLevelName), [levels, currentLevelName])
     const processElapsed = currentLevel?.Ps?.elapsed || currentLevel?.ps?.elapsed
 
@@ -101,23 +77,13 @@ export default () => {
         setCommand(e.target.value);
     };
 
-    function escapeString(str) {
-        return str.replace(/\\/g, '\\\\')
-            .replace(/"/g, '\\"')
-            .replace(/'/g, "\\'")
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r')
-            .replace(/\t/g, '\\t');
-    }
-
     function sendInstruct(command) {
         if (command === "") {
             message.warning("请填写指令在发送")
             return
         }
-        console.log(currentLevelName, escapeString(command))
         setSpinLoading(true)
-        sendCommandApi(cluster, currentLevelName, escapeString(command))
+        sendCommandApi(cluster, currentLevelName, command)
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送指令成功")
@@ -136,10 +102,6 @@ export default () => {
             const currentLogs = editorRef?.current?.current?.getValue() || ""
             editorRef?.current?.current?.setValue(currentLogs + `${line}\n`)
             editorRef?.current?.current?.revealLine(editorRef?.current?.current?.getModel()?.getLineCount())
-            const latestRuntime = extractLatestRuntimeSeconds([line])
-            if (latestRuntime !== null) {
-                setRuntimeSeconds(latestRuntime)
-            }
         },
         onError: (err) => {
             console.error('Log stream error:', err)
@@ -151,7 +113,6 @@ export default () => {
 
     const handleChange = (value) => {
         setCurrentLevelName(value)
-        setRuntimeSeconds(null)
         editorRef?.current?.current?.setValue("")
     }
 
@@ -185,7 +146,7 @@ export default () => {
                 </Space>}
             >
                 <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
-                    日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}；日志最新时间：{formatRuntime(runtimeSeconds)}
+                    日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}
                 </Typography.Text>
                 <MonacoEditor
                     className={style.icon}
