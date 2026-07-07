@@ -262,6 +262,11 @@
   "mod.dismiss.button": "다시 표시하지 않음",
   "mod.dismiss.success": "알림이 닫혔습니다",
 
+  "mod.preference.save": "설정 저장",
+  "mod.preference.save.ok": "모드 설정을 저장했습니다",
+  "mod.preference.save.error": "모드 설정 저장 실패",
+  "mod.preference.no.config": "이 모드는 저장할 설정이 없습니다",
+
   "backup.BackupList": "백업 목록",
   "backup.SnapshotBackup": "스냅샷 백업",
   "backup.delete.ok": "백업 삭제 성공",

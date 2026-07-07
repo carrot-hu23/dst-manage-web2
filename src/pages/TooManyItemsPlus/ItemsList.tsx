@@ -17,7 +17,7 @@ export default function ItemList(itemListProps: ItemListProps) {
     function give(levelName: string, prefab: string, amount: number, kuId: string) {
         setLoadingItems(prev => new Set(prev).add(prefab));
 
-        const command = `ThePlayer = UserToPlayer(\\"${kuId}\\")   c_give(\\"${prefab}\\", ${amount}) ThePlayer = nil`
+        const command = `ThePlayer = UserToPlayer(\"${kuId}\")   c_give(\"${prefab}\", ${amount}) ThePlayer = nil`
         sendCommandApi(cluster || "", levelName, command)
             .then(resp => {
                 if (resp.code === 200) {

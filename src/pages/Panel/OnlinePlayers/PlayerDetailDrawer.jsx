@@ -129,7 +129,7 @@ export default ({player, visible, onClose, levelName}) => {
                 // 注意：模板字符串中的转义字符可能需要根据实际语言环境调整
                 // 原代码: GetPlayerData(\"${player.kuId}\", \"${uuid}\")
                 // 如果这是发送给 Lua/特定脚本引擎的命令，请确保引号转义正确
-                const command = `print(ToJSONStr(GetPlayerData(\\"${player.kuId}\\", \\"${uuid}\\")))`;
+                const command = `print(ToJSONStr(GetPlayerData(\"${player.kuId}\", \"${uuid}\")))`;
 
                 const commandResp = await sendCommandApi(cluster, levelName, command);
 
