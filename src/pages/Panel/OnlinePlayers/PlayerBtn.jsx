@@ -20,7 +20,7 @@ export default ({player, levelName}) => {
     }
 
     const gotoPlayer = (player, otherPlayerKuId) => {
-        let command = `ThePlayer = UserToPlayer(\\"${player.kuId}\\") c_goto(\\"${otherPlayerKuId}\\") ThePlayer = nil`
+        let command = `ThePlayer = UserToPlayer(\"${player.kuId}\") c_goto(\"${otherPlayerKuId}\") ThePlayer = nil`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
@@ -32,7 +32,7 @@ export default ({player, levelName}) => {
     }
 
     const gotoNext = (player, where) => {
-        let command = `ThePlayer = UserToPlayer(\\"${player.kuId}\\") c_gonext(\\"${where}\\") ThePlayer = nil`
+        let command = `ThePlayer = UserToPlayer(\"${player.kuId}\") c_gonext(\"${where}\") ThePlayer = nil`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
@@ -55,7 +55,7 @@ export default ({player, levelName}) => {
     };
 
     const kickPlayer = (player) => {
-        const command = `TheNet:Kick(\\"${player.kuId}\\")`
+        const command = `TheNet:Kick(\"${player.kuId}\")`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
@@ -66,7 +66,7 @@ export default ({player, levelName}) => {
             })
     }
     const killPlayer = (player) => {
-        const command = `UserToPlayer(\\"${player.kuId}\\"):PushEvent('death')`
+        const command = `UserToPlayer(\"${player.kuId}\"):PushEvent('death')`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
@@ -78,7 +78,7 @@ export default ({player, levelName}) => {
     }
     const respawnPlayer = (player) => {
 
-        const command = `UserToPlayer(\\"${player.kuId}\\"):PushEvent('respawnfromghost')`
+        const command = `UserToPlayer(\"${player.kuId}\"):PushEvent('respawnfromghost')`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
@@ -92,9 +92,9 @@ export default ({player, levelName}) => {
     const execPlayerCommand = (player, order, arg) => {
         let command
         if (arg == null) {
-            command = `ThePlayer = UserToPlayer(\\"${player.kuId}\\") ${order}() ThePlayer = nil`
+            command = `ThePlayer = UserToPlayer(\"${player.kuId}\") ${order}() ThePlayer = nil`
         } else {
-            command = `ThePlayer = UserToPlayer(\\"${player.kuId}\\") ${order}(${arg}) ThePlayer = nil`
+            command = `ThePlayer = UserToPlayer(\"${player.kuId}\") ${order}(${arg}) ThePlayer = nil`
         }
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
@@ -107,7 +107,7 @@ export default ({player, levelName}) => {
     }
 
     const despawnPlayer = (player) => {
-        const command = `c_despawn(\\"${player.kuId}\\")`
+        const command = `c_despawn(\"${player.kuId}\")`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
@@ -119,7 +119,7 @@ export default ({player, levelName}) => {
     }
 
     const resetskilltree = (player) => {
-        const command = `ThePlayer = UserToPlayer(\\"${player.kuId}\\") require(\\"debugcommands\\") d_resetskilltree() ThePlayer = nil`
+        const command = `ThePlayer = UserToPlayer(\"${player.kuId}\") require(\"debugcommands\") d_resetskilltree() ThePlayer = nil`
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {

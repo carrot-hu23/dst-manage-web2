@@ -11,7 +11,7 @@ interface LevelsStore {
     levels: Level[]
     getLevels: () => Level[]
     setLevels: (newLevels: Level[]) => void
-    reFlushLevels: (cluster: string) => Promise<void>
+    reFlushLevels: (cluster: string) => Promise<Level[]>
 }
 
 async function getLevelApi(cluster: string) {
@@ -40,6 +40,7 @@ const store: StateCreator<LevelsStore> = (set, get) => ({
     reFlushLevels: async (cluster: string) => {
         const newLevels = await fetchLevelApi(cluster)
         set({levels: newLevels})
+        return newLevels
     }
 })
 

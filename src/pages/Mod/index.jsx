@@ -4,7 +4,6 @@ import {useTranslation} from "react-i18next";
 import {message, Skeleton, Tabs} from "antd";
 import {parse} from "lua-json";
 
-import {getHomeConfigApi} from "../../api/gameApi.jsx";
 import {getMyModInfoList} from "../../api/modApi.jsx";
 import ModList from "./ModList/index.jsx";
 
@@ -19,8 +18,9 @@ export default () => {
     const {cluster} = useParams()
     const { t } = useTranslation()
 
-    const [modoverrides, setmodoverrides] = useState("")
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('1')
+    const [selectedLevelUuid, setSelectedLevelUuid] = useState('')
 
     // 模组列表展示数据
     const [modList, setmodList] = useState([])
@@ -35,14 +35,6 @@ export default () => {
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true)
-            const modoverridesResp = await getHomeConfigApi(cluster)
-            if (modoverridesResp.code !== 200) {
-                message.warning(t('mod.fetch.error'))
-                return
-            }
-            const modoverrides = modoverridesResp.data.modData
-            setmodoverrides(modoverrides)
-
             const modInfoListResp = await getMyModInfoList(cluster)
             if (modInfoListResp.code !== 200) {
                 message.warning(t('mod.fetch.error'))
@@ -55,9 +47,14 @@ export default () => {
             setmodList([...modList])
             setModDataList([...modList])
             // modInfoListResp.data
-            await initModConfigList(modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
-
-            await reFlushLevels(cluster)
+            const loadedLevels = await reFlushLevels(cluster)
+            const defaultLevel = findDefaultLevel(loadedLevels)
+            if (defaultLevel) {
+                setSelectedLevelUuid(defaultLevel.uuid)
+                await initModConfigList(defaultLevel.modoverrides, modList, setmodList, defaultConfigOptionsRef, modConfigOptionsRef)
+            } else {
+                setmodList([])
+            }
             setLoading(false)
         }
         fetchData()
@@ -67,8 +64,21 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
 
+    function findDefaultLevel(levelList) {
+        if (!Array.isArray(levelList) || levelList.length === 0) {
+            return null
+        }
+        return levelList.find(level => level.uuid === 'Master') || levelList[0]
+    }
+
     async function changeLevel(newLevel) {
-        const modoverrides = levels.filter(level=>level.uuid === newLevel)[0].modoverrides
+        const selectedLevel = levels.find(level=>level.uuid === newLevel)
+        if (!selectedLevel) {
+            message.warning(t('level.fetch.error'))
+            return
+        }
+        setSelectedLevelUuid(newLevel)
+        const modoverrides = selectedLevel.modoverrides
         const newModDataList = modDataList.map(a=>{
             return {...a}
         })
@@ -98,8 +108,11 @@ export default () => {
         //
         // })
         const modOptions = {}
+        const visibleModList = []
+        const subscribeModMap = new Map()
         subscribeModList.forEach(mod => {
             const {modid} = mod
+            subscribeModMap.set(modid, mod)
             const options = mod.mod_config.configuration_options
             if (typeof options === 'object' && options !== undefined && options !== null) {
                 const defaultOptions = {}
@@ -113,10 +126,7 @@ export default () => {
             if (workshopMap.has(modid)) {
                 mod.enable = true
                 mod.installed = true
-            } else {
-                mod.enable = false
-                mod.installed = true
-                workshopMap.set(modid, modOptions[modid])
+                visibleModList.push(mod)
             }
         });
 
@@ -143,16 +153,11 @@ export default () => {
             })
         }
 
-        const subscribeModMap = subscribeModList.reduce((acc, item) => {
-            acc.set(item.modid, item);
-            return acc;
-        }, new Map());
-
-        // 如果没有订阅mod
+        // 如果当前世界的 modoverrides 中有未订阅/未安装的 mod，仍显示出来用于编辑或删除。
         workshopMap.forEach((value, key) => {
             if (subscribeModMap.get(key) === undefined) {
                 console.log("not subscribe mod: ", key)
-                subscribeModList.push({
+                visibleModList.push({
                     mod_config: {
                         author: "unknown",
                         name: "unknown"
@@ -166,7 +171,7 @@ export default () => {
             }
         });
 
-        subscribeModList.sort((a, b) => {
+        visibleModList.sort((a, b) => {
             if (a.enable === b.enable) {
                 return 0;
             }
@@ -176,7 +181,7 @@ export default () => {
             return 1; // b在前
         });
 
-        setModList(subscribeModList || [])
+        setModList(visibleModList || [])
         defaultConfigOptionsRef.current = workshopMap
         modConfigOptionsRef.current = modOptions
     }
@@ -206,6 +211,7 @@ export default () => {
                                defaultConfigOptionsRef={defaultConfigOptionsRef}
                                modConfigOptionsRef={modConfigOptionsRef}
                                changeLevel={changeLevel}
+                               selectedLevelUuid={selectedLevelUuid}
             />,
         },
         {
@@ -223,7 +229,9 @@ export default () => {
     return (
         <>
             <Skeleton loading={loading}>
-                <Tabs defaultActiveKey="1" items={items}/>
+                <Tabs activeKey={activeTab} items={items} onChange={(key) => {
+                    setActiveTab(key)
+                }}/>
             </Skeleton>
         </>
     )

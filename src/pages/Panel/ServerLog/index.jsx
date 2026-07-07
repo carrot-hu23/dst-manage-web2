@@ -1,6 +1,6 @@
-import {Button, Input, message, Popconfirm, Select, Space, Spin} from "antd";
+import {Button, Input, message, Popconfirm, Select, Space, Spin, Typography} from "antd";
 import {DownloadOutlined} from '@ant-design/icons';
-import React, {useEffect, useRef, useState} from "react";
+import React, {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
 
@@ -55,16 +55,21 @@ export default () => {
     const levels = useLevelsStore((state) => state.levels)
 
     const notHasLevels = levels === undefined || levels === null || levels.length === 0
-    const [currentLevelName, setCurrentLevelName] = useState(notHasLevels ? "" : levels[0].key)
+    const defaultLevelName = useMemo(() => {
+        if (notHasLevels) return ""
+        return (levels.find(level => level.status)?.key) || levels[0].key
+    }, [levels, notHasLevels])
+    const [currentLevelName, setCurrentLevelName] = useState(defaultLevelName)
     const editorRef = useRef()
+    const currentLevel = useMemo(() => levels.find(level => level.key === currentLevelName), [levels, currentLevelName])
+    const processElapsed = currentLevel?.Ps?.elapsed || currentLevel?.ps?.elapsed
 
-    // 当 levels 加载完成后，更新 currentLevelName
+    // 当 levels 加载完成后，默认选择正在运行的世界，否则选择第一个世界
     useEffect(() => {
-        if (levels && levels.length > 0 && !currentLevelName) {
-            console.log('Setting initial level:', levels[0].key)
-            setCurrentLevelName(levels[0].key)
+        if (!currentLevelName && defaultLevelName) {
+            setCurrentLevelName(defaultLevelName)
         }
-    }, [levels])
+    }, [currentLevelName, defaultLevelName])
 
     const [command, setCommand] = useState('');
 
@@ -72,23 +77,13 @@ export default () => {
         setCommand(e.target.value);
     };
 
-    function escapeString(str) {
-        return str.replace(/\\/g, '\\\\')
-            .replace(/"/g, '\\"')
-            .replace(/'/g, "\\'")
-            .replace(/\n/g, '\\n')
-            .replace(/\r/g, '\\r')
-            .replace(/\t/g, '\\t');
-    }
-
     function sendInstruct(command) {
         if (command === "") {
             message.warning("请填写指令在发送")
             return
         }
-        console.log(currentLevelName, escapeString(command))
         setSpinLoading(true)
-        sendCommandApi(cluster, currentLevelName, escapeString(command))
+        sendCommandApi(cluster, currentLevelName, command)
             .then(resp => {
                 if (resp.code === 200) {
                     message.success("发送指令成功")
@@ -101,7 +96,7 @@ export default () => {
 
     // 使用 useLogStream 处理实时日志流
     useLogStream({
-        clusterName: cluster | 'Cluster_1',
+        clusterName: cluster || 'Cluster_1',
         levelName: currentLevelName,
         onLog: (line) => {
             const currentLogs = editorRef?.current?.current?.getValue() || ""
@@ -118,6 +113,7 @@ export default () => {
 
     const handleChange = (value) => {
         setCurrentLevelName(value)
+        editorRef?.current?.current?.setValue("")
     }
 
     return <>
@@ -149,6 +145,9 @@ export default () => {
                     </Button>
                 </Space>}
             >
+                <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
+                    进程运行时长：{processElapsed || '未运行/未知'}
+                </Typography.Text>
                 <MonacoEditor
                     className={style.icon}
                     ref={editorRef}
