@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "sync-version": "node scripts/sync-version.mjs",
+    "build": "npm run sync-version && vite build",
     "lint": "eslint .",
     "preview": "vite preview"
   },

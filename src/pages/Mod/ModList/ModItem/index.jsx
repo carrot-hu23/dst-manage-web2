@@ -82,6 +82,10 @@ const ModItem = (props) => {
 
                                 <span style={{}}>{mod?.name}</span>
                             </div>
+                            <div style={{fontSize: 12, color: '#8c8c8c', paddingBottom: 8}}>
+                                <div>作者：{mod?.mod_config?.author || mod?.author || mod?.auth || 'unknown'}</div>
+                                <div>Mod ID：{mod?.modid}</div>
+                            </div>
                             <div>
                                 {mod?.update && <Badge count={1}>
                                     <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
@@ -133,6 +137,10 @@ const ModItem = (props) => {
                             <Col span={24}><span style={{
                                 fontSize: '16px'
                             }}>{props?.mod?.modid}</span></Col>
+                            <Col span={24} style={{fontSize: 12, color: '#8c8c8c', marginTop: 4}}>
+                                作者：{mod?.mod_config?.author || mod?.author || mod?.auth || 'unknown'}<br/>
+                                Mod ID：{mod?.modid}
+                            </Col>
                         </Row>
                         <Row style={{
                             marginTop: '12px'

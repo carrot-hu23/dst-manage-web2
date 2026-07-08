@@ -4,13 +4,15 @@ import {useTranslation} from "react-i18next";
 import {message, Skeleton, Tabs} from "antd";
 import {parse} from "lua-json";
 
-import {getMyModInfoList} from "../../api/modApi.jsx";
+import {deleteModInfo, getMyModInfoList} from "../../api/modApi.jsx";
 import ModList from "./ModList/index.jsx";
 
 import Workshop from "./Workshop/index.jsx";
 import UgcAcf from "./UgcAcf/index.jsx";
 import {useLevelsStore} from "../../store/useLevelsStore";
 import {useModPreferences} from "../../hooks/useModPreferences";
+import {updateLevelsApi} from "../../api/clusterLevelApi.jsx";
+import {formatModOverrideFromList, mergeSubscribedMod, removeModFromAllLevels, syncSubscribedModToAllLevels} from "./modSyncUtils.js";
 
 
 export default () => {
@@ -108,6 +110,7 @@ export default () => {
         //
         // })
         const modOptions = {}
+        const modOverrideOptions = new Map()
         const visibleModList = []
         const subscribeModMap = new Map()
         subscribeModList.forEach(mod => {
@@ -123,9 +126,13 @@ export default () => {
                 })
                 modOptions[modid] = defaultOptions
             }
-            if (workshopMap.has(modid)) {
-                mod.enable = true
-                mod.installed = true
+            const workshopEntry = workshopMap.get(modid)
+            mod.installed = true
+            if (workshopEntry) {
+                // 只有当前世界 modoverrides.lua 中存在的订阅模组才显示。
+                // enabled=false 表示“禁用”；不存在表示“已从该世界删除”，不能因为全局订阅仍存在而复活。
+                mod.enable = workshopEntry.enabled !== false
+                modOverrideOptions.set(modid, workshopEntry.configuration_options || {})
                 visibleModList.push(mod)
             }
         });
@@ -147,16 +154,18 @@ export default () => {
                     if (savedPreference) {
                         // 智能合并：保留新增的配置项，同时应用已保存的偏好
                         const mergedConfig = applyPreference(modid, defaultConfig, savedPreference)
-                        workshopMap.set(modid, mergedConfig)
+                        modOverrideOptions.set(modid, mergedConfig)
                     }
                 }
             })
         }
 
-        // 如果当前世界的 modoverrides 中有未订阅/未安装的 mod，仍显示出来用于编辑或删除。
+        // 保留当前世界 modoverrides.lua 中未订阅/未安装的条目：有人可能手工维护这种配置。
+        // 但这类 orphan 只能来自已有配置，正常的“单世界删除”和“取消订阅传播”流程必须避免再生成。
         workshopMap.forEach((value, key) => {
             if (subscribeModMap.get(key) === undefined) {
                 console.log("not subscribe mod: ", key)
+                modOverrideOptions.set(key, value.configuration_options || {})
                 visibleModList.push({
                     mod_config: {
                         author: "unknown",
@@ -166,7 +175,8 @@ export default () => {
                     update: false,
                     modid: key,
                     installed: false,
-                    enable: true
+                    orphan: true,
+                    enable: value.enabled !== false
                 })
             }
         });
@@ -182,7 +192,7 @@ export default () => {
         });
 
         setModList(visibleModList || [])
-        defaultConfigOptionsRef.current = workshopMap
+        defaultConfigOptionsRef.current = modOverrideOptions
         modConfigOptionsRef.current = modOptions
     }
 
@@ -193,13 +203,137 @@ export default () => {
             const keys = Object.keys(result)
             const workshopMap = new Map();
             keys.forEach(workshopId => {
-                workshopMap.set(workshopId.replace('workshop-', '').replace('"', '').replace('"', ''), {...result[workshopId].configuration_options})
+                workshopMap.set(workshopId.replace('workshop-', '').replace('"', '').replace('"', ''), {
+                    configuration_options: {...(result[workshopId].configuration_options || {})},
+                    enabled: result[workshopId].enabled !== false,
+                })
             })
             console.log("modoverrides 解析对象", workshopMap)
             return workshopMap
         } catch (error) {
             return new Map()
         }
+    }
+    async function syncSubscribedMod(subscribedMod) {
+        const activeLevels = Array.isArray(levels) && levels.length > 0 ? levels : await reFlushLevels(cluster)
+        if (!Array.isArray(activeLevels) || activeLevels.length === 0) {
+            message.warning(t('level.fetch.error'))
+            return false
+        }
+
+        const {
+            newLevels,
+            newModList,
+            nextDefaultConfigOptions,
+            nextModConfigOptions,
+        } = syncSubscribedModToAllLevels({
+            levels: activeLevels,
+            currentModList: modList,
+            subscribedMod,
+            defaultConfigOptions: defaultConfigOptionsRef.current,
+            modConfigOptions: modConfigOptionsRef.current,
+        })
+
+        const resp = await updateLevelsApi({levels: newLevels})
+        if (resp.code !== 200) {
+            message.warning(t('level.save.error'))
+            if (resp.msg) {
+                message.warning(resp.msg)
+            }
+            return false
+        }
+
+
+        defaultConfigOptionsRef.current = nextDefaultConfigOptions
+        modConfigOptionsRef.current = nextModConfigOptions
+        setmodList(newModList)
+        setModDataList(current => mergeSubscribedMod(current, subscribedMod))
+        await reFlushLevels(cluster)
+        return true
+    }
+    async function removeModFromCurrentLevel(modId) {
+        const activeLevels = Array.isArray(levels) && levels.length > 0 ? levels : await reFlushLevels(cluster)
+        if (!Array.isArray(activeLevels) || activeLevels.length === 0 || !selectedLevelUuid) {
+            message.warning(t('level.fetch.error'))
+            return false
+        }
+
+        const newModList = modList.filter(mod => String(mod?.modid) !== String(modId))
+        let modoverrides
+        try {
+            modoverrides = formatModOverrideFromList(
+                newModList,
+                defaultConfigOptionsRef.current,
+                modConfigOptionsRef.current,
+            )
+        } catch (error) {
+            console.log(error)
+            message.warning(t('mod.parse.error'))
+            return false
+        }
+
+        const newLevels = activeLevels.map(level => (
+            level.uuid === selectedLevelUuid ? {...level, modoverrides} : level
+        ))
+
+        const resp = await updateLevelsApi({levels: newLevels})
+        if (resp.code !== 200) {
+            message.warning(t('level.save.error'))
+            if (resp.msg) {
+                message.warning(resp.msg)
+            }
+            return false
+        }
+
+        defaultConfigOptionsRef.current.delete(modId)
+        delete modConfigOptionsRef.current[modId]
+        setmodList(newModList)
+        await reFlushLevels(cluster)
+        return true
+    }
+
+    async function syncUnsubscribedMod(modId) {
+        const activeLevels = Array.isArray(levels) && levels.length > 0 ? levels : await reFlushLevels(cluster)
+        if (!Array.isArray(activeLevels) || activeLevels.length === 0) {
+            message.warning(t('level.fetch.error'))
+            return false
+        }
+
+        const {
+            newLevels,
+            newModList,
+            nextDefaultConfigOptions,
+            nextModConfigOptions,
+        } = removeModFromAllLevels({
+            levels: activeLevels,
+            currentModList: modList,
+            modId,
+            defaultConfigOptions: defaultConfigOptionsRef.current,
+            modConfigOptions: modConfigOptionsRef.current,
+        })
+
+        const resp = await updateLevelsApi({levels: newLevels})
+        if (resp.code !== 200) {
+            message.warning(t('level.save.error'))
+            if (resp.msg) {
+                message.warning(resp.msg)
+            }
+            return false
+        }
+
+
+        const deleteResp = await deleteModInfo(cluster, modId)
+        if (deleteResp.code !== 200) {
+            message.warning(deleteResp.msg || t('mod.delete.error'))
+            return false
+        }
+
+        defaultConfigOptionsRef.current = nextDefaultConfigOptions
+        modConfigOptionsRef.current = nextModConfigOptions
+        setmodList(newModList)
+        setModDataList(current => current.filter(mod => String(mod?.modid) !== String(modId)))
+        await reFlushLevels(cluster)
+        return true
     }
 
 
@@ -212,12 +346,13 @@ export default () => {
                                modConfigOptionsRef={modConfigOptionsRef}
                                changeLevel={changeLevel}
                                selectedLevelUuid={selectedLevelUuid}
+                               onRemoveMod={removeModFromCurrentLevel}
             />,
         },
         {
             key: '2',
             label: t('mod.Subscribe'),
-            children: <Workshop addModList={setmodList}/>,
+            children: <Workshop addModList={setmodList} currentModList={modDataList} onSubscribeMod={syncSubscribedMod} onUnsubscribeMod={syncUnsubscribedMod}/>,
         },
         {
             key: '3',

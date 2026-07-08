@@ -107,7 +107,7 @@ async function saveClusterIniApi(cluster, data) {
 }
 
 async function getLevelStatusApi(cluster) {
-    const url = '/api/game/8level/status'
+    const url = `/api/game/8level/status?_ts=${Date.now()}`
     const response = await http.get(url, {
         headers: {
             'Cluster': cluster,
@@ -205,8 +205,25 @@ async function getFreeUDPPortApi(cluster) {
 
 async function readLevelServerLogApi(cluster, levelName, lines) {
 
-    const url = `/api/game/level/server/log?levelName=${levelName}&lines=${lines}`
+    const url = `/api/game/level/server/log?levelName=${encodeURIComponent(levelName)}&lines=${lines}`
     const response = await http.get(url, {
+        headers: {
+            'Cluster': cluster,
+        }
+    })
+    return response.data
+}
+
+async function readLevelServerLogPageApi(cluster, levelName, {offset, limit = 300} = {}) {
+    const params = new URLSearchParams({
+        levelName,
+        paged: 'true',
+        limit: String(limit),
+    })
+    if (offset !== undefined && offset !== null) {
+        params.set('offset', String(offset))
+    }
+    const response = await http.get(`/api/game/level/server/log?${params.toString()}`, {
         headers: {
             'Cluster': cluster,
         }
@@ -255,6 +272,7 @@ export {
     getFreeUDPPortApi,
 
     readLevelServerLogApi,
+    readLevelServerLogPageApi,
     readPanelLogApi,
 
 }

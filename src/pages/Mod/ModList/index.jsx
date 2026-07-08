@@ -1,9 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import _ from "lodash";
-import {Row, Col, Button, Space, Tooltip, message, Alert, Popconfirm, Spin, Select} from 'antd';
+import {Row, Col, Button, Space, Tooltip, message, Alert, Popconfirm, Spin, Select, Input} from 'antd';
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
-import {format} from "lua-json";
 
 import {updateModinfosApi} from '../../../api/modApi.jsx';
 import ModItem from "./ModItem/index.jsx";
@@ -12,9 +11,10 @@ import {useLevelsStore} from "../../../store/useLevelsStore";
 import {updateLevelsApi} from "../../../api/clusterLevelApi.jsx";
 import i18n from "i18next";
 import {useUserPreferences} from "../../../hooks/useUserPreferences.ts";
+import {formatModOverrideFromList, syncSubscribedModToAllLevels} from "../modSyncUtils.js";
 
 // eslint-disable-next-line react/prop-types
-export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel, selectedLevelUuid}) => {
+export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRef, changeLevel, selectedLevelUuid, onRemoveMod}) => {
 
     const levels = useLevelsStore((state) => state.levels)
     const reFlushLevels = useLevelsStore((state) => state.reFlushLevels)
@@ -29,6 +29,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     const modListRef = useRef(modList)
     const levelsRef = useRef(levels)
     const [showModTips1Alert, setShowModTips1Alert] = useState(true)
+    const [modSearchText, setModSearchText] = useState('')
 
     const changeMod = (mod) => {
         const _mod = _.cloneDeep(mod);
@@ -42,52 +43,15 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
         setModList(newModList);
     };
 
-    function isWorkshopId(str) {
-        return /^[0-9]+$/.test(str);
-    }
-
     function formatModOverride(targetModList = modList) {
         try {
-            const chooses = targetModList.filter(mod => mod.enable)
-            const modids = chooses.map(mod => mod.modid)
-            const object = _.pick(modConfigOptionsRef.current, modids)
-            const object1 = {}
-            // eslint-disable-next-line no-restricted-syntax
-            for (const id of modids) {
-                defaultConfigOptionsRef.current.get(id)
-                object1[id] = defaultConfigOptionsRef.current.get(id)
-            }
-            const workshopObject = _.merge({}, object, object1)
-            const workshopIdKeys = Object.keys(workshopObject)
-            const workShops = {}
-            workshopIdKeys.forEach(workshopId => {
-                if (workshopObject[workshopId] === undefined) {
-                    workshopObject[workshopId] = {}
-                }
-                let workshop
-                if (isWorkshopId(workshopId)) {
-                    workshop = `workshop-${workshopId}`
-                } else {
-                    workshop = workshopId
-                }
-                const options = workshopObject[workshopId]
-                delete options.null
-                if (options !== undefined || options !== null) {
-                    Object.keys(options).map(k=>{
-                        if (options[k] === null || options[k] === undefined) {
-                            delete options[k]
-                        }
-                    })
-                }
-                workShops[workshop] = {
-                    configuration_options: options,
-                    enabled: true
-                }
-            })
-            console.log("结果",workShops)
-            return format(workShops, {
-                singleQuote: false
-            })
+            const modoverrides = formatModOverrideFromList(
+                targetModList,
+                defaultConfigOptionsRef.current,
+                modConfigOptionsRef.current,
+            )
+            console.log("结果", modoverrides)
+            return modoverrides
         } catch (error) {
             console.log(error)
             message.warning("mod配置解析错误", error.message)
@@ -171,18 +135,26 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     const removeMod = (modId) => {
-        const newModList = modList.filter(mod => mod.modid !== modId)
+        if (onRemoveMod) {
+            return onRemoveMod(modId).then(success => {
+                if (success) {
+                    setMod(current => String(current?.modid) === String(modId) ? (modListRef.current.filter(mod => String(mod.modid) !== String(modId))[0] || {}) : current)
+                    message.success(t('mod.delete.ok'))
+                }
+                return success
+            })
+        }
+
+        const newModList = modList.filter(mod => String(mod.modid) !== String(modId))
         const modoverrides = formatModOverride(newModList)
         if (modoverrides === "return { error }") {
             message.warning(t('mod.parse.error'))
             return Promise.resolve(false)
         }
-        const newLevels = levelsRef.current.map(item => {
-            if (item.uuid === selectedLevelUuid) {
-                return {...item, modoverrides}
-            }
-            return item
-        })
+        const newLevels = levelsRef.current.map(item => ({
+            ...item,
+            modoverrides,
+        }))
         return updateLevelsApi({levels: newLevels})
             .then(resp => {
                 if (resp.code === 200) {
@@ -248,6 +220,19 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
     }
 
     const updateModSize = modList.filter(mod=>mod.update)
+    const visibleModList = modList.filter(mod => {
+        const keyword = modSearchText.trim().toLowerCase()
+        if (!keyword) return true
+        const fields = [
+            mod?.name,
+            mod?.modid,
+            mod?.auth,
+            mod?.author,
+            mod?.mod_config?.author,
+            mod?.mod_config?.name,
+        ]
+        return fields.some(value => String(value || '').toLowerCase().includes(keyword))
+    })
     const selectedLevel = levels.find(item => item.uuid === selectedLevelUuid) || levels[0] || {}
 
     const handleChange = (value) => {
@@ -319,7 +304,13 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                             onClick={()=>saveLevelMod()}
                         >保存到{selectedLevel?.levelName || selectedLevel?.uuid || ''}</Button>
                     </Space>
-                    <br/><br/>
+                    <Input.Search
+                        allowClear
+                        placeholder="搜索模组名称 / 作者 / Mod ID"
+                        value={modSearchText}
+                        onChange={(event) => setModSearchText(event.target.value)}
+                        style={{maxWidth: 420, marginTop: 12, marginBottom: 12, display: 'block'}}
+                    />
                     <Row gutter={24}>
                         <Col span={10} xs={24} md={10} lg={10}>
                             <div className={'scrollbar'} style={{
@@ -328,8 +319,8 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                                 overflowY: 'auto',
                                 overflowX: 'auto'
                             }}>
-                                {modList.length > 0 && <div>
-                                    {modList.map((item, index) =>
+                                {visibleModList.length > 0 && <div>
+                                    {visibleModList.map((item, index) =>
                                         <ModItem
                                             key={item.modid}
                                             mod={item}

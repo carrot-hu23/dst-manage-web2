@@ -16,12 +16,12 @@ export function useLogStream(options: UseLogStreamOptions) {
     onLogRef.current = onLog
 
     useEffect(() => {
-        // if (!clusterName || !levelName) return
+        if (!clusterName || !levelName) return
 
         const es = new EventSource(
             `/api/game/log/stream?clusterName=${encodeURIComponent(
                 clusterName
-            )}&levelName=${encodeURIComponent(levelName)}`
+            )}&levelName=${encodeURIComponent(levelName)}&snapshot=false`
         )
 
         es.addEventListener("open", () => {
