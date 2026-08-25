@@ -10,6 +10,7 @@ import {
     message, Input,
 } from 'antd';
 import type { ColorPickerProps, GetProp } from 'antd';
+import { useTranslation } from 'react-i18next';
 import { useThemeConfigStore, type ThemeData } from '../../../store/useThemeConfigStore';
 
 
@@ -25,20 +26,21 @@ const defaultData: ThemeData = {
 
 
 const ThemeSetting: React.FC = () => {
+    const { t } = useTranslation();
     const [form] = Form.useForm();
     const { themeConfig, setThemeConfig, resetThemeConfig } = useThemeConfigStore();
 
     const handleReset = () => {
         resetThemeConfig();
         form.setFieldsValue(defaultData);
-        message.success('Theme reset to default');
+        message.success(t('setting.theme.reset.ok'));
     };
 
     return (
         <div style={{ padding: '24px' }}>
             <Space>
-                <Input placeholder="Test input" />
-                <Button type="primary">Preview Button</Button>
+                <Input placeholder={t('setting.theme.testInput.placeholder')} />
+                <Button type="primary">{t('setting.theme.previewButton')}</Button>
             </Space>
             <Divider />
             <Form
@@ -55,38 +57,38 @@ const ThemeSetting: React.FC = () => {
             >
                 <Form.Item
                     name="colorPrimary"
-                    label="Primary Color"
+                    label={t('setting.theme.colorPrimary')}
                     trigger="onChangeComplete"
                     getValueFromEvent={(color: Color) => color?.toHexString() || '#1677ff'}
                 >
                     <ColorPicker presets={[{
-                        label: '主题色',
+                        label: t('setting.theme.presetLabel'),
                         colors: ['#1B6EFC', '#2886FD', "#DD3127", '#E7531D', '#F2A520', '#42B7BA','#61B826', '#234FE5', '#5D33C8'],
                     }]} defaultValue="#1677ff" />
                 </Form.Item>
-                <Form.Item name="borderRadius" label="Border Radius">
+                <Form.Item name="borderRadius" label={t('setting.theme.borderRadius')}>
                     <InputNumber min={0} max={30} />
                 </Form.Item>
-                <Form.Item label="Button">
-                    <Form.Item name={['Button', 'algorithm']} valuePropName="checked" label="Algorithm">
+                <Form.Item label={t('setting.theme.buttonGroup')}>
+                    <Form.Item name={['Button', 'algorithm']} valuePropName="checked" label={t('setting.theme.algorithm')}>
                         <Switch />
                     </Form.Item>
                     <Form.Item
                         name={['Button', 'colorPrimary']}
-                        label="Primary Color"
+                        label={t('setting.theme.colorPrimary')}
                         trigger="onChangeComplete"
                         getValueFromEvent={(color: Color) => color?.toHexString() || '#00B96B'}
                     >
                         <ColorPicker  presets={[{
-                            label: '主题色',
+                            label: t('setting.theme.presetLabel'),
                             colors: ['#1B6EFC', '#2886FD', "#DD3127", '#E7531D', '#F2A520', '#42B7BA','#61B826', '#234FE5', '#5D33C8'],
                         }]}/>
                     </Form.Item>
                 </Form.Item>
                 <Form.Item name="submit" wrapperCol={{ offset: 4, span: 20 }}>
                     <Space>
-                        <Button type="primary">Save</Button>
-                        <Button onClick={handleReset}>Reset</Button>
+                        <Button type="primary">{t('cluster.save')}</Button>
+                        <Button onClick={handleReset}>{t('setting.theme.reset')}</Button>
                     </Space>
                 </Form.Item>
             </Form>

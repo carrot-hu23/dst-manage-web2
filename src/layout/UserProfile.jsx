@@ -2,8 +2,10 @@ import {Button, Form, Input, message, Skeleton, Typography} from 'antd';
 import {useEffect, useState} from "react";
 import {ProCard} from "@ant-design/pro-components";
 import {getUserInfoApi, updateUserApi} from "../api/userApi.jsx";
+import {useTranslation} from "react-i18next";
 
 export default () => {
+    const {t} = useTranslation();
 
     const [loading, setLoading] = useState(false)
     const [form] = Form.useForm();
@@ -25,9 +27,9 @@ export default () => {
             updateUserApi("", data)
                 .then(resp => {
                     if (resp.code === 200) {
-                        message.success("保存成功")
+                        message.success(t('userProfile.save.ok'))
                     } else {
-                        message.error("保存失败", resp.msg)
+                        message.error(t('userProfile.save.error'), resp.msg)
                     }
                 })
         }).catch(err => {
@@ -39,7 +41,7 @@ export default () => {
 
     return <>
         <ProCard>
-            <Typography.Title level={4}>个人信息</Typography.Title>
+            <Typography.Title level={4}>{t('userProfile.title')}</Typography.Title>
             <Skeleton loading={loading} active>
                 <Form
                     form={form}
@@ -47,29 +49,29 @@ export default () => {
                     layout="vertical"
                 >
                     <Form.Item
-                        label="头像url"
+                        label={t('init.photoURL')}
                         name="photoURL"
                     >
                         <Input/>
                     </Form.Item>
                     <Form.Item
-                        label="用户名"
+                        label={t('init.username')}
                         name="username"
-                        rules={[{required: true, message: '请输入用户名',},]}
+                        rules={[{required: true, message: t('userProfile.username.required'),},]}
                     >
                         <Input/>
                     </Form.Item>
                     <Form.Item
-                        label="显示昵称"
+                        label={t('init.displayName')}
                         name="displayName"
-                        rules={[{required: true, message: '请输入显示昵称',},]}
+                        rules={[{required: true, message: t('userProfile.displayName.required'),},]}
                     >
                         <Input/>
                     </Form.Item>
                     <Form.Item
-                        label="密码"
+                        label={t('init.password')}
                         name="password"
-                        rules={[{required: true, message: '请输入密码',},]}
+                        rules={[{required: true, message: t('userProfile.password.required'),},]}
                     >
                         <Input/>
                     </Form.Item>
@@ -78,7 +80,7 @@ export default () => {
                 <Button style={{margin: "0 auto", display: "block"}} type="primary" onClick={() => {
                     updateUserInfo()
                 }}>
-                    保存
+                    {t('cluster.save')}
                 </Button>
             </Skeleton>
         </ProCard>

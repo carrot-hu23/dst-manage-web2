@@ -90,7 +90,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
             })
         } catch (error) {
             console.log(error)
-            message.warning("mod配置解析错误", error.message)
+            message.warning(t('mod.parse.error'), error.message)
             return "return { error }"
         }
     }
@@ -279,7 +279,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                         <div style={{
                             paddingBottom: 8
                         }}>
-                            <Alert message={`你有 ${updateModSize.length} 个模组配置有更新`} type="warning" showIcon
+                            <Alert message={t('mod.update.pending.count', {count: updateModSize.length})} type="warning" showIcon
                                    closable/>
                         </div>
                     </>}
@@ -287,8 +287,8 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                         <Button type="primary" onClick={() => saveModConfig()}>{t('mod.save')}</Button>
                         <Popconfirm
                             title={t('mod.tips2')}
-                            okText="Yes"
-                            cancelText="No"
+                            okText={t('panel.y')}
+                            cancelText={t('panel.n')}
                             onConfirm={() => updateModConfigOptions()}
                         >
                             <Button type="primary">{t('mod.update.all')}</Button>
@@ -317,7 +317,7 @@ export default ({modList, setModList,defaultConfigOptionsRef, modConfigOptionsRe
                                 backgroundColor: '#00B96B'
                             }}
                             onClick={()=>saveLevelMod()}
-                        >保存到{selectedLevel?.levelName || selectedLevel?.uuid || ''}</Button>
+                        >{t('mod.save.to', {name: selectedLevel?.levelName || selectedLevel?.uuid || ''})}</Button>
                     </Space>
                     <br/><br/>
                     <Row gutter={24}>

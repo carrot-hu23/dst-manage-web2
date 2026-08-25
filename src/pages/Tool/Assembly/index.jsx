@@ -12,6 +12,7 @@ import {
     Skeleton, message, Select,
 } from 'antd';
 import React, {useEffect, useRef, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {format, parse} from "lua-json";
 import {MinusCircleOutlined, PlusOutlined} from "@ant-design/icons";
 
@@ -56,6 +57,7 @@ function parseWorldConfig(modoverrides, workshopId) {
 
 
 export default ({reload}) => {
+    const {t} = useTranslation()
 
     const [levels, setLevels] = useState([])
     const [loading, setLoading] = useState(false)
@@ -75,7 +77,7 @@ export default ({reload}) => {
 
         const world_config =  form.getFieldValue().world_config
         if (world_config === null || world_config === undefined) {
-            message.warning("不能为空")
+            message.warning(t('tool.assembly.cannotBeEmpty'))
             return
         }
         world_config.forEach(item => {
@@ -91,7 +93,7 @@ export default ({reload}) => {
         // 转成对象
         const object = {}
         if (world_config === null || world_config === undefined) {
-            message.warning("不能为空")
+            message.warning(t('tool.assembly.cannotBeEmpty'))
             return
         }
         world_config.forEach(item => {
@@ -137,10 +139,10 @@ export default ({reload}) => {
         updateLevelsApi({levels: levels2})
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("保存成功")
+                    message.success(t('tool.assembly.saveSuccess'))
                     reload()
                 } else {
-                    message.error("保存失败", resp.msg)
+                    message.error(t('tool.assembly.saveError'), resp.msg)
                 }
             })
 
@@ -169,14 +171,14 @@ export default ({reload}) => {
 
     const items = [
         {
-            label: '多层选择器',
+            label: t('tool.tab.assembly'),
             children: <div>
                 <SelectorMod form={form} updateWorkshopId={updateWorkshopId} workshopId={workshopId} saveWorkshop={saveWorkshop} />
             </div>,
             key: '1',
         },
         {
-            label: '世界配置同步',
+            label: t('tool.assembly.tab.syncConfig'),
             children: <>
                 <SyncConfig levels={levels} />
             </>,
@@ -197,6 +199,7 @@ export default ({reload}) => {
 }
 
 const SelectorMod = ({form, formValueChange, updateWorkshopId, workshopId, saveWorkshop}) => {
+    const {t} = useTranslation()
 
     const inputRef = useRef(null);
 
@@ -221,83 +224,83 @@ const SelectorMod = ({form, formValueChange, updateWorkshopId, workshopId, saveW
                                         wrap
                                     >
                                         <Form.Item
-                                            label={'世界id'}
+                                            label={t('tool.assembly.field.worldId')}
                                             key={`${key}世界id`}
                                             {...restField}
                                             name={[name, 'id']}
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: '缺失世界id',
+                                                    message: t('tool.assembly.validation.worldIdRequired'),
                                                 },
                                             ]}
                                         >
-                                            <Input placeholder="世界id"/>
+                                            <Input placeholder={t('tool.assembly.field.worldId')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'世界名称'}
+                                            label={t('tool.assembly.field.worldName')}
                                             key={`${key}世界名称`}
                                             {...restField}
                                             name={[name, 'name']}
                                             rules={[
                                                 {
                                                     required: true,
-                                                    message: '世界名称',
+                                                    message: t('tool.assembly.validation.worldNameRequired'),
                                                 },
                                             ]}
                                         >
-                                            <Input placeholder="世界名称，不允许换行"/>
+                                            <Input placeholder={t('tool.assembly.field.worldNamePlaceholder')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'分类'}
+                                            label={t('tool.assembly.field.category')}
                                             key={`${key}分类`}
                                             {...restField}
                                             name={[name, 'category']}
                                         >
-                                            <Input placeholder="世界类别，用于筛选，将显示于左侧菜单"/>
+                                            <Input placeholder={t('tool.assembly.field.categoryPlaceholder')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'提示信息'}
+                                            label={t('tool.assembly.field.note')}
                                             key={`${key}提示信息`}
                                             {...restField}
                                             name={[name, 'note']}
                                         >
-                                            <Input placeholder="鼠标悬停显示的提示信息"/>
+                                            <Input placeholder={t('tool.assembly.field.notePlaceholder')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'人数'}
+                                            label={t('tool.assembly.field.galleryful')}
                                             key={`${key}人数`}
                                             {...restField}
                                             name={[name, 'galleryful']}
                                         >
-                                            <InputNumber placeholder="世界人数限制"/>
+                                            <InputNumber placeholder={t('tool.assembly.field.gallerfulPlaceholder')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'不分流'}
+                                            label={t('tool.assembly.field.extra')}
                                             key={`${key}不分流`}
                                             {...restField}
                                             name={[name, 'extra']}
                                             valuePropName="checked"
                                         >
-                                            <Switch checkedChildren="是" unCheckedChildren="否"/>
+                                            <Switch checkedChildren={t('panel.y')} unCheckedChildren={t('panel.n')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'洞穴'}
+                                            label={t('tool.assembly.field.isCave')}
                                             key={`${key}洞穴`}
                                             {...restField}
                                             name={[name, 'is_cave']}
                                             valuePropName="checked"
                                         >
-                                            <Switch checkedChildren="是" unCheckedChildren="否"/>
+                                            <Switch checkedChildren={t('panel.y')} unCheckedChildren={t('panel.n')}/>
                                         </Form.Item>
                                         <Form.Item
-                                            label={'不可见'}
+                                            label={t('tool.assembly.field.invisible')}
                                             key={`${key}不可见`}
                                             {...restField}
                                             name={[name, 'invisible']}
                                             valuePropName="checked"
                                         >
-                                            <Switch checkedChildren="是" unCheckedChildren="否"/>
+                                            <Switch checkedChildren={t('panel.y')} unCheckedChildren={t('panel.n')}/>
                                         </Form.Item>
                                         <MinusCircleOutlined onClick={() => remove(name)}/>
                                     </Space>
@@ -306,7 +309,7 @@ const SelectorMod = ({form, formValueChange, updateWorkshopId, workshopId, saveW
                             ))}
                             <Form.Item>
                                 <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined/>}>
-                                    Add field
+                                    {t('tool.assembly.addField')}
                                 </Button>
                             </Form.Item>
                         </>
@@ -318,12 +321,12 @@ const SelectorMod = ({form, formValueChange, updateWorkshopId, workshopId, saveW
 
     return (
         <>
-            <Alert message="目前只兼容 [WIP] 又是一个世界选择器 workshop-1754389029 这种格式的配置"
+            <Alert message={t('tool.assembly.compatNotice')}
                    type="info"
                    showIcon
                    action={
                        <a target={'_blank'}
-                          href="https://steamcommunity.com/sharedfiles/filedetails/?id=1754389029">详细</a>
+                          href="https://steamcommunity.com/sharedfiles/filedetails/?id=1754389029">{t('tool.assembly.details')}</a>
                    }
             />
             <br/>
@@ -333,27 +336,28 @@ const SelectorMod = ({form, formValueChange, updateWorkshopId, workshopId, saveW
                         width: '100%',
                     }}
                 >
-                    <Input defaultValue={workshopId} ref={inputRef} placeholder="多层选择器模组id"/>
+                    <Input defaultValue={workshopId} ref={inputRef} placeholder={t('tool.assembly.modIdPlaceholder')}/>
                     <Button type="primary" onClick={() => {
                         updateWorkshopId(inputRef.current.input.value)
-                    }}>刷新</Button>
+                    }}>{t('backup.refresh')}</Button>
                 </Space.Compact>
                 <Button size={"middle"} type="primary"
                         onClick={() => localStorage.setItem("workshop", inputRef.current.input.value)}
-                >设置默认多层选择器</Button>
+                >{t('tool.assembly.setDefault')}</Button>
             </Space>
             <br/><br/>
             <Connect/>
             <br/><br/>
             <Button type={'primary'}
                     onClick={()=>saveWorkshop()}
-            >保存配置</Button>
+            >{t('tool.assembly.saveConfig')}</Button>
         </>
     )
 }
 
 
 const SyncConfig = ({levels, saveSyncConfig})=>{
+    const {t} = useTranslation()
 
     return(
         <>
@@ -371,7 +375,7 @@ const SyncConfig = ({levels, saveSyncConfig})=>{
                         }
                     })}
                 />
-                <span>同步</span>
+                <span>{t('tool.assembly.sync')}</span>
                 <Select
                     mode="multiple"
                     defaultValue={levels[0]?.uuid}

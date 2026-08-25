@@ -38,9 +38,10 @@ interface LevelTagsProps {
 }
 
 const LevelTags: React.FC<LevelTagsProps> = ({isMaster, serverPort}) => {
+    const {t} = useTranslation();
     return (
         <>
-            {isMaster && <Tag color="blue" bordered={false}>主</Tag>}
+            {isMaster && <Tag color="blue" bordered={false}>{t('level2.tag.master')}</Tag>}
             {serverPort && <Tag color="green" bordered={true}>{serverPort}</Tag>}
         </>
     );
@@ -227,9 +228,9 @@ const ServerIni: React.FC<LevelItemProps> = (props) => {
                 message={(
                     <>
                         <ul className="list-disc list-inside space-y-1 text-blue-800">
-                            <li>确保端口未被其他程序占用,端口需要在防火墙中开放</li>
-                            <li>建议使用默认端口范围（10998-11018）</li>
-                            <li>建议关闭世界后再修改端口</li>
+                            <li>{t('serverini.portTip.item1')}</li>
+                            <li>{t('serverini.portTip.item2')}</li>
+                            <li>{t('serverini.portTip.item3')}</li>
                         </ul>
                     </>
                 )}
@@ -240,60 +241,46 @@ const ServerIni: React.FC<LevelItemProps> = (props) => {
             <Form.Item
                 label={t('serverini.server_port')}
                 name="server_port"
-                tooltip={`
-            服务器监听的 UDP 端口，每个服务器需要设置不同的端口\n\n
-            范围：10998-11018 (其它端口也可，但游戏在检索局域网房间时只会扫描这些端口)\n\n
-            页面自动分配的端口不会与已填写的端口重复，但页面不会擅自修改自行填写的端口，所以确保不要填写重复的端口。
-            `}
+                tooltip={t('serverini.tooltip.server_port')}
             >
                 <InputNumber style={{
                     width: '100%',
-                }} placeholder="范围: 10998-11018" disabled={!props.has('allowEditingServerIni')}/>
+                }} placeholder={t('serverini.placeholder.server_port')} disabled={!props.has('allowEditingServerIni')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.is_master')}
                 valuePropName="checked"
                 name='is_master'
-                tooltip={`
-        将该世界设为主世界，即第一次进入房间时将会进入的世界。
-        主服务器运行的是一个房间的核心世界，其它世界都是该世界的附属，比如季节、天数等都是以该世界为准的。
-        `}>
+                tooltip={t('serverini.tooltip.is_master')}>
                 <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.name')}
                 name="name"
-                tooltip={`name`}
+                tooltip={t('serverini.name')}
             >
-                <Input placeholder="世界名"/>
+                <Input placeholder={t('serverini.placeholder.name')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.id')}
                 name="id"
-                tooltip={`
-            随机数字，用于区分不同的从服务器。
-
-            游戏过程中修改该项会导致该世界的玩家信息丢失。
-
-            主服务器强制为 1。其它世界设为 1 也会被视为主服务器去新注册一个房间。
-            `}
+                tooltip={t('serverini.tooltip.id')}
             >
                 <InputNumber
                     style={{
                         width: '100%',
                     }}
-                    placeholder="id"/>
+                    placeholder={t('serverini.id')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.encode_user_path')}
                 valuePropName="checked"
                 name='encode_user_path'
-                tooltip={`
-            使路径编码与不区分大小写的操作系统兼容`}
+                tooltip={t('serverini.tooltip.encode_user_path')}
             >
                 <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')} defaultChecked/>
             </Form.Item>
@@ -301,23 +288,23 @@ const ServerIni: React.FC<LevelItemProps> = (props) => {
             <Form.Item
                 label={t('serverini.authentication_port')}
                 name='authentication_port'
-                tooltip={`serverini.authentication_port`}
+                tooltip={t('serverini.authentication_port')}
             >
                 <InputNumber style={{
                     width: '100%',
-                }} placeholder="serverini.authentication_port" disabled={!props.has('allowEditingServerIni')}/>
+                }} placeholder={t('serverini.authentication_port')} disabled={!props.has('allowEditingServerIni')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.master_server_port')}
                 name='master_server_port'
-                tooltip={`master_server_port`}
+                tooltip={t('serverini.master_server_port')}
             >
                 <InputNumber
                     style={{
                         width: '100%',
                     }}
-                    placeholder="master_server_port" disabled={!props.has('allowEditingServerIni')}/>
+                    placeholder={t('serverini.master_server_port')} disabled={!props.has('allowEditingServerIni')}/>
             </Form.Item>
         </Form>
     )
@@ -413,7 +400,7 @@ const Level2 = () => {
                     const menuItems: MenuProps['items'] = [
                         {
                             key: 'rename',
-                            label: '重命名',
+                            label: t('level2.rename'),
                             icon: <EditOutlined/>,
                             onClick: () => {
                                 setRenameLevelUuid(updatedLevel.uuid)
@@ -494,7 +481,7 @@ const Level2 = () => {
                         const menuItems: MenuProps['items'] = [
                             {
                                 key: 'rename',
-                                label: '重命名',
+                                label: t('level2.rename'),
                                 icon: <EditOutlined/>,
                                 onClick: () => {
                                     setRenameLevelUuid(level.uuid)
@@ -629,7 +616,7 @@ const Level2 = () => {
     const handleConfirmDownload = () => {
         const fileName = downloadFileName.trim()
         if (!fileName) {
-            message.error('文件名不能为空')
+            message.error(t('level2.filename.required'))
             return
         }
 
@@ -649,7 +636,7 @@ const Level2 = () => {
     // Upload handler
     const handleUpload = (file: File) => {
         if (file.type !== "application/json") {
-            message.warning("请上传 JSON 文件");
+            message.warning(t('level2.upload.invalidType'));
             return false;
         }
         const reader = new FileReader();
@@ -665,7 +652,7 @@ const Level2 = () => {
                         const menuItems: MenuProps['items'] = [
                             {
                                 key: 'rename',
-                                label: '重命名',
+                                label: t('level2.rename'),
                                 icon: <EditOutlined/>,
                                 onClick: () => {
                                     setRenameLevelUuid(level.uuid)
@@ -711,9 +698,9 @@ const Level2 = () => {
                     });
                     itemsRef.current = items2
                     setItems(items2);
-                    message.success("导入成功")
+                    message.success(t('level2.import.success'))
                 } catch (error) {
-                    message.error("JSON 解析失败")
+                    message.error(t('level2.import.error'))
                     console.error(error)
                 }
             }
@@ -741,7 +728,7 @@ const Level2 = () => {
         const menuItems: MenuProps['items'] = [
             {
                 key: 'rename',
-                label: '重命名',
+                label: t('level2.rename'),
                 icon: <EditOutlined/>,
                 onClick: () => {
                     setRenameLevelUuid(uuid)
@@ -870,7 +857,7 @@ const Level2 = () => {
 
     const validateName3 = (_: unknown, value: string) => {
         if (value === undefined || value === null || value === "") {
-            return Promise.reject(new Error('请选择类型'));
+            return Promise.reject(new Error(t('level.required.type')));
         }
         return Promise.resolve();
     };
@@ -943,7 +930,7 @@ const Level2 = () => {
                         const menuItems: MenuProps['items'] = [
                             {
                                 key: 'rename',
-                                label: '重命名',
+                                label: t('level2.rename'),
                                 icon: <EditOutlined/>,
                                 onClick: () => {
                                     setRenameLevelUuid(level.uuid)
@@ -991,7 +978,7 @@ const Level2 = () => {
             itemsRef.current = newItems
             setItems(newItems)
 
-            message.success(`世界名称已修改为: ${newLevelName}`)
+            message.success(t('level2.rename.success', {name: newLevelName}))
             setOpenRename(false)
         }).catch(err => {
             if (err.errorFields) {
@@ -1004,7 +991,7 @@ const Level2 = () => {
             {/* 重命名提示 */}
             {showRenameTip && (
                 <Alert
-                    message="您可以双击世界标签名或右键点击标签选择「重命名」来修改世界名称，修改后记得点击保存按钮。"
+                    message={t('level2.renameTip.message')}
                     type="info"
                     showIcon
                     closable
@@ -1015,7 +1002,7 @@ const Level2 = () => {
                         <Button type={'link'} onClick={() => {
                             localStorage.setItem('level2-rename-tip-dismissed', 'true')
                             setShowRenameTip(false)
-                        }}>不再提示</Button>
+                        }}>{t('mod.dismiss.button')}</Button>
                     ]}
                 />
             )}
@@ -1043,9 +1030,9 @@ const Level2 = () => {
                     <Button type={"primary"} onClick={() => setOpenAdd(true)}>{t('level.add')}</Button>
                 }
                 <Upload beforeUpload={handleUpload} showUploadList={false}>
-                    <Button type={'primary'}>导入</Button>
+                    <Button type={'primary'}>{t('level2.import.button')}</Button>
                 </Upload>
-                <Button type={'primary'} onClick={handleDownload}>下载</Button>
+                <Button type={'primary'} onClick={handleDownload}>{t('backup.download')}</Button>
             </Space>
         {/* Add Level Modal */}
         <Modal
@@ -1072,7 +1059,7 @@ const Level2 = () => {
                                },
                            ]}
                 >
-                    <Input placeholder="请输入世界名"/>
+                    <Input placeholder={t('level.placeholder.name')}/>
                 </Form.Item>
                 <Alert
                     message={t('level.add.tips2')}
@@ -1087,7 +1074,7 @@ const Level2 = () => {
                                },
                            ]}
                 >
-                    <Input placeholder="请输入文件名"/>
+                    <Input placeholder={t('level.placeholder.filename')}/>
                 </Form.Item>
                 <Form.Item label={t('level.type')}
                            name="type"
@@ -1095,7 +1082,7 @@ const Level2 = () => {
                                {
                                    required: true,
                                    validator: validateName3,
-                                   message: 'Please input your type!',
+                                   message: t('level.required.type'),
                                },
                            ]}
                 >
@@ -1110,24 +1097,24 @@ const Level2 = () => {
 
         {/* Delete Level Modal */}
         <Modal
-            title={`是否删除 ${deleteLevelName} 世界`}
+            title={t('level.delete.confirm.title', {name: deleteLevelName})}
             open={openDelete}
             onOk={() => {
                 setConfirmLoading(true)
                 deleteLevelApi(deleteLevelName)
                     .then(resp => {
                         if (resp.code === 200) {
-                            message.success(`删除世界成功`)
+                            message.success(t('level.delete.success'))
                             removeLevel(deleteLevelName)
                             setConfirmLoading(false)
                             setOpenDelete(false)
                         } else {
-                            message.error(`删除世界失败`)
+                            message.error(t('level.delete.error'))
                             setConfirmLoading(false)
                         }
                     })
                     .catch(() => {
-                        message.error(`删除世界失败`)
+                        message.error(t('level.delete.error'))
                         setConfirmLoading(false)
                     })
             }}
@@ -1136,19 +1123,19 @@ const Level2 = () => {
                 setOpenDelete(false)
             }}
         >
-            <Alert message="删世界会先停止世界运行，删除之前请保存好数据" type="warning" showIcon/>
+            <Alert message={t('level.delete.warning')} type="warning" showIcon/>
         </Modal>
 
         {/* Rename Level Modal */}
         <Modal
-            title={`重命名世界: ${renameLevelOldName}`}
+            title={t('level2.rename.modal.title', {name: renameLevelOldName})}
             open={openRename}
             onOk={() => onRenameLevel()}
             onCancel={() => {
                 setOpenRename(false)
             }}
         >
-            <Alert message="提示：双击标签名或右键菜单可快速重命名，修改后记得保存" type="info" showIcon/>
+            <Alert message={t('level2.rename.modal.tip')} type="info" showIcon/>
             <br/>
             <Form
                 form={renameForm}
@@ -1156,7 +1143,7 @@ const Level2 = () => {
                 labelAlign={'left'}
             >
                 <Form.Item
-                    label="新世界名称"
+                    label={t('level2.rename.newName.label')}
                     name="newLevelName"
                     rules={[
                         {
@@ -1165,27 +1152,27 @@ const Level2 = () => {
                         },
                     ]}
                 >
-                    <Input placeholder="请输入新的世界名称"/>
+                    <Input placeholder={t('level2.rename.newName.placeholder')}/>
                 </Form.Item>
             </Form>
         </Modal>
 
         {/* Download Modal */}
         <Modal
-            title="下载配置"
+            title={t('level2.download.modal.title')}
             open={openDownload}
             onOk={() => handleConfirmDownload()}
             onCancel={() => setOpenDownload(false)}
         >
             <Form layout="vertical">
                 <Form.Item
-                    label="文件名"
+                    label={t('backup.fileName')}
                     rules={[
                         {
                             required: true,
                             validator: (_: unknown, value: string) => {
                                 if (!value || value.trim() === '') {
-                                    return Promise.reject(new Error('文件名不能为空'))
+                                    return Promise.reject(new Error(t('level2.filename.required')))
                                 }
                                 return Promise.resolve()
                             }
@@ -1195,7 +1182,7 @@ const Level2 = () => {
                     <Input
                         value={downloadFileName}
                         onChange={(e) => setDownloadFileName(e.target.value)}
-                        placeholder={`默认: ${cluster || 'levels'}-配置`}
+                        placeholder={t('level2.download.filename.placeholder', {cluster: cluster || 'levels'})}
                         suffix=".json"
                     />
                 </Form.Item>

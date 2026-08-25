@@ -1,6 +1,7 @@
 import {Button, Form, Input, InputNumber, message, Modal, Spin, Switch} from "antd";
 import React, {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 import {saveAutoCheck2Api} from "../../../api/autoCheckApi.jsx";
 import DstEmoji from "../../DstServerList/DstEmoji/index.jsx";
@@ -10,6 +11,7 @@ import style from "../../DstServerList/index.module.css";
 const {TextArea} = Input;
 
 export default ({isGameUpdate, isMod, autoCheck}) => {
+    const {t} = useTranslation()
     const {cluster} = useParams()
     const [form] = Form.useForm()
     const [spin, setSpin] = useState(false)
@@ -25,10 +27,10 @@ export default ({isGameUpdate, isMod, autoCheck}) => {
         saveAutoCheck2Api(cluster, data)
             .then(resp=>{
                 if (resp.code === 200) {
-                    message.success("保存成功")
+                    message.success(t('backup.save.ok'))
                     form.setFieldsValue(resp.data)
                 } else {
-                    message.error("保存失败")
+                    message.error(t('backup.save.error'))
                     message.warning(resp.msg)
                 }
                 setSpin(false)
@@ -38,7 +40,7 @@ export default ({isGameUpdate, isMod, autoCheck}) => {
     return (<>
 
         <Spin spinning={spin}>
-            <Modal  title="饥荒Emoj" open={open}  onCancel={()=>setOpen(false)} footer={null} >
+            <Modal  title={t('setting.autoGameDown.emoji.title')} open={open}  onCancel={()=>setOpen(false)} footer={null} >
                 <DstEmoji />
             </Modal>
 
@@ -57,73 +59,73 @@ export default ({isGameUpdate, isMod, autoCheck}) => {
             >
                 {!isGameUpdate && <>
                     <Form.Item
-                        label={"世界名"}
+                        label={t('setting.autoGameDown.levelName')}
                     >
                         {autoCheck.levelName}
                     </Form.Item>
                     <Form.Item
-                        tooltip={"uuid 是你存档的世界文件名称"}
-                        label={"uuid"}
+                        tooltip={t('setting.autoGameDown.uuid.tooltip')}
+                        label={t('setting.autoGameDown.uuid')}
                     >
                         {autoCheck.uuid}
                     </Form.Item>
                 </>}
 
                 <Form.Item
-                    label={"开启"}
+                    label={t('setting.autoGameDown.enable')}
                     name='enable'
                     valuePropName="checked"
                 >
-                    <Switch checkedChildren="开启"
-                            unCheckedChildren="关闭"/>
+                    <Switch checkedChildren={t('switch.open')}
+                            unCheckedChildren={t('switch.close')}/>
                 </Form.Item>
                 {isMod && <>
                     <Form.Item
-                        label={"公告"}
+                        label={t('setting.timedTask.column.announcement')}
                         name='announcement'
                     >
-                        <TextArea className={style.icon} rows={4} placeholder="请输入公告。tips: 发送公告后，默认 5s 后将执行操作"/>
+                        <TextArea className={style.icon} rows={4} placeholder={t('setting.announcement.placeholder')}/>
                     </Form.Item>
                     <Form.Item label="-">
-                        <Button type={'link'} onClick={()=>setOpen(true)} >查看emoji</Button>
+                        <Button type={'link'} onClick={()=>setOpen(true)} >{t('setting.autoGameDown.viewEmoji')}</Button>
                     </Form.Item>
                     <Form.Item
-                        label={"延迟"}
+                        label={t('setting.delay.label')}
                         name='sleep'
                     >
                         <InputNumber
-                            addonAfter="秒"
+                            addonAfter={t('setting.delay.unit')}
                             style={{width: 120,}}
                             min={1}
-                            placeholder="设置多少秒后执行"/>
+                            placeholder={t('setting.delay.placeholder')}/>
                     </Form.Item>
                     <Form.Item
-                        label={"公告次数"}
+                        label={t('setting.announcementCount.label')}
                         name='times'
                     >
                         <InputNumber
-                            addonAfter="次"
+                            addonAfter={t('setting.announcementCount.unit')}
                             style={{width: 120,}}
                             min={1}
-                            placeholder="公告次数"/>
+                            placeholder={t('setting.announcementCount.label')}/>
                     </Form.Item>
                 </>}
                 <Form.Item
-                    label={"检测间隔"}
+                    label={t('setting.detectionInterval.label')}
                     name='interval'
                 >
                     <InputNumber
-                        addonAfter="分钟"
+                        addonAfter={t('backup.snapshotBackup.interval.minute')}
                         style={{width: 120,}}
                         min={1}
-                        placeholder="检测间隔时间"/>
+                        placeholder={t('setting.detectionInterval.placeholder')}/>
                 </Form.Item>
                 <Form.Item
-                    label={"操作"}
+                    label={t('panel.action')}
                 >
                     <Button type={'primary'}
                             onClick={() => saveAutoCheck()}
-                    >保存</Button>
+                    >{t('backup.save')}</Button>
                 </Form.Item>
             </Form>
         </Spin>

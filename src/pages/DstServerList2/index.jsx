@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 
 import React, {useState} from 'react';
+import {useTranslation} from "react-i18next";
 
 import {ProTable} from '@ant-design/pro-components';
 import {Button, Modal, Image, Skeleton} from 'antd';
@@ -12,6 +13,7 @@ import style from "./index.module.css"
 
 
 const DstServerList = () => {
+    const {t} = useTranslation()
 
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -46,7 +48,7 @@ const DstServerList = () => {
 
     const columns = [
         {
-            title: '房间名',
+            title: t('dstServerList.column.name'),
             dataIndex: 'Name',
             key: 'Name',
             copyable: true,
@@ -56,7 +58,7 @@ const DstServerList = () => {
             }
         },
         {
-            title: '当前人数',
+            title: t('dstServerList.column.players'),
             key: 'Maxconnections',
             render: (text, record, _, action) => (
                 <div>{record.Connected}/{record.MaxConnections}
@@ -72,13 +74,13 @@ const DstServerList = () => {
             align: 'right '
         },
         {
-            title: '游戏模式',
+            title: t('dstServerList.column.mode'),
             key: 'Mode',
             // eslint-disable-next-line no-unused-vars
             render: (text, record, _, action) => (<div>{record.Mode}</div>),
         },
         {
-            title: '季节',
+            title: t('dstServerList.column.season'),
             key: 'Season',
             dataIndex: 'Season',
             // eslint-disable-next-line no-unused-vars
@@ -120,7 +122,7 @@ const DstServerList = () => {
         },
         {
             disable: true,
-            title: '密码',
+            title: t('dstServerList.column.password'),
             key: 'Password',
             dataIndex: 'Password',
             filters: true,
@@ -130,12 +132,12 @@ const DstServerList = () => {
             valueEnum: {
                 open: {
                     key: '1111',
-                    text: '有密码',
+                    text: t('dstServerList.password.yes'),
                     status: true,
                 },
                 closed: {
                     key: '1112',
-                    text: '无密码',
+                    text: t('dstServerList.password.no'),
                     status: false,
                 },
             },
@@ -154,7 +156,7 @@ const DstServerList = () => {
         },
         {
             disable: true,
-            title: '模组',
+            title: t('dstServerList.column.mods'),
             key: 'Mods',
             dataIndex: 'Mods',
             filters: true,
@@ -164,12 +166,12 @@ const DstServerList = () => {
             valueEnum: {
                 false: {
                     key: '1113',
-                    text: '无模组',
+                    text: t('dstServerList.mods.no'),
                     status: false,
                 },
                 true: {
                     key: '1114',
-                    text: '有模组',
+                    text: t('dstServerList.mods.yes'),
                     status: true,
                 },
 
@@ -188,7 +190,7 @@ const DstServerList = () => {
             </div>),
         },
         {
-            title: '操作',
+            title: t('dstServerList.column.action'),
             valueType: 'option',
             key: 'option',
             render: (_, record) => [
@@ -196,7 +198,7 @@ const DstServerList = () => {
                 (<div>
                     <Button type="link" onClick={() => {
                         viewHomeDetail(record)
-                    }} key={record.RowId}>查看详情</Button>
+                    }} key={record.RowId}>{t('dstServerList.viewDetail')}</Button>
 
                 </div>)
             ],
@@ -244,7 +246,7 @@ const DstServerList = () => {
                     pageSize: 10,
                     onChange: (page) => console.log(page),
                 }}
-                headerTitle="饥荒服务器列表"
+                headerTitle={t('dstServerList.title')}
                 tableAlertRender={({selectedRowKeys, selectedRows, onCleanSelected}) => false}
             />
         </>

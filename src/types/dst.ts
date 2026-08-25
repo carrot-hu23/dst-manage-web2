@@ -1,41 +1,34 @@
-const dstRolesMap : Record<string, string> = {
-    wendy: '温蒂',
-    wilson: '威尔逊',
-    willow: '薇洛',
-    wolfgang: '沃尔夫冈',
-    wx78: 'WX-78',
-    wickerbottom: '薇克巴顿',
-    woodie: '伍迪',
-    wes: '韦斯',
-    waxwell: '麦斯威尔',
-    wathgrithr: '薇格弗德',
-    webber: '韦伯',
-    winona: '薇诺娜',
-    warly: '沃利',
-    walter: '沃尔特',
-    wortox: '沃拓克斯',
-    wormwood: '沃姆伍德',
-    wurt: '沃特',
-    wanda: '旺达',
-    wonkey: '芜猴',
-    mod: '模组角色',
-    "": '未知角色',
+import i18next from '../locales/i18n.tsx';
 
-}
-const dstSeason: Record<string, string> = {
-    spring: "春",
-    summer: "夏",
-    autumn: "秋",
-    winter: "冬",
-    "": "  "
+// Character/season/time-of-day display names are looked up live via i18next
+// (through a Proxy) instead of being baked in at import time, so they follow
+// whichever language is currently active instead of freezing on whatever was
+// active when this module first loaded.
+const dstCharacterKeys = ['wendy', 'wilson', 'willow', 'wolfgang', 'wx78', 'wickerbottom', 'woodie', 'wes', 'waxwell', 'wathgrithr', 'webber', 'winona', 'warly', 'walter', 'wortox', 'wormwood', 'wurt', 'wanda', 'wonkey', 'mod', ''];
+
+function makeI18nLookupProxy(keys: string[], i18nPrefix: string, unknownKey: string): Record<string, string> {
+    const resolveI18nKey = (key: string) => `${i18nPrefix}.${key === '' ? unknownKey : key}`;
+    return new Proxy({} as Record<string, string>, {
+        get(_target, prop) {
+            if (typeof prop !== 'string' || !keys.includes(prop)) return undefined;
+            return i18next.t(resolveI18nKey(prop));
+        },
+        has(_target, prop) {
+            return typeof prop === 'string' && keys.includes(prop);
+        },
+        ownKeys() {
+            return keys;
+        },
+        getOwnPropertyDescriptor(_target, prop) {
+            if (typeof prop !== 'string' || !keys.includes(prop)) return undefined;
+            return {enumerable: true, configurable: true, value: i18next.t(resolveI18nKey(prop))};
+        },
+    });
 }
 
-const dstSegs: Record<string, string> = {
-    'night': '夜晚',
-    'day': '白天',
-    'dusk': '黄昏',
-    '': '  '
-}
+const dstRolesMap: Record<string, string> = makeI18nLookupProxy(dstCharacterKeys, 'dst.character', 'unknown');
+const dstSeason: Record<string, string> = makeI18nLookupProxy(['spring', 'summer', 'autumn', 'winter', ''], 'dst.season', 'unknown');
+const dstSegs: Record<string, string> = makeI18nLookupProxy(['night', 'day', 'dusk', ''], 'dst.timeSegment', 'unknown');
 
 const dstRolesMap2: Record<string, string> = {
     '温蒂': 'wendy',
@@ -90,19 +83,19 @@ const customization = "customization"
 // 选择服务器的游戏风格。
 const dstGameMod = [
     {
-        cn: '无尽',
+        get cn() { return i18next.t('dst.gameMode.endless'); },
         name: 'endless',
         description: `永不结束的饥荒沙盒模式。\n
         永远可以在绚丽之门复活。\n
         `
     },
     {
-        cn: '生存',
+        get cn() { return i18next.t('dst.gameMode.survival'); },
         name: 'survival',
         description: `标准《饥荒》体验。\n`
     },
     {
-        cn: '荒野',
+        get cn() { return i18next.t('dst.gameMode.wilderness'); },
         name: 'wilderness',
         description: `外面就是荒野,充满了危险!\n
         随机进入世界的一个地方。
@@ -110,38 +103,38 @@ const dstGameMod = [
         `
     },
     {
-        cn: '暗无天日',
+        get cn() { return i18next.t('dst.gameMode.lightsout'); },
         name: 'lightsout',
         description: `在标准《饥荒》体验的基础上添加黑暗基调。\n
         `
     },
     {
-        cn: '熔炉',
+        get cn() { return i18next.t('dst.gameMode.lavaarena'); },
         name: 'lavaarena',
         description: `伴随着远古传送门的激活，我们的幸存者发现自己现在被困在一个充满敌意的战火世界里。 如果他们还怀抱着回家的渺茫希望，那就需要团结起来击败战神普格纳的军队以及他的王牌——大熔炉猪战士。\n
         `
     },
     {
-        cn: '暴食',
+        get cn() { return i18next.t('dst.gameMode.quagmire'); },
         name: 'quagmire',
         description: `好不容易逃出了熔火大门後，我們的求生者們進到了一個被饥饿的野獸所統治的城市遺跡中。合作煮出美味的料理以緩解噬咬永無止盡的飢餓，避免受到可怕詛咒的折磨。煮出來的料理夠好吃，說不定你還可以回到原本的世界\n
         (tips: 暴食模式需要关闭无人暂停)
         `
     },
     {
-        cn: '海钓模式',
+        get cn() { return i18next.t('dst.gameMode.oceanFishing'); },
         name: 'OceanFishing',
         description: `海钓随机物品\n
         `
     },
     {
-        cn: '闯关模式',
+        get cn() { return i18next.t('dst.gameMode.starvingFloor'); },
         name: 'starvingfloor',
         description: `饥荒单机版的闯关模式\n
         `
     },
     {
-        cn: '自定义模式',
+        get cn() { return i18next.t('dst.gameMode.customization'); },
         name: customization,
         description: `自定义模式\n
         `
@@ -149,10 +142,7 @@ const dstGameMod = [
 
 ]
 
-export function getDstMod(lang: string, name: string) {
-    if (lang === "en") {
-        return name
-    }
+export function getDstMod(name: string) {
     let result = name
     dstGameMod.forEach(item=>{
         if (item.name === name) {

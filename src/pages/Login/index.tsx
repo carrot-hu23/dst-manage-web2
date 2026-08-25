@@ -106,7 +106,7 @@ const Login: React.FC = () => {
         })
         const loginResponseData = loginResponse.data
         if (loginResponseData.code !== 200) {
-            message.error("登录失败")
+            message.error(t('login.failed'))
             return
         }
         console.log("values", values)
@@ -166,25 +166,25 @@ const Login: React.FC = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your Username!',
+                                    message: t('init.username.required'),
                                 },
                             ]}
                         >
-                            <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder="Username"/>
+                            <Input prefix={<UserOutlined className="site-form-item-icon"/>} placeholder={t('init.username.placeholder')}/>
                         </Form.Item>
                         <Form.Item
                             name="password"
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Please input your Password!',
+                                    message: t('init.password.required'),
                                 },
                             ]}
                         >
                             <Input
                                 prefix={<LockOutlined className="site-form-item-icon"/>}
                                 type="password"
-                                placeholder="Password"
+                                placeholder={t('init.password.placeholder')}
                             />
                         </Form.Item>
                         <Form.Item
@@ -192,7 +192,7 @@ const Login: React.FC = () => {
                             valuePropName="checked"
                         >
                             <Checkbox>
-                                <Tooltip title={'记住账号密码，下次自动填充'}>
+                                <Tooltip title={t('login.remember.tooltip')}>
                                     <span>{t('login.remember.me')}</span>
                                 </Tooltip>
                             </Checkbox>
@@ -203,9 +203,9 @@ const Login: React.FC = () => {
                                     marginBlockEnd: 36,
                                 }}
                             >
-                                <Tooltip title={'在部署目录下找到password.txt文件修改'}>
+                                <Tooltip title={t('login.forgotPassword.tooltip')}>
                                     <a style={{float: 'left',}}>
-                                        忘记密码
+                                        {t('login.forgotPassword.button')}
                                     </a>
                                 </Tooltip>
                                 <Space wrap style={{float: 'right',}}>

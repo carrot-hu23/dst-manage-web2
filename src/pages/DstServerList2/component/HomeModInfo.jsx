@@ -1,4 +1,5 @@
 import {Image, List, Tooltip} from 'antd';
+import {useTranslation} from "react-i18next";
 
 const data = [
     [
@@ -12,6 +13,7 @@ const data = [
 
 // eslint-disable-next-line react/prop-types
 const HomeModInfo = ({mods}) => {
+    const {t} = useTranslation()
 
     return (
         <>
@@ -35,14 +37,14 @@ const HomeModInfo = ({mods}) => {
                                     style={{
                                         background: 'url(https://dst.liuyh.com/static/img/dstui/icon_button_normal.png)'
                                     }} rel="noreferrer">
-                                    <Tooltip title="点击进入订阅页">
+                                    <Tooltip title={t('dstServerList.mod.clickToSubscribe')}>
                                         <Image preview={false} width={22}
                                                src={'https://dst.liuyh.com/static/img/dstui/icon/update.png'}/>
                                     </Tooltip>
                                 </a>,
                                     // eslint-disable-next-line react/jsx-key
                                     <div>{item.IsClientDownload ?
-                                        <Tooltip title="必须安装才能进入">
+                                        <Tooltip title={t('dstServerList.mod.mustInstall')}>
                                             <Image preview={false} width={22}
                                                    src={'https://dst.liuyh.com/static/img/dstui/icon/apply_skins.png'}/>
                                         </Tooltip> : ''}</div>,

@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import BackupList from "../../Backup/BackupList/index.jsx";
 
 // @ts-ignore
-export default ({block}) => {
+export default ({block, style}) => {
 
     const [open, setOpen] = useState(false);
     const showDrawer = () => {
@@ -18,10 +18,10 @@ export default ({block}) => {
 
     return (
         <>
-            <Button block={block} type="primary" onClick={showDrawer}>{t('panel.archive')}</Button>
+            <Button block={block} type="primary" onClick={showDrawer} style={style}>{t('panel.archive')}</Button>
             <Drawer
                 closable={{ placement: 'end' }}
-                title="存档列表" onClose={onClose} open={open} width={1200}>
+                title={t('panel.archive')} onClose={onClose} open={open} width={1200}>
                 <div>
                     <BackupList />
                 </div>

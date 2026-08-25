@@ -1,4 +1,5 @@
 import React from "react";
+import {useTranslation} from "react-i18next";
 
 import {Tabs} from "antd";
 
@@ -6,17 +7,18 @@ import Assembly from "./Assembly";
 import Preinstall from "./Preinstall";
 
 export default ()=>{
+    const {t} = useTranslation()
 
     const items = [
         {
-            label: '多层选择器',
+            label: t('tool.tab.assembly'),
             children: <div>
                 <Assembly />
             </div>,
             key: '1',
         },
         {
-            label: '预设模板',
+            label: t('menu.levels.preinstall'),
             children: <Preinstall />,
             key: '2',
             forceRender: true,

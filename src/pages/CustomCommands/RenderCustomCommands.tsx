@@ -1,10 +1,12 @@
 import {useEffect, useState} from 'react';
 import {Card, Empty, Spin} from 'antd';
+import {useTranslation} from 'react-i18next';
 import ItemsManager from '../TooManyItemsPlus/ItemsManager';
 import {getKv} from '../../api/clusterApi';
 import {ProCard} from "@ant-design/pro-components";
 
 export default function RenderCustomCommands() {
+    const {t} = useTranslation();
     const [data, setData] = useState<Record<string, Record<string, string>>>({});
     const [loading, setLoading] = useState<boolean>(true);
     const [hasData, setHasData] = useState<boolean>(false);
@@ -49,7 +51,7 @@ export default function RenderCustomCommands() {
     if (loading) {
         return (
             <Card>
-                <Spin tip="加载中...">
+                <Spin tip={t('customCommands.loading')}>
                     <div style={{ height: '300px' }} />
                 </Spin>
             </Card>
@@ -59,7 +61,7 @@ export default function RenderCustomCommands() {
     if (!hasData) {
         return (
             <ProCard>
-                <Empty description="暂无自定义指令数据" />
+                <Empty description={t('customCommands.render.empty')} />
             </ProCard>
         );
     }

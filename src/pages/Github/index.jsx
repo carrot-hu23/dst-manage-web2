@@ -3,12 +3,14 @@ import aliPayImage from './alipay.jpg';
 import wechatpayImage from './wechatpay.png';
 import qqgroup from './qqgroup.png'
 import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {base64ToUtf8} from "../../utils/encoding";
 import axios from "axios";
 
 const {Link, Paragraph} = Typography;
 
 export default () => {
+    const {t} = useTranslation()
 
     const [adData, setAdData] = useState({
         title: '',
@@ -34,11 +36,11 @@ export default () => {
 
     return (
         <div>
-            <h1>帮助文档</h1>
-            <strong>禁止商用，商用请联系本人授权！！！</strong>
+            <h1>{t('github.pageTitle')}</h1>
+            <strong>{t('github.noCommercialUse')}</strong>
             <br/>
             <div>
-                开源协议:
+                {t('github.licenseLabel')}
                 <a
                     target={'_blank'}
                     href={'https://github.com/hujinbo23/dst-admin-go/blob/main/LICENSE'}
@@ -48,7 +50,7 @@ export default () => {
                 </a>
             </div>
             <div>
-                github 地址:
+                {t('github.addressLabel')}
                 <a
                     target={'_blank'}
                     href={"https://github.com/hujinbo23/dst-admin-go"}
@@ -59,7 +61,7 @@ export default () => {
             </div>
             <br/>
             <div>
-                <h2>赞助商广告</h2>
+                <h2>{t('github.sponsorAd')}</h2>
                 {adData && (
                     <div>
                         <div style={{maxWidth: 300}}>
@@ -76,7 +78,7 @@ export default () => {
                                 rel="noopener noreferrer"
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                了解更多 →
+                                {t('github.learnMore')}
                             </a>
                         </div>
                     </div>
@@ -84,7 +86,7 @@ export default () => {
             </div>
             <br/>
             <div>
-                <h3>请作者喝一杯咖啡：</h3>
+                <h3>{t('github.buyCoffee')}</h3>
                 <Space size={32} wrap>
                     <Image style={{borderRadius: '4px'}} width={160} src={aliPayImage}/>
                     <Image style={{borderRadius: '4px'}} width={160} src={wechatpayImage}/>
@@ -92,7 +94,7 @@ export default () => {
             </div>
 
             <div>
-                <h3>QQ群反馈</h3>
+                <h3>{t('github.qqGroupFeedback')}</h3>
                 <Image style={{borderRadius: '4px'}} width={160} src={qqgroup}/>
             </div>
         </div>

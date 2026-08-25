@@ -4,10 +4,12 @@ import {
 } from '@ant-design/pro-components';
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 
 import {usePreinstallApi} from "../../../api/preinstallApi.jsx";
 
 export default ({reload}) => {
+    const {t} = useTranslation()
     const {cluster} = useParams()
 
     const [form] = Form.useForm();
@@ -34,12 +36,12 @@ export default ({reload}) => {
         usePreinstallApi(cluster, name)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("设置成功")
+                    message.success(t('tool.preinstall.setSuccess'))
                     if (reload) {
                         reload()
                     }
                 } else {
-                    message.error(`设置失败 ${resp.msg}`)
+                    message.error(`${t('tool.preinstall.setError')} ${resp.msg}`)
                 }
                 setSpin(false)
             })
@@ -48,9 +50,9 @@ export default ({reload}) => {
     return (
         <>
             <Skeleton loading={loading}>
-                <Spin spinning={spin} tip={"正在替换"}>
+                <Spin spinning={spin} tip={t('tool.preinstall.replacing')}>
                     <Form form={form} layout="vertical">
-                        <Form.Item name="template" label="世界模板">
+                        <Form.Item name="template" label={t('tool.preinstall.worldTemplate')}>
                             <CheckCard.Group
                                 style={{width: '100%'}}
                                 onChange={(value) => {
@@ -73,7 +75,8 @@ export default ({reload}) => {
                                                             size="large"
                                                         />
                                                     }
-                                                    title={item.name} description={item.description}
+                                                    title={item.key ? t(`tool.preinstall.preset.${item.key}.name`) : item.name}
+                                                    description={item.key ? t(`tool.preinstall.preset.${item.key}.description`) : item.description}
                                                     value={item.value}/>
                                             </div>
                                         </Col>
@@ -84,18 +87,18 @@ export default ({reload}) => {
                         </Form.Item>
                     </Form>
 
-                    <Alert message="window版本 面板和饥荒存档以及备份路径请在C盘，其他盘将没有操作权限导致失败"
+                    <Alert message={t('tool.preinstall.windowsPathWarning')}
                            type="warning" showIcon/>
                     <Alert style={{marginTop: '8px'}}
-                           message="此操作可能会导致世界启动不起来，比如模组冲突，配置文件更新等问题。请先停止所有世界，自行做好保存存档，此操作会删除之前的存档"
+                           message={t('tool.preinstall.riskWarning')}
                            type="warning" showIcon/>
                     <br/>
                     <Alert style={{marginTop: '8px'}}
-                           message={`如果想更改默认的模板，显示模板预设是在 dist/misc/preinstall.json 修改， 同时请在面板的static/preinstall目录下，设置对应的存档`}
+                           message={t('tool.preinstall.templateInfoNote')}
                            type="info" showIcon/>
                     <br/><br/>
                     <Space size={8} wrap>
-                        <Button type="primary" onClick={() => save()}>保存</Button>
+                        <Button type="primary" onClick={() => save()}>{t('cluster.save')}</Button>
                     </Space>
                 </Spin>
             </Skeleton>

@@ -2,12 +2,14 @@ import {Button, Divider, Form, Space, Tooltip} from "antd";
 import {useEffect, useState} from "react";
 import _ from "lodash";
 import { FixedSizeList as List } from 'react-window';
+import {useTranslation} from "react-i18next";
 
 import Select2 from "../../component/Select2.jsx";
 import {generateUUID} from "../../../../utils/dateUitls";
 
 const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
 
+    const {t} = useTranslation()
     const defaultConfigOptions = defaultConfigOptionsRef.current
 
     useEffect(() => {
@@ -103,7 +105,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                                 }
                                 return  <div style={style}>
                                     <Divider key={generateUUID()}>
-                                        <span style={{fontSize: "14px", fontWeight: "600"}}>{item.label} 配置</span>
+                                        <span style={{fontSize: "14px", fontWeight: "600"}}>{item.label} {t('mod.config.title')}</span>
                                     </Divider>
                                 </div>
                             }
@@ -142,7 +144,7 @@ const OptionSelect = ({mod, defaultConfigOptionsRef, modConfigOptionsRef}) => {
                                         return ""
                                     }
                                     return <Divider key={generateUUID()}><span
-                                        style={{fontSize: "14px", fontWeight: "600"}}>{item.label} 配置</span></Divider>
+                                        style={{fontSize: "14px", fontWeight: "600"}}>{item.label} {t('mod.config.title')}</span></Divider>
                                 }
 
                                 let defaultValue

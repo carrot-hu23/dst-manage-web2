@@ -5,6 +5,7 @@ import axios, {
     AxiosError,
 } from 'axios';
 import {message} from 'antd';
+import i18next from '../locales/i18n.tsx';
 
 // 创建 axios 实例
 const http: AxiosInstance = axios.create({
@@ -29,10 +30,10 @@ http.interceptors.response.use(
 
         if (status === 401 || status === 504) {
             if (status === 504) {
-                message.error('服务器异常');
+                message.error(i18next.t('error.serverException'));
             }
             if (status === 401) {
-                message.warning('登录失效');
+                message.warning(i18next.t('error.loginExpired'));
             }
 
             // 清除本地登录信息

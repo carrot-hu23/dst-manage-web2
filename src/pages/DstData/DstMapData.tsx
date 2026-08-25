@@ -9,6 +9,7 @@ import useIsMobile from "../../hooks/UseIsMobile";
 // @ts-expect-error
 import {readLevelServerLogApi, sendCommandApi} from "../../api/level.jsx";
 import { useTranslation } from "react-i18next";
+import i18next from "../../locales/i18n.tsx";
 import { parse } from "lua-json";
 import {Level} from "../../types";
 import {useParams} from "react-router-dom";
@@ -25,7 +26,7 @@ function getLevelObject(value: string): LevelDataOverride {
     try {
         return parse(value) as LevelDataOverride;
     } catch (error) {
-        message.warning("lua配置解析错误");
+        message.warning(i18next.t("level.warning.lua.error"));
         console.log(error);
         return {};
     }
@@ -80,11 +81,11 @@ export default () => {
                         .map(l => fetchHasWalrusHutPlainsApi(l.uuid))
                 );
             } else {
-                message.error("获取世界列表失败");
+                message.error(t('dstData.map.fetchLevelsError'));
             }
         } catch (err) {
             console.error("获取世界列表失败", err);
-            message.error("获取世界列表失败");
+            message.error(t('dstData.map.fetchLevelsError'));
         }
     };
 
@@ -115,9 +116,9 @@ export default () => {
             const results = await Promise.all(levels.map(l => genDstMapApi(l.uuid)));
             const failed = results.some((resp: { code: number }) => resp.code !== 200);
             if (failed) {
-                message.warning("生成地图预览失败");
+                message.warning(t('dstData.map.generateFailed'));
             } else {
-                message.success("生成成功");
+                message.success(t('dstData.map.generateSuccess'));
                 refreshImage();
                 // 生成成功后仅对 forest 世界重新查询海象平原
                 await Promise.all(
@@ -128,7 +129,7 @@ export default () => {
             }
         } catch (err) {
             console.error("生成地图失败", err);
-            message.error("生成地图失败");
+            message.error(t('dstData.map.generateError'));
         }
     };
 
@@ -137,13 +138,13 @@ export default () => {
         try {
             const resp = await sendCommandApi(cluster, levelName, "c_regenerateshard()");
             if (resp.code === 200) {
-                message.success(`${levelName} 重置成功`);
+                message.success(t('dstData.map.resetSuccess', {levelName}));
             } else {
-                message.error(`${levelName} 重置失败: ${resp.msg || "未知错误"}`);
+                message.error(`${t('dstData.map.resetError', {levelName})}: ${resp.msg || t('dstData.map.unknownError')}`);
             }
         } catch (err) {
             console.error("重置世界失败", err);
-            message.error(`${levelName} 重置失败`);
+            message.error(t('dstData.map.resetError', {levelName}));
         }
     };
 
@@ -172,7 +173,7 @@ export default () => {
             <div>
                 <Space size={24} wrap>
                     <Button type="primary" onClick={generateMaps}>
-                        刷新
+                        {t('backup.refresh')}
                     </Button>
                     <div>
                         {levels.map(l => (
@@ -182,9 +183,9 @@ export default () => {
                                         key={l.uuid}
                                         color={hasWalrusHutPlainsMap[l.uuid] ? "blue" : "red"}
                                     >
-                                        {l.levelName} {hasWalrusHutPlainsMap[l.uuid] ? "存在海象平原" : "不存在海象平原"}
+                                        {l.levelName} {hasWalrusHutPlainsMap[l.uuid] ? t('dstData.map.hasWalrusPlains') : t('dstData.map.noWalrusPlains')}
                                     </Tag>
-                                    <Tag color={'blue'}>杀人蜂数量: {wasphive}</Tag>
+                                    <Tag color={'blue'}>{t('dstData.map.killerBeeCount', {count: wasphive})}</Tag>
                                 </Space>
                             )
                         ))}
@@ -194,7 +195,7 @@ export default () => {
                 <br />
                 <Alert
                     type="info"
-                    message={'第一次生成世界时，请点击 "存档"，再点击生成, 不然生成的图片是错误的'}
+                    message={t('dstData.map.firstGenerateTip')}
                     closable
                 />
             </div>
@@ -211,10 +212,10 @@ export default () => {
                         <br />
                         <Popconfirm
                             title={t('panel.regenerate')}
-                            description="请保存好数据"
+                            description={t('dstData.map.resetConfirmDesc')}
                             onConfirm={() => resetWorld(cluster || 'Master', l.uuid)} // ⚠️ 这里 cluster 先写死
-                            okText="Yes"
-                            cancelText="No"
+                            okText={t('panel.y')}
+                            cancelText={t('panel.n')}
                         >
                             <Button
                                 size="small"

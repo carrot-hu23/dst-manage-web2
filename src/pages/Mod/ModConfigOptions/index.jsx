@@ -33,7 +33,7 @@ const ModInfo = ({mod}) => {
                 <div>
                     <span>{t('mod.version')}: {mod?.mod_config?.version}</span>
                     <div>{t('mod.lasttime')}: {timestampToString(mod.last_time * 1000)}</div>
-                    <span>{mod?.mod_config?.dont_starve_compatible === true && <span>饥荒联机版兼容</span>}</span>
+                    <span>{mod?.mod_config?.dont_starve_compatible === true && <span>{t('mod.dst.compatible')}</span>}</span>
                     <span>{mod?.mod_config?.dont_starve_compatible === false && <span>-</span>}</span>
                 </div>
             </Space>
@@ -198,13 +198,13 @@ export default ({mod, setModList, defaultConfigOptionsRef, modConfigOptionsRef})
                         )}
                         {mod?.mod_config?.configuration_options === undefined && mod?.mod_config?.author === undefined &&<>
                             <Paragraph>
-                               网络问题!!! 下模组失败
+                               {t('mod.download.error.title')}
                             </Paragraph>
                             <Paragraph>
-                               点击 更新 按钮重新下载
+                               {t('mod.download.error.retry')}
                             </Paragraph>
                             <Paragraph>
-                               如果多次更新依旧没有配置，请先加此mod加入到你的模组配置文件里面,然后在启动房间，等待房间mod下载完成后，在点击 更新 按钮就会有配置选项
+                               {t('mod.download.error.tips')}
                             </Paragraph>
                         </>}
                         {mod?.mod_config?.configuration_options === undefined && mod?.mod_config?.author !== undefined &&<>

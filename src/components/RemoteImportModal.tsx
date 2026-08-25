@@ -1,6 +1,7 @@
 import {useEffect, useState} from 'react';
 import {Modal, Image, Row, Col, message, Empty, Button} from 'antd';
 import {CheckCard} from '@ant-design/pro-components';
+import {useTranslation} from 'react-i18next';
 import {getModCommandIndexApi, getModCommandFileApi, ModCommandItem} from '../api/modCommandApi';
 import {base64ToUtf8} from '../utils/encoding';
 
@@ -11,6 +12,7 @@ interface RemoteImportModalProps {
 }
 
 export default function RemoteImportModal({open, onCancel, onImport}: RemoteImportModalProps) {
+    const {t} = useTranslation();
     const [loading, setLoading] = useState<boolean>(true);
     const [modCommands, setModCommands] = useState<ModCommandItem[]>([]);
     const [fetchingFile, setFetchingFile] = useState<boolean>(false);
@@ -31,11 +33,11 @@ export default function RemoteImportModal({open, onCancel, onImport}: RemoteImpo
                 const data = JSON.parse(decoded) as ModCommandItem[];
                 setModCommands(data);
             } else {
-                message.error('获取模组命令列表失败');
+                message.error(t('remoteImport.fetchListError'));
             }
         } catch (error) {
             console.error('Error loading mod commands:', error);
-            message.error('获取模组命令列表失败');
+            message.error(t('remoteImport.fetchListError'));
         } finally {
             setLoading(false);
         }
@@ -49,11 +51,11 @@ export default function RemoteImportModal({open, onCancel, onImport}: RemoteImpo
                 const data = JSON.parse(base64ToUtf8(response.data));
                 onImport(data);
             } else {
-                message.error('获取模组命令失败');
+                message.error(t('remoteImport.fetchFileError'));
             }
         } catch (error) {
             console.error('Error importing mod command:', error);
-            message.error('导入失败');
+            message.error(t('tool.share.importError'));
         } finally {
             setFetchingFile(false);
         }
@@ -61,7 +63,7 @@ export default function RemoteImportModal({open, onCancel, onImport}: RemoteImpo
 
     return (
         <Modal
-            title="选择远程模组命令"
+            title={t('remoteImport.title')}
             open={open}
             onCancel={onCancel}
             footer={null}
@@ -69,7 +71,7 @@ export default function RemoteImportModal({open, onCancel, onImport}: RemoteImpo
         >
             <div>
                 {modCommands.length === 0 && !loading && (
-                    <Empty description="暂无可用的模组命令"/>
+                    <Empty description={t('remoteImport.noAvailable')}/>
                 )}
                 <Row gutter={[16, 16]}>
                     {modCommands.map((cmd) => (
@@ -103,7 +105,7 @@ export default function RemoteImportModal({open, onCancel, onImport}: RemoteImpo
                 <Button type="primary" loading={fetchingFile} block onClick={()=>{
                     handleSelect(selectedFile);
                 }}>
-                    导入
+                    {t('remoteImport.import')}
                 </Button>
             </div>
         </Modal>

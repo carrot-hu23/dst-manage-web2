@@ -40,6 +40,7 @@ interface ReadTxtFileProps {
 }
 
 const ReadTxtFileWithAntd: React.FC<ReadTxtFileProps> = ({form}) => {
+    const {t} = useTranslation();
     const [, setFileLines] = useState<string[]>([]);
 
     const handleBeforeUpload = useCallback((file: File) => {
@@ -71,7 +72,7 @@ const ReadTxtFileWithAntd: React.FC<ReadTxtFileProps> = ({form}) => {
                 showUploadList={false}
                 style={{}}
             >
-                <Button type={'primary'} icon={<UploadOutlined/>}>选择文件</Button>
+                <Button type={'primary'} icon={<UploadOutlined/>}>{t('namelist.selectFile')}</Button>
             </Upload>
         </>
     );
@@ -141,12 +142,12 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
         a.download = 'namelist.txt';
         a.click();
         URL.revokeObjectURL(url);
-        message.success('导出成功');
+        message.success(t('namelist.export.success'));
     };
 
     const handleBatchAdd = () => {
         if (!batchText.trim()) {
-            message.warning('请输入内容');
+            message.warning(t('namelist.batchAdd.emptyWarning'));
             return;
         }
         const lines = batchText
@@ -159,7 +160,7 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
             list: [...list, ...lines]
         });
         setBatchText('');
-        message.success(`已添加 ${lines.length} 条记录`);
+        message.success(t('namelist.batchAdd.successCount', {count: lines.length}));
     };
 
     const handleSort = () => {
@@ -222,11 +223,11 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                 {/* 操作按钮 */}
                                 <Space wrap size={12} style={{marginBottom: '16px'}}>
                                     <Button type="primary" htmlType="submit" loading={spin}>
-                                        保存
+                                        {t('cluster.save')}
                                     </Button>
                                     <ReadTxtFileWithAntd form={form}/>
                                     <Button icon={<DownloadOutlined/>} onClick={handleExport}>
-                                        导出文件
+                                        {t('namelist.exportFile')}
                                     </Button>
                                 </Space>
 
@@ -253,10 +254,10 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                             alignItems: 'center',
                                                             gap: '12px'
                                                         }}>
-                                                            <span>KuID 列表 ({filteredFields.length}/{fields.length})</span>
+                                                            <span>{t('namelist.kuidList.title', {filtered: filteredFields.length, total: fields.length})}</span>
                                                             <Space size={8}>
                                                                 <Input
-                                                                    placeholder="搜索 KuID"
+                                                                    placeholder={t('namelist.search.placeholder')}
                                                                     prefix={<SearchOutlined/>}
                                                                     value={searchText}
                                                                     onChange={(e) => setSearchText(e.target.value)}
@@ -267,9 +268,9 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                                     icon={sortOrder === 'asc' ? <SortAscendingOutlined/> :
                                                                         <SortDescendingOutlined/>}
                                                                     onClick={handleSort}
-                                                                    title={sortOrder === 'asc' ? '升序' : '降序'}
+                                                                    title={sortOrder === 'asc' ? t('namelist.sort.asc') : t('namelist.sort.desc')}
                                                                 >
-                                                                    {sortOrder === 'asc' ? '升序' : '降序'}
+                                                                    {sortOrder === 'asc' ? t('namelist.sort.asc') : t('namelist.sort.desc')}
                                                                 </Button>
                                                             </Space>
                                                         </div>
@@ -289,7 +290,7 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                             padding: '20px',
                                                             color: '#999'
                                                         }}>
-                                                            {searchText ? '未找到匹配的数据' : '暂无数据'}
+                                                            {searchText ? t('namelist.search.noResults') : t('namelist.empty')}
                                                         </div>
                                                     ) : (
                                                         filteredFields.map((field) => (
@@ -309,13 +310,13 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                                         {
                                                                             required: true,
                                                                             whitespace: true,
-                                                                            message: "请输入 KuID",
+                                                                            message: t('namelist.kuid.required'),
                                                                         },
                                                                     ]}
                                                                     style={{flex: 1, margin: 0}}
                                                                 >
                                                                     <Input
-                                                                        placeholder="请输入 KU_xxx"
+                                                                        placeholder={t('namelist.kuid.placeholder')}
                                                                         style={{width: '100%'}}
                                                                     />
                                                                 </Form.Item>
@@ -326,7 +327,7 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                                     onClick={() => remove(field.name)}
                                                                     style={{marginLeft: '12px'}}
                                                                 >
-                                                                    删除
+                                                                    {t('backup.delete')}
                                                                 </Button>
                                                             </div>
                                                         ))
@@ -343,14 +344,14 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                     }}
                                                     level={5}
                                                 >
-                                                    批量粘贴添加
+                                                    {t('namelist.batchAdd.title')}
                                                 </Title>
 
                                                 <div>
                                                     <TextArea
                                                         value={batchText}
                                                         onChange={(e) => setBatchText(e.target.value)}
-                                                        placeholder="每行一个 KuID，支持批量粘贴"
+                                                        placeholder={t('namelist.batchAdd.placeholder')}
                                                         rows={6}
                                                         style={{
                                                             marginBottom: 8
@@ -361,7 +362,7 @@ const NameList: React.FC<NameListProps> = ({title, tips, getApi, saveApi}) => {
                                                         icon={<PlusOutlined/>}
                                                         onClick={handleBatchAdd}
                                                     >
-                                                        解析添加
+                                                        {t('namelist.batchAdd.parseButton')}
                                                     </Button>
                                                 </div>
                                             </div>

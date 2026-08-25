@@ -27,19 +27,18 @@ export default ()=>{
     const getTips = (panelStyle) => [
         {
             key: '1',
-            label: t('Level quantity problem'),
+            label: t('levelTips.layerCount.title'),
             children:
                 <Typography>
                     <Paragraph>
                         <Paragraph>
-                            从 <Text keyboard>1.2.6</Text> 版本起，世界层数从<Text keyboard>两层</Text>变成<Text keyboard>动态层数</Text>，
-                            你可以任意的添加世界层数，来开<Text keyboard>多层存档</Text>
+                            {t('levelTips.layerCount.para1')}
                         </Paragraph>
                         <Paragraph>
-                            {t('There is only one "Forest World" by default. Please click Add Button to add a level.')}
+                            {t('levelTips.layerCount.para2')}
                         </Paragraph>
                         <Paragraph>
-                            {t('You can also Backup the game/upload the archive/refresh and click on the corresponding archive to restore the archive. Save format compatible with local games by default')}
+                            {t('levelTips.layerCount.para3')}
                         </Paragraph>
                     </Paragraph>
                 </Typography>,
@@ -47,22 +46,21 @@ export default ()=>{
         },
         {
             key: '2',
-            label: t('Cluster level.json explained'),
+            label: t('levelTips.levelJson.title'),
             children: <Typography>
                 <Paragraph>
                     <Paragraph>
-                        {t('Each archive cluster will generate a level.json file. This file mainly marks which file your archive level is.')}
+                        {t('levelTips.levelJson.para1')}
                     </Paragraph>
                     <Paragraph>
-                        {t('However, due to the special collection of this panel, your main level file must be Master (otherwise the panel\'s log collection and statistics will be invalid)')}
+                        {t('levelTips.levelJson.para2')}
                     </Paragraph>
                     <ul>
-                        <li>name: {t('The name displayed on the interface')}</li>
-                        <li>file: {t('level file')}</li>
+                        <li>{t('levelTips.levelJson.nameField')}</li>
+                        <li>{t('levelTips.levelJson.fileField')}</li>
                     </ul>
                     <Paragraph>
-                        {t('eg')}:
-                        {t('For example, my previous archive world is Master Caves Master1 Caves1')}
+                        {t('levelTips.levelJson.example')}
                     </Paragraph>
                     <pre>{'{"levelList":[{"name":"森林","file":"Master"},{"name":"洞穴","file":"Caves"},{"name":"森林1","file":"Master1"},{"name":"洞穴1","file":"Caves1"}]}'}</pre>
 
@@ -72,14 +70,14 @@ export default ()=>{
         },
         {
             key: '3',
-            label: t('Leveldataovrride view failure problem'),
+            label: t('levelTips.visualFailure.title'),
             children: <Typography>
                 <Paragraph>
                     <Paragraph>
-                        {t('If the configuration is return {}, please paste the configuration manually')}
+                        {t('levelTips.visualFailure.para1')}
                     </Paragraph>
                     <Paragraph>
-                        {t('If the configuration is not return {}, please remove the newline character \\n in the configuration. There will be a \\ symbol in the interface display. Remove it and merge it into one line.')}
+                        {t('levelTips.visualFailure.para2')}
                     </Paragraph>
 
                 </Paragraph>

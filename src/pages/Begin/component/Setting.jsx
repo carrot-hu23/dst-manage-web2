@@ -1,11 +1,13 @@
 import { Form, Input, Tooltip, Button } from 'antd';
 import InstallSteamcmd from './installSteamcmd';
 import InstallDst from './installDst';
+import { useTranslation } from "react-i18next";
 
 const Setting = (props) => {
+    const { t } = useTranslation();
 
     function importConfig() {
-        
+
         // ~/steamcmd
         // ~/dst
         // ~/.klei/DoNotStarveTogether/
@@ -22,7 +24,7 @@ const Setting = (props) => {
 
     }
     return <>
-        <h3>设置 steamcmd 安装路径</h3>
+        <h3>{t('begin.setting.title')}</h3>
 
         <Form
             layout="vertical"
@@ -34,42 +36,42 @@ const Setting = (props) => {
             }}
         >
             <Form.Item
-                label="steamcmd安装路径"
+                label={t('begin.setting.steamcmd.label')}
                 name="steamcmd"
                 rules={[
                     {
                         required: true,
-                        message: 'Please input steam cmd install path',
+                        message: t('begin.setting.steamcmd.required'),
                     },
                 ]}
             >
-                <Input placeholder="steamcmd安装路径" />
+                <Input placeholder={t('begin.setting.steamcmd.placeholder')} />
             </Form.Item>
 
             <Form.Item
-                label="饥荒服务器安装路径"
+                label={t('begin.setting.dstPath.label')}
                 name="force_install_dir"
                 rules={[
                     {
                         required: true,
-                        message: 'Please input dontstarve_dedicated_server_nullrenderer.exe path',
+                        message: t('begin.setting.dstPath.required'),
                     },
                 ]}
             >
-                <Input placeholder="steamcmd 饥荒联机版安装路径" />
+                <Input placeholder={t('begin.setting.dstPath.placeholder')} />
             </Form.Item>
 
             <Form.Item
-                label="服务器房间文件名字"
+                label={t('begin.setting.cluster.label')}
                 name="cluster"
                 rules={[
                     {
                         required: true,
-                        message: 'Please input dontstarve_dedicated_server name',
+                        message: t('begin.setting.cluster.required'),
                     },
                 ]}
             >
-                <Input placeholder="服务器房间文件名字" />
+                <Input placeholder={t('begin.setting.cluster.placeholder')} />
             </Form.Item>
 
             {/* <Form.Item
@@ -103,12 +105,12 @@ const Setting = (props) => {
             <InstallSteamcmd />
         </div>
         <div>
-            <InstallDst />    
+            <InstallDst />
         </div>
             <div>
-        <Tooltip placement="top" title={"导入 qinming99/dst-admin 安装位置"}>
+        <Tooltip placement="top" title={t('begin.setting.importConfig.tooltip')}>
             <Button type="link" onClick={()=>importConfig()}>
-                一键导入dst-admin
+                {t('begin.setting.importConfig.button')}
             </Button>
         </Tooltip>
         </div>

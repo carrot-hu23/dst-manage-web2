@@ -11,7 +11,7 @@ const Blacklist: React.FC = () => {
             title={t('cluster.blacklist')}
             getApi={getBlacklistApi}
             saveApi={saveBlacklistApi}
-            tips={`保存在该文件内的ID对应的玩家将不能加入该房间。`}
+            tips={t('cluster.blacklist.tips')}
         />
     </>)
 }

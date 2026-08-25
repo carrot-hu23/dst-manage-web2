@@ -2,11 +2,13 @@ import {sendCommandApi} from "../../api/commdApi.ts";
 import {Button, Divider, Image, Input, InputNumber, message, Select, Space, Typography} from "antd";
 import {useParams} from "react-router-dom";
 import {useState} from "react";
+import {useTranslation} from "react-i18next";
 import {usePlayerListStore} from "../../store/usePlayerListStore.tsx";
 import {dstRoles} from "../../types/dst.ts";
 import {useLevelsStore} from "../../store/useLevelsStore.tsx";
 
 export default function OtherIOrder(){
+    const {t} = useTranslation()
 
     const {cluster} = useParams()
 
@@ -14,9 +16,9 @@ export default function OtherIOrder(){
         sendCommandApi(cluster || "", "Master", command)
             .then(resp =>{
                 if (resp.code === 200) {
-                    message.success("发送成功")
+                    message.success(t('tooManyItems.sendSuccess'))
                 } else {
-                    message.warning("发送失败")
+                    message.warning(t('tooManyItems.sendFailed'))
                 }
             })
     }
@@ -35,9 +37,9 @@ export default function OtherIOrder(){
         sendCommandApi(cluster || "", levelName, command)
             .then(resp =>{
                 if (resp.code === 200) {
-                    message.success("发送成功")
+                    message.success(t('tooManyItems.sendSuccess'))
                 } else {
-                    message.warning("发送失败")
+                    message.warning(t('tooManyItems.sendFailed'))
                 }
             })
     }
@@ -45,31 +47,31 @@ export default function OtherIOrder(){
     return(
         <div>
             <Typography.Title level={5}>
-                时间按钮
+                {t('tooManyItems.timeButtons')}
             </Typography.Title>
             <Space wrap size={16}>
-                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\"ms_nextcycle\")')}>跳过一天</Button>
-                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\"ms_nextphase\")')}>跳过时钟</Button>
+                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\"ms_nextcycle\")')}>{t('tooManyItems.skipDay')}</Button>
+                <Button type={'primary'} onClick={() => send('TheWorld:PushEvent(\"ms_nextphase\")')}>{t('tooManyItems.skipPhase')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"summer\")')}>进入夏季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"summer\")')}>{t('tooManyItems.enterSummer')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"winter\")')}>进入冬季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"winter\")')}>{t('tooManyItems.enterWinter')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"spring\")')}>进入春季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"spring\")')}>{t('tooManyItems.enterSpring')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"autumn\")')}>进人秋季</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_setseason\", \"autumn\")')}>{t('tooManyItems.enterAutumn')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_forceprecipitation\")')}>开始下雨</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_forceprecipitation\")')}>{t('tooManyItems.startRain')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_forceprecipitation\", false)')}>停止下雨</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_forceprecipitation\", false)')}>{t('tooManyItems.stopRain')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_startthemoonstorms\")')}>开启月亮裂隙</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_startthemoonstorms\")')}>{t('tooManyItems.enableMoonStorm')}</Button>
                 <Button type={'primary'}
-                        onClick={() => send('TheWorld:PushEvent(\"ms_stopthemoonstorms\")')}>关闭月亮裂隙</Button>
+                        onClick={() => send('TheWorld:PushEvent(\"ms_stopthemoonstorms\")')}>{t('tooManyItems.disableMoonStorm')}</Button>
             </Space>
             <Divider />
             <Typography.Title level={5}>
-                自定义模组物品给予
+                {t('tooManyItems.customItemGive')}
             </Typography.Title>
             <Space size={16} wrap>
                 <Select
@@ -100,7 +102,7 @@ export default function OtherIOrder(){
                     max={10}
                     defaultValue={1}
                     onChange={value => setAmount(value || 1)}
-                    addonAfter="数量"
+                    addonAfter={t('tooManyItems.quantity')}
                 />
                 {kuId && (
                     <>
@@ -112,10 +114,10 @@ export default function OtherIOrder(){
                         />
                     </>
                 )}
-                <Input placeholder={'请输入物品代码'} onChange={value => setPrefab(value.target.value)} />
+                <Input placeholder={t('tooManyItems.itemCodePlaceholder')} onChange={value => setPrefab(value.target.value)} />
                 <Button type={'primary'} onClick={()=>{
                     give(prefab||'', amount, kuId||'')
-                }} >发送</Button>
+                }} >{t('tooManyItems.send')}</Button>
             </Space>
         </div>
     )

@@ -1,5 +1,6 @@
 import {Button, Card, Col, Divider, Drawer, Form, Image, Row, Select, Switch} from "antd";
 import React, {RefObject, useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {getMyModInfoList} from "../../api/modApi.ts";
 import {parse} from "lua-json";
 import {useParams} from "react-router-dom";
@@ -63,6 +64,7 @@ function generateUUID(): string {
 }
 
 const ModItem2: React.FC<{ modInfo: ModInfo, valueRef: RefObject<string> }> = ({modInfo, valueRef}) => {
+    const {t} = useTranslation();
     const [open1, setOpen1] = useState(false);
     const [modoverridesMap, setModoverridesMap] = useState(parseModoverrides(valueRef.current || "return{}"))
     useEffect(() => {
@@ -82,17 +84,17 @@ const ModItem2: React.FC<{ modInfo: ModInfo, valueRef: RefObject<string> }> = ({
                                 src={modInfo.img}/>
                             <div style={{paddingLeft: 8}}>
                                 <strong>{modInfo.name}</strong>
-                                <div>模组id: {modInfo.modid}</div>
+                                <div>{t('modViewer.modId', {id: modInfo.modid})}</div>
                             </div>
                         </div>
                     </Col>
                     <Col span={12}>
                         <div style={{float: "right"}}>
                             <div style={{paddingBottom: 8}}>
-                                <Switch checkedChildren="开启" unCheckedChildren="关闭"
+                                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
                                         defaultValue={modoverridesMap?.has(modInfo.modid)}/>
                             </div>
-                            <Button type="link" onClick={() => setOpen1(true)}>配置</Button>
+                            <Button type="link" onClick={() => setOpen1(true)}>{t('modViewer.configure')}</Button>
                         </div>
                     </Col>
                 </Row>
@@ -129,6 +131,7 @@ function parseModoverrides(modoverrides: string) {
 }
 
 const ModOptions: React.FC<{ modInfo: ModInfo, valueRef: RefObject<string> }> = ({modInfo, valueRef}) => {
+    const {t} = useTranslation();
     // @ts-ignore
     const [modoverridesMap, setModoverridesMap] = useState<Map<any, any>>()
     useEffect(() => {
@@ -171,7 +174,7 @@ const ModOptions: React.FC<{ modInfo: ModInfo, valueRef: RefObject<string> }> = 
                             }
                             return <div>
                                 <Divider key={generateUUID()}>
-                                    <span style={{fontSize: "14px", fontWeight: "600"}}>{item.label} 配置</span>
+                                    <span style={{fontSize: "14px", fontWeight: "600"}}>{item.label} {t('modViewer.itemConfigSuffix')}</span>
                                 </Divider>
                             </div>
                         }

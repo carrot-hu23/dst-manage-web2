@@ -1,7 +1,9 @@
 import { Button, Popconfirm, message } from 'antd';
 import { useState } from 'react';
+import { useTranslation } from "react-i18next";
 
 export default () => {
+    const { t } = useTranslation();
 
     const [open, setOpen] = useState(false);
     const [confirmLoading, setConfirmLoading] = useState(false);
@@ -14,7 +16,7 @@ export default () => {
         setTimeout(() => {
             setOpen(false);
             setConfirmLoading(false);
-            message.success("安装饥荒成功")
+            message.success(t('begin.dst.install.success'))
         }, 2000);
     };
     const handleCancel = () => {
@@ -24,8 +26,7 @@ export default () => {
 
     return (
         <Popconfirm
-            title="安装饥荒"
-            // description="安装饥荒"
+            title={t('begin.dst.install.title')}
             open={open}
             onConfirm={handleOk}
             okButtonProps={{
@@ -35,7 +36,7 @@ export default () => {
         >
             <Button type="link"
                 onClick={showPopconfirm}
-            >点击安装 饥荒</Button>
+            >{t('begin.dst.install.button')}</Button>
         </Popconfirm>
     )
 }

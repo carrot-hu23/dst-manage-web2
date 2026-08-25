@@ -76,7 +76,7 @@ const ModCard2 = ({modinfo, addModList, subscribe}) => {
                 overflow: 'hidden',
                 textOverflow: 'ellipsis',
             }}>
-                {t('mod.author') || 'Author'}: {authorText}
+                {t('mod.author')}: {authorText}
             </div>
 
             {modinfo.vote && (
@@ -179,7 +179,7 @@ export default ({addModList}) => {
             setLoading(false)
         }).catch(error => {
             setTimeout(messageApi.destroy, 1);
-            message.warning(`${t('mod.subscribe.error')} ${modName} 失败`)
+            message.warning(`${t('mod.subscribe.error')} ${modName}`)
             setLoading(false)
             console.log(error)
         })
@@ -218,7 +218,7 @@ export default ({addModList}) => {
             {contextHolder}
 
             <Search
-                placeholder={t('mod.search.placeholder') || 'input search text'}
+                placeholder={t('mod.search.placeholder')}
                 allowClear
                 enterButton
                 // size="large"
@@ -233,7 +233,7 @@ export default ({addModList}) => {
             <Spin spinning={searching}>
                 {modList.length === 0 && !searching ? (
                     <Empty
-                        description={t('mod.empty') || 'No mods found'}
+                        description={t('mod.empty')}
                         style={{marginTop: '100px'}}
                     />
                 ) : (

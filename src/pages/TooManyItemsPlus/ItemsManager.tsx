@@ -1,7 +1,8 @@
 import {useEffect, useState, useMemo, useCallback} from "react";
 import {Alert, Col, Image, Input, InputNumber, Row, Select, Space, Tabs, Skeleton, Empty} from "antd";
+import {useTranslation} from "react-i18next";
 import ItemsList from "./ItemsList";
-import {translations} from "../../utils/translate.ts";
+import {getCategoryLabel} from "../../utils/translate.ts";
 import {usePlayerListStore} from "../../store/usePlayerListStore.tsx";
 import {useParams} from "react-router-dom";
 import {getAllOnlinePlayersApi} from "../../api/onlinPlayerApi.ts";
@@ -26,6 +27,7 @@ export default function ItemsManager({
     warningMessage,
     isLoading = false
 }: ItemsManagerProps) {
+    const {t} = useTranslation();
 
     const {cluster} = useParams();
 
@@ -92,7 +94,7 @@ export default function ItemsManager({
     const tabItems = useMemo(() => {
         return Object.keys(filteredData).map(key => ({
             key,
-            label: translations[key] || key,
+            label: getCategoryLabel(key),
             children: <ItemsList levelName={levelName} items={filteredData[key]} kuId={kuId} amount={amount} />
         }));
     }, [filteredData, levelName, kuId, amount]);
@@ -136,7 +138,7 @@ export default function ItemsManager({
                                             notFoundContent={
                                                 <Empty
                                                     image={Empty.PRESENTED_IMAGE_SIMPLE}
-                                                    description="暂无在线玩家"
+                                                    description={t('tooManyItems.noOnlinePlayers')}
                                                 />
                                             }
                                         />
@@ -146,7 +148,7 @@ export default function ItemsManager({
                                             max={99}
                                             defaultValue={1}
                                             onChange={value => setAmount(value || 1)}
-                                            suffix="个"
+                                            suffix={t('tooManyItems.unitCount')}
                                         />
                                         {selectedPlayer && (
                                             <>
@@ -165,7 +167,7 @@ export default function ItemsManager({
                         </Col>
                         <Col xs={24} sm={12} md={12} lg={8} xl={8}>
                             <Input
-                                placeholder="请输入关键字过滤"
+                                placeholder={t('tooManyItems.filterPlaceholder')}
                                 onChange={e => handleFilter(e.target.value)}
                                 allowClear
                                 disabled={isLoading}
@@ -185,7 +187,7 @@ export default function ItemsManager({
                         </>
                     )}
                     {Object.keys(filteredData).length === 0 ? (
-                        <Empty description="未找到匹配的物品" />
+                        <Empty description={t('tooManyItems.noMatchingItems')} />
                     ) : (
                         <Tabs items={tabItems} tabPosition="left" />
                     )}

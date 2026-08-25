@@ -1,35 +1,34 @@
 import {useParams} from "react-router-dom";
 import React, {useRef, useState} from 'react';
-import {ProTable} from '@ant-design/pro-components';
+import {ProConfigProvider, ProTable} from '@ant-design/pro-components';
 import {Button, ConfigProvider, Image, message, Popconfirm, Space, Tag} from 'antd';
 
 import {useTranslation} from "react-i18next";
 import i18n from "i18next";
-import zhCN from 'antd/es/locale/zh_CN';
-import enUS from 'antd/es/locale/en_US';
 
 import {deleteLogs, getPlayerLog} from '../../api/playerLogApi.jsx';
 import {dstRoles, dstRolesMap} from '../../utils/dst.js';
 import {addBlackListPlayerListApi} from "../../api/playerApi.jsx";
 import style from "../DstServerList2/index.module.css";
 import HiddenText from "../Home/HiddenText/HiddenText";
+import {getAntdLocale, getProIntl} from "../../locales/antdLocale";
 
-
-const playerActionEnum = {
-    "[LeaveAnnouncement]": '离开房间',
-    "[JoinAnnouncement]": '加入房间',
-    "[Say]": '聊天',
-    "[DeathAnnouncement]": '死亡',
-    "[ResurrectAnnouncement]": '复活',
-    "[Announcement]": '系统',
-}
 
 export default ()=> {
 
     const {t} = useTranslation()
 
+    const playerActionEnum = {
+        "[LeaveAnnouncement]": t('player.log.action.leave'),
+        "[JoinAnnouncement]": t('player.log.action.join'),
+        "[Say]": t('player.log.action.chat'),
+        "[DeathAnnouncement]": t('player.log.action.death'),
+        "[ResurrectAnnouncement]": t('player.log.action.resurrect'),
+        "[Announcement]": t('player.log.action.system'),
+    }
+
     const {cluster} = useParams()
-    const currentLocale = i18n.language.startsWith('zh') ? zhCN : enUS;
+    const currentLocale = getAntdLocale(i18n.resolvedLanguage);
 
     const actionRef = useRef();
     const [currentPage, setCurrentPage] = useState(1);
@@ -47,7 +46,7 @@ export default ()=> {
 
     const columns = [
         {
-            title: 'Name',
+            title: t('player.log.column.name'),
             dataIndex: 'name',
             key: 'name',
             copyable: true,
@@ -56,7 +55,7 @@ export default ()=> {
             }
         },
         {
-            title: 'Role',
+            title: t('player.log.column.role'),
             dataIndex: 'role',
             key: 'role',
             ellipsis: true,
@@ -67,7 +66,7 @@ export default ()=> {
             </div>)
         },
         {
-            title: 'KuId',
+            title: t('player.log.column.kuId'),
             dataIndex: 'kuId',
             key: 'kuId',
             ellipsis: true,
@@ -75,7 +74,7 @@ export default ()=> {
             render: (text, record, _, action) => <HiddenText text={record.kuId}/>
         },
         {
-            title: 'SteamId',
+            title: t('player.log.column.steamId'),
             dataIndex: 'steamId',
             key: 'steamId',
             // ellipsis: true,
@@ -99,36 +98,36 @@ export default ()=> {
 
         },
         {
-            title: 'Date',
+            title: t('player.log.column.date'),
             dataIndex: 'CreatedAt',
             key: 'CreatedAt',
             valueType: 'dateTime',
             search: false
         },
         {
-            title: 'Ip',
+            title: t('player.log.column.ip'),
             dataIndex: 'ip',
             key: 'ip',
             valueType: 'string',
             render: (text, record, _, action) => <HiddenText text={record.ip}/>
         },
         {
-            title: 'Action',
+            title: t('panel.action'),
             dataIndex: 'action',
             key: 'action',
             valueEnum: playerActionEnum,
             // eslint-disable-next-line no-unused-vars
             render: (text, record, _, action) => (<div>
-                {record.action === '[JoinAnnouncement]' && <Tag color="magenta">加入</Tag>}
-                {record.action === '[LeaveAnnouncement]' && <Tag>离开</Tag>}
-                {record.action === '[DeathAnnouncement]' && <Tag color="red">死亡</Tag>}
-                {record.action === '[ResurrectAnnouncement]' && <Tag color="green">复活</Tag>}
-                {record.action === '[Say]' && <Tag color="gold">聊天</Tag>}
-                {record.action === '[Announcement]' && <Tag color="geekblue">系统</Tag>}
+                {record.action === '[JoinAnnouncement]' && <Tag color="magenta">{t('player.log.tag.join')}</Tag>}
+                {record.action === '[LeaveAnnouncement]' && <Tag>{t('player.log.tag.leave')}</Tag>}
+                {record.action === '[DeathAnnouncement]' && <Tag color="red">{t('player.log.tag.death')}</Tag>}
+                {record.action === '[ResurrectAnnouncement]' && <Tag color="green">{t('player.log.tag.resurrect')}</Tag>}
+                {record.action === '[Say]' && <Tag color="gold">{t('player.log.tag.chat')}</Tag>}
+                {record.action === '[Announcement]' && <Tag color="geekblue">{t('player.log.tag.system')}</Tag>}
             </div>)
         },
         {
-            title: 'ActionDesc',
+            title: t('player.log.column.actionDesc'),
             search: false,
             dataIndex: 'actionDesc',
             key: 'actionDesc',
@@ -139,25 +138,25 @@ export default ()=> {
             ),
         },
         {
-            title: '操作',
+            title: t('panel.action'),
             key: 'index',
             search: false,
             render: (text, record, _, action) => (
                 <div>
                     <Popconfirm
-                        title="是否拉黑"
+                        title={t('player.log.block.title')}
                         onConfirm={() => {
                             addBlackListPlayerListApi(cluster, [record.kuId])
                                 .then(resp => {
                                     if (resp.code === 200) {
-                                        message.success("拉黑成功")
+                                        message.success(t('player.log.block.ok'))
                                     }
                                 })
                         }}
                         onCancel={() => {
                         }}
-                        okText="Yes"
-                        cancelText="No"
+                        okText={t('panel.y')}
+                        cancelText={t('panel.n')}
                     >
                         <Button size={'small'} type={'primary'} danger disabled={record.action === '[Announcement]'}>{t('player.log.block')}</Button>
                     </Popconfirm>
@@ -169,6 +168,7 @@ export default ()=> {
     return (
         <>
             <ConfigProvider locale={currentLocale}>
+                        <ProConfigProvider intl={getProIntl(i18n.resolvedLanguage)}>
                             <ProTable
                                 scroll={{
                                     x: 500,
@@ -203,7 +203,7 @@ export default ()=> {
                                             ids: selectedRowKeys
                                         }).then(resp => {
                                             if (resp.code === 200) {
-                                                message.success("删除成功")
+                                                message.success(t('player.log.delete.ok'))
                                                 actionRef.current?.reload();
                                             }
                                         })
@@ -212,6 +212,7 @@ export default ()=> {
                                     </Button>
                                 ]}
                             />
+                        </ProConfigProvider>
             </ConfigProvider>
         </>
     )

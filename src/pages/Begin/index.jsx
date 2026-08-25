@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import {Button, Form, message} from 'antd';
+import {Button, Form, message, Select} from 'antd';
 
 import {useEffect, useState} from 'react';
 import {useNavigate} from "react-router-dom"
@@ -12,6 +12,7 @@ import End from './component/End.jsx';
 import {http} from '../../utils/http';
 import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
 import {useTheme} from "../../hooks/useTheme";
+import {LANGUAGES} from "../../layout/Language.tsx";
 
 const mainCss = {
     textAlign: 'center',
@@ -26,8 +27,13 @@ const mainCss = {
 
 // eslint-disable-next-line no-unused-vars
 const Begin = (props) => {
-    const {t} = useTranslation()
+    const {t, i18n} = useTranslation()
     const {theme} = useTheme()
+
+    const changeLanguage = (lng) => {
+        localStorage.setItem('language', lng)
+        i18n.changeLanguage(lng)
+    }
 
     const [form] = Form.useForm();
     const [current, setCurrent] = useState(0);
@@ -76,7 +82,7 @@ const Begin = (props) => {
         const response = await http.post("/api/init", initData)
         const responseData = response.data
         if (responseData.code !== 200) {
-            message.error("初始化数据失败")
+            message.error(t('begin.init.error'))
             return
         }
 
@@ -84,7 +90,7 @@ const Begin = (props) => {
         const loginResponse = await http.post("/api/login", initData.userInfo)
         const loginResponseData = loginResponse.data
         if (loginResponseData.code !== 200) {
-            message.error("登录失败")
+            message.error(t('login.failed'))
             return
         }
         localStorage.setItem("token", loginResponseData.data.username)
@@ -119,6 +125,15 @@ const Begin = (props) => {
                     >
                         {t('init.previous')}
                     </Button>
+                )}
+                {current === 0 && (
+                    <Select
+                        value={i18n.resolvedLanguage}
+                        onChange={changeLanguage}
+                        options={LANGUAGES}
+                        fieldNames={{value: 'key', label: 'label'}}
+                        style={{width: 120, margin: '0 8px'}}
+                    />
                 )}
                 {current >= 0 && current < 2 && (
                     <Button type="primary" onClick={() => next()}>

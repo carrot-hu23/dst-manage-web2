@@ -1,9 +1,11 @@
 import React from "react";
+import {useTranslation} from "react-i18next";
 
 import EChartComponent from "./EChartComponent.jsx";
 import {ProCard} from "@ant-design/pro-components";
 
 export default ({chartData, title}) => {
+    const {t} = useTranslation()
 
     console.log(chartData)
     const options = {
@@ -11,7 +13,7 @@ export default ({chartData, title}) => {
             trigger: 'axis'
         },
         legend: {
-            data: ['活跃玩家', '加入玩家'],
+            data: [t('activePlayer'), t('joinPlayer')],
         },
         grid: {
             left: '3%',
@@ -42,7 +44,7 @@ export default ({chartData, title}) => {
         },
         series: [
             {
-                name: '活跃玩家',
+                name: t('activePlayer'),
                 type: 'line',
                 smooth: true,
                 data: chartData.y1,
@@ -63,7 +65,7 @@ export default ({chartData, title}) => {
                 }
             },
             {
-                name: '加入玩家',
+                name: t('joinPlayer'),
                 type: 'bar',
                 data: chartData.y2,
                 barWidth: '24%',

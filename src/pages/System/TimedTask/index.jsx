@@ -20,27 +20,29 @@ import {
 import {converter} from 'react-js-cron'
 
 import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import {addJobTaskApi, deleteJobTaskApi, getJobTaskListApi} from "../../../api/jobTaskApi.jsx";
 import {getLevelListApi} from "../../../api/clusterLevelApi.jsx";
 
 const {Option} = Select;
 const { TextArea } = Input;
 
-const jobTaskEnum = {
-    "backup": "备份存档",
-    "update": "更新游戏",
-    "start": "启动世界",
-    "stop": "停止世界",
-    "startGame": "启动所有世界",
-    "stopGame": "停止所有世界",
-
-    "restart": "重启世界",
-    "regenerate": "重置世界",
-    "script": "shell脚本",
-    "none": "无操作(定时公告)"
-}
-
 export default () => {
+
+    const {t} = useTranslation()
+    const jobTaskEnum = {
+        "backup": t('setting.timedTask.category.backup'),
+        "update": t('setting.timedTask.category.update'),
+        "start": t('setting.timedTask.category.start'),
+        "stop": t('setting.timedTask.category.stop'),
+        "startGame": t('setting.timedTask.category.startGame'),
+        "stopGame": t('setting.timedTask.category.stopGame'),
+
+        "restart": t('setting.timedTask.category.restart'),
+        "regenerate": t('setting.timedTask.category.regenerate'),
+        "script": t('setting.timedTask.category.script'),
+        "none": t('setting.timedTask.category.none')
+    }
 
     const {cluster} = useParams()
 
@@ -81,22 +83,22 @@ export default () => {
 
     const columns = [
         {
-            title: '世界',
+            title: t('setting.timedTask.column.level'),
             dataIndex: 'levelName',
             key: 'levelName',
         },
         {
-            title: 'jobId',
+            title: t('setting.timedTask.column.jobId'),
             dataIndex: 'jobId',
             key: 'jobId',
         },
         {
-            title: 'corn 表达式',
+            title: t('setting.timedTask.column.cron'),
             dataIndex: 'cron',
             key: 'cron',
         },
         {
-            title: '上一次执行时间',
+            title: t('setting.timedTask.column.prev'),
             dataIndex: 'prev',
             key: 'prev',
             render: (text, record) => (
@@ -104,7 +106,7 @@ export default () => {
             ),
         },
         {
-            title: '下一次执行时间',
+            title: t('setting.timedTask.column.next'),
             dataIndex: 'next',
             key: 'next',
             render: (text, record) => (
@@ -112,49 +114,49 @@ export default () => {
             ),
         },
         {
-            title: '是否有效',
+            title: t('setting.timedTask.column.valid'),
             dataIndex: 'valid',
             key: 'valid',
             render: (text, record, _, action) => (
                 <>
-                    {record.valid && <Tag color="green">生效中</Tag>}
-                    {!record.valid && <Tag color="purple">已失效</Tag>}
+                    {record.valid && <Tag color="green">{t('setting.timedTask.valid.active')}</Tag>}
+                    {!record.valid && <Tag color="purple">{t('setting.timedTask.valid.inactive')}</Tag>}
                 </>
             )
         },
         {
-            title: '备注',
+            title: t('setting.timedTask.column.comment'),
             dataIndex: 'comment',
             key: 'comment',
         },
         {
-            title: '公告',
+            title: t('setting.timedTask.column.announcement'),
             dataIndex: 'announcement',
             key: 'announcement',
             render: (text, record, _, action)=> <ShowAnnouncement announcement={record.announcement} />
         },
         {
-            title: '类型',
+            title: t('setting.timedTask.column.category'),
             dataIndex: 'category',
             key: 'category',
             render: (text, record, _, action)=> <Tag>{jobTaskEnum[record.category]}</Tag>
         },
         {
-            title: '操作',
+            title: t('panel.action'),
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
 
                     <Popconfirm
-                        title="删除定时任务"
-                        description="确定要删除这个定时任务吗？"
+                        title={t('setting.timedTask.delete.title')}
+                        description={t('setting.timedTask.delete.desc')}
                         onConfirm={() => {
                             deleteJobTaskApi("", record.jobId)
                                 .then(resp=>{
                                     if (resp.code !== 200) {
-                                        message.error("删除定时任务失败")
+                                        message.error(t('setting.timedTask.delete.error'))
                                     } else {
-                                        message.success("删除定时任务成功")
+                                        message.success(t('setting.timedTask.delete.ok'))
                                         getJobTaskList()
                                     }
                                 })
@@ -162,10 +164,10 @@ export default () => {
                         onCancel={() => {
 
                         }}
-                        okText="Yes"
-                        cancelText="No"
+                        okText={t('panel.y')}
+                        cancelText={t('panel.n')}
                     >
-                        <Button type="link" danger >删除</Button>
+                        <Button type="link" danger >{t('backup.delete')}</Button>
                     </Popconfirm>
 
                 </Space>
@@ -212,7 +214,7 @@ export default () => {
             });
             const data = form.getFieldsValue()
 
-            if (activeTab === '默认') {
+            if (activeTab === 'default') {
                 data.cron = converter.getCronStringFromValues(
                     'day', // period: 'year' | 'month' | 'week' | 'day' | 'hour' | 'minute' | 'reboot'
                     [], // months: number[] | undefined
@@ -235,20 +237,20 @@ export default () => {
             addJobTaskApi("", data).then((response => {
                 if (response.code === 200) {
                     getJobTaskList();
-                    message.success("创建定时任务成功");
+                    message.success(t('setting.timedTask.create.ok'));
                 } else {
-                    message.error("创建定时任务失败: " + response.msg);
+                    message.error(t('setting.timedTask.create.error') + response.msg);
                 }
             })).catch(err => console.log(err))
         };
-        const [activeTab, setActiveTab] = useState('默认');
+        const [activeTab, setActiveTab] = useState('default');
 
         const handleTabChange = (value) => {
             setActiveTab(value);
         };
         return (
-            <Modal title={"创建任务"} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
-                <Alert message={"[启动所有世界] [关闭所有世界] [备份存档] [重置世界] 这几个选择世界是没有用的，是针对所有世界的，[启动所有世界]: 先关闭，在启动（可以当作重启）"} type="warning" showIcon closable />
+            <Modal title={t('setting.timedTask.create.title')} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
+                <Alert message={t('setting.timedTask.tips1')} type="warning" showIcon closable />
                 <br/>
                 <Form
                     form={form}
@@ -265,53 +267,56 @@ export default () => {
                         block
                         value={activeTab}
                         onChange={handleTabChange}
-                        options={['默认', '自定义']}
+                        options={[
+                            {label: t('setting.timedTask.mode.default'), value: 'default'},
+                            {label: t('setting.timedTask.mode.custom'), value: 'custom'},
+                        ]}
                     />
                     <br/>
-                    {activeTab === '默认' && <div>
+                    {activeTab === 'default' && <div>
                         <Form.Item
-                            label={"时间"}
+                            label={t('setting.timedTask.form.time')}
                             name='date'
-                            rules={[{required: true, message: '请选择时间',},]}
+                            rules={[{required: true, message: t('setting.timedTask.form.time.required'),},]}
                         >
                             <TimePicker onChange={onChange} format={'HH:mm'} />
                         </Form.Item>
                     </div>}
-                    {activeTab === '自定义' && <div>
+                    {activeTab === 'custom' && <div>
                         <Form.Item
-                            label={"Cron 表达式"}
+                            label={t('setting.timedTask.form.cron')}
                             name='cron'
                             rules={[
-                                { required: true, message: '请输入 Cron 表达式' },
+                                { required: true, message: t('setting.timedTask.form.cron.required') },
                                 {
                                     pattern: /^(\*|[0-5]?\d) (\*|[0-2]?\d) (\*|[1-3]?\d) (\*|[1-12]) (\*|[0-6])$/,
-                                    message: '请输入正确的五位 Cron 表达式（分 时 日 月 周）',
+                                    message: t('setting.timedTask.form.cron.pattern'),
                                 },
                             ]}
                         >
-                            <Input placeholder="请输入 Cron 表达式（分 时 日 月 周）" />
+                            <Input placeholder={t('setting.timedTask.form.cron.placeholder')} />
                         </Form.Item>
                     </div>}
                     <Form.Item
-                        label={"类型"}
+                        label={t('setting.timedTask.column.category')}
                         name='category'
-                        rules={[{required: true, message: '请选择类型',},]}
+                        rules={[{required: true, message: t('setting.timedTask.form.category.required'),},]}
                     >
                         <Select>
-                            <Option value="startGame">启动所有世界</Option>
-                            <Option value="stopGame">关闭所有世界</Option>
-                            <Option value="backup">备份存档</Option>
-                            <Option value="update">更新游戏</Option>
-                            <Option value="start">启动世界</Option>
-                            <Option value="stop">停止世界</Option>
-                            <Option value="regenerate">重置世界</Option>
-                            <Option value="none">无操作(定时公告)</Option>
+                            <Option value="startGame">{t('setting.timedTask.category.startGame')}</Option>
+                            <Option value="stopGame">{t('setting.timedTask.category.stopGame')}</Option>
+                            <Option value="backup">{t('setting.timedTask.category.backup')}</Option>
+                            <Option value="update">{t('setting.timedTask.category.update')}</Option>
+                            <Option value="start">{t('setting.timedTask.category.start')}</Option>
+                            <Option value="stop">{t('setting.timedTask.category.stop')}</Option>
+                            <Option value="regenerate">{t('setting.timedTask.category.regenerate')}</Option>
+                            <Option value="none">{t('setting.timedTask.category.none')}</Option>
                         </Select>
                     </Form.Item>
                     <Form.Item
-                        label={"世界"}
+                        label={t('setting.timedTask.column.level')}
                         name='levelName'
-                        rules={[{required: true, message: '请选择世界',},]}
+                        rules={[{required: true, message: t('setting.timedTask.form.level.required'),},]}
                     >
                         <Select>
                             {levels.map((item,index)=>
@@ -320,35 +325,35 @@ export default () => {
                         </Select>
                     </Form.Item>
                     <Form.Item
-                        label={"备注"}
+                        label={t('setting.timedTask.column.comment')}
                         name='comment'
                     >
-                        <Input placeholder="备注"
+                        <Input placeholder={t('setting.timedTask.column.comment')}
                         />
                     </Form.Item>
                     <Form.Item
-                        label={"公告"}
+                        label={t('setting.timedTask.column.announcement')}
                         name='announcement'
                     >
-                        <TextArea rows={6} placeholder="请输入公告。tips: 发送公告后，默认 5s 后将执行操作" />
+                        <TextArea rows={6} placeholder={t('setting.announcement.placeholder')} />
                     </Form.Item>
                     <Form.Item
-                        label={"延迟"}
+                        label={t('setting.delay.label')}
                         name='sleep'
                     >
                         <InputNumber
-                            addonAfter="秒"
+                            addonAfter={t('setting.delay.unit')}
                             style={{width: 120,}}
-                            placeholder="设置多少秒后执行" />
+                            placeholder={t('setting.delay.placeholder')} />
                     </Form.Item>
                     <Form.Item
-                        label={"公告次数"}
+                        label={t('setting.announcementCount.label')}
                         name='times'
                     >
                         <InputNumber
-                            addonAfter="次"
+                            addonAfter={t('setting.announcementCount.unit')}
                             style={{width: 120,}}
-                            placeholder="公告次数" />
+                            placeholder={t('setting.announcementCount.label')} />
                     </Form.Item>
                 </Form>
             </Modal>
@@ -359,12 +364,12 @@ export default () => {
                 <div>
                     <Space size={16} wrap>
                         <Button type="primary" onClick={() => {setIsOpenAddJobTask(true)}}>
-                            创建定时任务
+                            {t('setting.timedTask.button.create')}
                         </Button>
                         <a
                             target={'_blank'}
                             href={`https://cron.qqe2.com`} rel="noreferrer" >
-                            在线 corn 网站
+                            {t('setting.timedTask.onlineCron')}
                         </a>
                     </Space>
                 </div>

@@ -55,7 +55,7 @@ export default () => {
 
     function sendInstructOrder() {
         if (command === "") {
-            message.warning("请填写指令在发送")
+            message.warning(t('panel.command.required'))
             return
         }
         console.log(levelName, command)
@@ -64,9 +64,9 @@ export default () => {
         sendCommandApi("", levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("发送指令成功")
+                    message.success(t('panel.command.send.success'))
                 } else {
-                    message.error("发送指令失败")
+                    message.error(t('panel.command.send.error'))
                 }
                 setSpin(false)
             })
@@ -74,7 +74,7 @@ export default () => {
 
     function SentBroad() {
         if (command2 === "") {
-            message.warning("请填写指令在发送")
+            message.warning(t('panel.command.required'))
             return
         }
         console.log(levelName, command2)
@@ -84,9 +84,9 @@ export default () => {
         sendCommandApi("", levelName, cmd)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("发送指令成功")
+                    message.success(t('panel.command.send.success'))
                 } else {
-                    message.error("发送指令失败")
+                    message.error(t('panel.command.send.error'))
                 }
                 setSpin(false)
             })
@@ -101,7 +101,7 @@ export default () => {
 
             <OtherIOrder />
             <Divider/>
-            <Spin spinning={spin} tip={"正在发送指令"}>
+            <Spin spinning={spin} tip={t('panel.command.sending')}>
                 <Space size={8}>
                     <Select
                         defaultValue={notHasLevels ? "" : levels[0].levelName}

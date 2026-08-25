@@ -1,5 +1,6 @@
 import {FC, useEffect, useState} from 'react';
 import {Row, Col, Space, Timeline, Image} from 'antd';
+import {useTranslation} from "react-i18next";
 import {Level} from "../../types";
 import {sessionFileApi} from "../../api/dstDataApi.ts";
 import {useParams} from "react-router-dom";
@@ -9,6 +10,7 @@ interface WorldProgressProps {
 }
 
 const WorldProgress: FC<WorldProgressProps> = ({levels}) => {
+    const {t} = useTranslation()
 
     const [sessionFile, setSessionFile] = useState<string>("")
     const {cluster} = useParams()
@@ -92,7 +94,7 @@ const WorldProgress: FC<WorldProgressProps> = ({levels}) => {
                             {
                                 children: (
                                     <div>
-                                        <div>天体宝球</div>
+                                        <div>{t('dstData.worldProgress.celestialOrb')}</div>
                                         <Image width={32} src={'./assets/dst/Celestial_Orb.webp'}/>
                                     </div>
                                 ),
@@ -101,7 +103,7 @@ const WorldProgress: FC<WorldProgressProps> = ({levels}) => {
                             {
                                 children: (
                                     <div>
-                                        <div>天体大门</div>
+                                        <div>{t('dstData.worldProgress.celestialPortal')}</div>
                                         <Image
                                             width={32}
                                             src={'./assets/dst/Celestial_Portal_Build.webp'}
@@ -113,7 +115,7 @@ const WorldProgress: FC<WorldProgressProps> = ({levels}) => {
                             {
                                 children: (
                                     <div>
-                                        <div>寄居蟹奶奶珍珠</div>
+                                        <div>{t('dstData.worldProgress.hermitPearl')}</div>
                                         <Image width={32} src={'./assets/dst/Crabby_Hermit.webp'}/>
                                     </div>
                                 ),
@@ -122,7 +124,7 @@ const WorldProgress: FC<WorldProgressProps> = ({levels}) => {
                             {
                                 children: (
                                     <div>
-                                        <div>月亮裂隙</div>
+                                        <div>{t('dstData.worldProgress.lunarRift')}</div>
                                         <Image
                                             width={32}
                                             src={'./assets/dst/Lunar_Rift_Phase_3.png'}

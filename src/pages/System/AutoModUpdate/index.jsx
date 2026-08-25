@@ -20,6 +20,9 @@ export default ()=>{
                 }
                 setLoading(false)
             })
+            .catch(() => {
+                setLoading(false)
+            })
     }, [])
 
     return(

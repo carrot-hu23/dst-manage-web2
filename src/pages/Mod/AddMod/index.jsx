@@ -4,6 +4,7 @@ import {Button, Spin, Space, Input, message, Typography, Grid, Card} from "antd"
 
 import {useNavigate} from "react-router-dom";
 import {ArrowLeftOutlined} from '@ant-design/icons';
+import {useTranslation} from "react-i18next";
 
 import {useTheme} from "../../../hooks/useTheme";
 
@@ -13,6 +14,7 @@ import {MonacoEditor} from "../../NewEditor/index.jsx";
 const {Title} = Typography;
 
 export default () => {
+    const {t} = useTranslation()
     const {theme} = useTheme()
     const navigate = useNavigate();
     const [spinLoading, setSpinLoading] = useState(false)
@@ -34,9 +36,9 @@ export default () => {
         addModInfoFileApi("", data)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("添加成功")
+                    message.success(t('mod.add.success'))
                 } else {
-                    message.error("添加失败")
+                    message.error(t('mod.add.error'))
                 }
                 setSpinLoading(false)
             })
@@ -49,16 +51,16 @@ export default () => {
 
 
     return <>
-        <Spin spinning={spinLoading} description={"正在添加模组"}>
+        <Spin spinning={spinLoading} description={t('mod.add.loading')}>
             <Space size={8} wrap>
                 <Button type={"link"} icon={<ArrowLeftOutlined/>}
                         onClick={() => navigate(`/mod`)}>
-                    返回
+                    {t('mod.back')}
                 </Button>
                 <Button type="primary" onClick={() => {
                     saveModinfo()
                 }}>
-                    保存
+                    {t('mod.save')}
                 </Button>
             </Space>
             <br/>
@@ -71,10 +73,10 @@ export default () => {
                 color: theme === 'dark' ? 'white' : 'rgba(0, 0, 0, 0.88)',
                 fontSize: '14px'
             }}>
-                模组id，如果是自定义模组请填写模组文件名称（文件名称不要是纯数字）
+                {t('mod.add.workshopId.tips')}
             </div>
             {/* eslint-disable-next-line react/jsx-no-bind */}
-            <Input onChange={wrokShopOnChange} placeholder={'模组id'}/>
+            <Input onChange={wrokShopOnChange} placeholder={t('mod.add.workshopId.placeholder')}/>
             <br/><br/>
             <div style={{
                 position: 'relative',
@@ -84,7 +86,7 @@ export default () => {
                 height: '32px',
                 color: theme === 'dark' ? 'white' : 'rgba(0, 0, 0, 0.88)',
                 fontSize: '14px',
-            }}>modinfo.lua 文件内容:
+            }}>{t('mod.add.modinfo.label')}
             </div>
 
             <MonacoEditor
@@ -98,14 +100,14 @@ export default () => {
                     theme: theme === 'dark' ? 'vs-dark' : ''
                 }}
             />
-            <Title level={4}>怎么找到本地电脑的模组?</Title>
-            <div>找到本地电脑 Steam 安装的路径，\steam\steamapps\workshop\content\322330 路径</div>
+            <Title level={4}>{t('mod.add.help.title')}</Title>
+            <div>{t('mod.add.help.step1')}</div>
             <br/>
-            <div>这个路径就是你本地饥荒联机版的mod位置</div>
+            <div>{t('mod.add.help.step2')}</div>
             <br/>
-            <div>在 模组id 哪里填写文件名 ，然后把 modinfo.lua 文件内容复制到第二个输入框</div>
+            <div>{t('mod.add.help.step3')}</div>
             <br/>
-            <div>点击保存即可</div>
+            <div>{t('mod.add.help.step4')}</div>
         </Spin>
     </>
 }

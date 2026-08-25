@@ -13,13 +13,14 @@ import {ProCard} from "@ant-design/pro-components";
 import {useLogStream} from "../../../hooks/useLogStream";
 
 const ConfirmButton = ({title, description, onConfirm, children, ...buttonProps}) => {
+    const {t} = useTranslation()
     return (
         <Popconfirm
             title={title}
             description={description}
             onConfirm={onConfirm}
-            okText="Yes"
-            cancelText="No"
+            okText={t('panel.y')}
+            cancelText={t('panel.n')}
         >
             <Button {...buttonProps}>{children}</Button>
         </Popconfirm>
@@ -35,7 +36,7 @@ const RollbackButtons = ({onRollback, t}) => {
                 <ConfirmButton
                     key={day}
                     title={t('panel.rollback')}
-                    description={`确认回档 ${day} 天？请先保存数据`}
+                    description={t('panel.rollback.confirm.desc', {day})}
                     onConfirm={() => onRollback(day)}
                     size="small"
                 >
@@ -79,16 +80,16 @@ export default () => {
 
     function sendInstruct(command) {
         if (command === "") {
-            message.warning("请填写指令在发送")
+            message.warning(t('panel.command.required'))
             return
         }
         setSpinLoading(true)
         sendCommandApi(cluster, currentLevelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("发送指令成功")
+                    message.success(t('panel.command.send.success'))
                 } else {
-                    message.error("发送指令失败")
+                    message.error(t('panel.command.send.error'))
                 }
                 setSpinLoading(false)
             })
@@ -119,7 +120,7 @@ export default () => {
     return <>
         <Spin spinning={spinLoading}>
             <ProCard
-                title={'服务器日志'}
+                title={t('panel.serverLog')}
                 extra={<Space>
                     <Select
                         style={{
@@ -146,7 +147,7 @@ export default () => {
                 </Space>}
             >
                 <Typography.Text type="secondary" style={{display: 'block', marginBottom: 12}}>
-                    日志行首的 [HH:MM:SS] 是 DST 分片进程启动后的日志相对时间，不是系统时间；进程运行时长：{processElapsed || '未运行/未知'}
+                    {t('panel.serverLog.timeExplanation', {elapsed: processElapsed || t('panel.serverLog.notRunning')})}
                 </Typography.Text>
                 <MonacoEditor
                     className={style.icon}
@@ -174,7 +175,7 @@ export default () => {
                 <Space size={8} wrap>
                     <ConfirmButton
                         title={t('panel.c_save()')}
-                        description="确认保存当前游戏数据？"
+                        description={t('panel.save.confirm.desc')}
                         onConfirm={() => {
                             sendInstruct("c_save()")
                         }}
@@ -185,7 +186,7 @@ export default () => {
                     </ConfirmButton>
                     <ConfirmButton
                         title={t('panel.regenerate')}
-                        description="请保存好数据"
+                        description={t('panel.regenerate.confirm.desc')}
                         onConfirm={() => {
                             sendInstruct("c_regenerateworld()")
                         }}

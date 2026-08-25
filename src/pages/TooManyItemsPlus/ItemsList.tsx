@@ -2,6 +2,7 @@ import {Button, message, Space} from "antd";
 import {sendCommandApi} from "../../api/commdApi.ts";
 import {useParams} from "react-router-dom";
 import {useState} from "react";
+import {useTranslation} from "react-i18next";
 
 interface ItemListProps {
     levelName: string,
@@ -11,6 +12,7 @@ interface ItemListProps {
 }
 
 export default function ItemList(itemListProps: ItemListProps) {
+    const {t} = useTranslation();
     const {cluster} = useParams();
     const [loadingItems, setLoadingItems] = useState<Set<string>>(new Set());
 
@@ -21,13 +23,13 @@ export default function ItemList(itemListProps: ItemListProps) {
         sendCommandApi(cluster || "", levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`成功发送 ${itemListProps.items[prefab]} x${amount}`);
+                    message.success(t('tooManyItems.sendItemSuccess', {item: itemListProps.items[prefab], amount}));
                 } else {
-                    message.error("发送失败");
+                    message.error(t('tooManyItems.sendFailed'));
                 }
             })
             .catch(() => {
-                message.error("发送失败");
+                message.error(t('tooManyItems.sendFailed'));
             })
             .finally(() => {
                 setLoadingItems(prev => {

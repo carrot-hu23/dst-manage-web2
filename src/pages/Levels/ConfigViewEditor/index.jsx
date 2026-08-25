@@ -5,13 +5,14 @@ import {parse,format} from "lua-json";
 
 import './index.css'
 import {useTranslation} from "react-i18next";
+import i18n from "../../../locales/i18n.tsx";
 
 function getLevelObject(value) {
     value = value.replace(/\n/g, "")
     try {
         return parse(value)
     } catch (error) {
-        message.warning("lua配置解析错误")
+        message.warning(i18n.t("level.warning.lua.error"))
         console.log(error)
         return {}
     }

@@ -26,7 +26,7 @@ export default () => {
                     }
                     form.setFieldsValue(resp.data)
                 } else {
-                    message.error("获取失败")
+                    message.error(t('backup.snapshotBackup.fetch.error'))
                 }
                 setLoading(false)
             })
@@ -73,7 +73,7 @@ export default () => {
                 <Form.Item
                     label={t('backup.snapshotBackup.c_save()')}
                     name='isCSave'
-                    tooltip={"开启后，每次创建备份时，都会先存档，但这可能会导致卡顿等情况"}
+                    tooltip={t('backup.snapshotBackup.c_save.tooltip')}
                     valuePropName="checked"
                 >
                     <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}/>
@@ -86,7 +86,7 @@ export default () => {
                         addonAfter={t('backup.snapshotBackup.interval.minute')}
                         style={{width: 120,}}
                         min={1}
-                        placeholder="检测间隔时间"/>
+                        placeholder={t('setting.detectionInterval.placeholder')}/>
                 </Form.Item>
                 <Form.Item
                     label={t('backup.snapshotBackup.maxSnapshots')}
@@ -95,7 +95,7 @@ export default () => {
                     <InputNumber
                         style={{width: 120,}}
                         min={1}
-                        placeholder="快照数量"/>
+                        placeholder={t('backup.snapshotBackup.maxSnapshots.placeholder')}/>
                 </Form.Item>
                 <Form.Item
                     label={t("backup.snapshotBackup.action")}

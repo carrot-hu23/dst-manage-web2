@@ -81,7 +81,7 @@ const Leveldataoverride = ({editorRef, dstWorldSetting, levelName, level, change
             try {
                 return parse(value)
             } catch (error) {
-                message.warning("lua配置解析错误")
+                message.warning(t('level.warning.lua.error'))
                 console.log(error)
                 return {}
             }
@@ -200,60 +200,46 @@ const ServerIni = ({levelName, level, changeValue}) => {
             <Form.Item
                 label={t('serverini.server_port')}
                 name="server_port"
-                tooltip={`
-            服务器监听的 UDP 端口，每个服务器需要设置不同的端口\n\n
-            范围：10998-11018 (其它端口也可，但游戏在检索局域网房间时只会扫描这些端口)\n\n
-            页面自动分配的端口不会与已填写的端口重复，但页面不会擅自修改自行填写的端口，所以确保不要填写重复的端口。
-            `}
+                tooltip={t('serverini.tooltip.server_port')}
             >
                 <InputNumber style={{
                     width: '100%',
-                }} placeholder="范围: 10998-11018"/>
+                }} placeholder={t('serverini.placeholder.server_port')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.is_master')}
                 valuePropName="checked"
                 name='is_master'
-                tooltip={`
-        将该世界设为主世界，即第一次进入房间时将会进入的世界。
-        主服务器运行的是一个房间的核心世界，其它世界都是该世界的附属，比如季节、天数等都是以该世界为准的。
-        `}>
+                tooltip={t('serverini.tooltip.is_master')}>
                 <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')} />
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.name')}
                 name="name"
-                tooltip={`name`}
+                tooltip={t('serverini.name')}
             >
-                <Input placeholder="世界名"/>
+                <Input placeholder={t('serverini.placeholder.name')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.id')}
                 name="id"
-                tooltip={`
-            随机数字，用于区分不同的从服务器。
-            
-            游戏过程中修改该项会导致该世界的玩家信息丢失。
-            
-            主服务器强制为 1。其它世界设为 1 也会被视为主服务器去新注册一个房间。
-            `}
+                tooltip={t('serverini.tooltip.id')}
             >
                 <InputNumber
                     style={{
                         width: '100%',
                     }}
-                    placeholder="id"/>
+                    placeholder={t('serverini.id')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.encode_user_path')}
                 valuePropName="checked"
                 name='encode_user_path'
-                tooltip={`
-            使路径编码与不区分大小写的操作系统兼容`}
+                tooltip={t('serverini.tooltip.encode_user_path')}
             >
                 <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')} defaultChecked/>
             </Form.Item>
@@ -261,23 +247,23 @@ const ServerIni = ({levelName, level, changeValue}) => {
             <Form.Item
                 label={t('serverini.authentication_port')}
                 name='authentication_port'
-                tooltip={`serverini.authentication_port`}
+                tooltip={t('serverini.authentication_port')}
             >
                 <InputNumber style={{
                     width: '100%',
-                }} placeholder="serverini.authentication_port"/>
+                }} placeholder={t('serverini.authentication_port')}/>
             </Form.Item>
 
             <Form.Item
                 label={t('serverini.master_server_port')}
                 name='master_server_port'
-                tooltip={`master_server_port`}
+                tooltip={t('serverini.master_server_port')}
             >
                 <InputNumber
                     style={{
                         width: '100%',
                     }}
-                    placeholder="master_server_port"/>
+                    placeholder={t('serverini.master_server_port')}/>
             </Form.Item>
         </Form>
     )
@@ -750,7 +736,7 @@ const App = () => {
     const validateName3 = (_, value) => {
         console.log("value3", value)
         if (value === undefined || value === null || value === "") {
-            return Promise.reject(new Error('请选择类型'));
+            return Promise.reject(new Error(t('level.required.type')));
         }
         return Promise.resolve();
     };
@@ -917,7 +903,7 @@ const App = () => {
                                ]}
 
                     >
-                        <Input placeholder="请输入世界名"/>
+                        <Input placeholder={t('level.placeholder.name')}/>
                     </Form.Item>
                     <Alert
                         message={t('level.add.tips2')}
@@ -932,7 +918,7 @@ const App = () => {
                                    },
                                ]}
                     >
-                        <Input placeholder="请输入文件名"/>
+                        <Input placeholder={t('level.placeholder.filename')}/>
                     </Form.Item>
                     <Form.Item label={t('level.type')}
                                name="type"
@@ -940,7 +926,7 @@ const App = () => {
                                    {
                                        required: true,
                                        validator: validateName3,
-                                       message: 'Please input your type!',
+                                       message: t('level.required.type'),
                                    },
                                ]}
                     >
@@ -955,19 +941,19 @@ const App = () => {
             </Modal>
 
             <Modal
-                title={`是否删除 ${deleteLevelName} 世界`}
+                title={t('level.delete.confirm.title', {name: deleteLevelName})}
                 open={openDelete}
                 onOk={() => {
                     setConfirmLoading(true)
                     deleteLevelApi(deleteLevelName)
                         .then(resp => {
                             if (resp.code === 200) {
-                                message.success(`删除世界成功`)
+                                message.success(t('level.delete.success'))
                                 removeLevel(deleteLevelName)
                                 setConfirmLoading(false)
                                 setOpenDelete(false)
                             } else {
-                                message.error(`删除世界失败`)
+                                message.error(t('level.delete.error'))
                             }
                         })
                 }}
@@ -976,7 +962,7 @@ const App = () => {
                     setOpenDelete(false)
                 }}
             >
-                <Alert message="删世界会先停止世界运行，删除之前请保存好数据" type="warning" showIcon/>
+                <Alert message={t('level.delete.warning')} type="warning" showIcon/>
             </Modal>
         </>
     );

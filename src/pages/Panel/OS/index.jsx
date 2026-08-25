@@ -71,7 +71,7 @@ export default () => {
     const panelMemUsageMB = toNumber(systeminfo?.panelMemUsage) / 1024;
     const panelDescription = hasSystemInfo
         ? `${systeminfo?.host?.os || '--'} /${systeminfo?.host?.kernelArch || '--'}-${systeminfo?.host?.platform || '--'}`
-        : (loadError || '加载中...')
+        : (loadError || t('panel.loading'))
 
     // 使用 SSE 替代轮询获取系统信息
     useSystemInfoStream({
@@ -81,7 +81,7 @@ export default () => {
         },
         onError: (err) => {
             console.error('System info stream error:', err)
-            setLoadError(err?.message || '获取系统监控失败')
+            setLoadError(err?.message || t('panel.systemInfo.fetchError'))
         },
         onOpen: () => {
             console.log('System info stream connected')
@@ -135,7 +135,7 @@ export default () => {
                                         {cpuPercent.map((value, index) =>
                                             // eslint-disable-next-line react/jsx-key
                                             <div>
-                                                {`核心${index}`}: {formatData(value, 1)}%<Progress
+                                                {t('panel.core', {index})}: {formatData(value, 1)}%<Progress
                                                 percent={roundTo(clampPercent(value), 1)} size="small" strokeColor={'#5BD171'}
                                                 status="active"/>
                                             </div>)}

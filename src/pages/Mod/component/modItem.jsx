@@ -5,6 +5,7 @@ import {Card, Switch, Popconfirm, Row, Col, Button, message, Spin, Badge} from '
 import './mod.css';
 import {useNavigate, useParams} from "react-router-dom";
 import {useTranslation} from "react-i18next";
+import i18n from "i18next";
 import {deleteModInfo, getModInfo} from '../../../api/modApi';
 
 function subscribeMod(modid, modList, setModList, setStartLoading) {
@@ -12,7 +13,7 @@ function subscribeMod(modid, modList, setModList, setStartLoading) {
     getModInfo("", modid).then(data => {
         console.log(data.data);
         if (data.code !== 200) {
-            message.error("订阅失败，此模组可能下架了", data.msg)
+            message.error(i18n.t('mod.subscribe.error.detail'), data.msg)
         } else {
             setStartLoading(false)
             setModList(current => {
@@ -30,11 +31,11 @@ function subscribeMod(modid, modList, setModList, setStartLoading) {
                 console.log("newModList: ", newModList)
                 return newModList
             })
-            message.success(`订阅 ${modid} 成功`)
+            message.success(`${i18n.t('mod.subscribe.ok')} ${modid}`)
         }
 
     }).catch(error => {
-        message.success(`获取 ${modid} 失败`)
+        message.success(`${i18n.t('mod.fetch.error')} ${modid}`)
     })
 
 }
@@ -49,7 +50,7 @@ const ModItem = (props) => {
     const {cluster} = useParams()
     const [startLoading, setStartLoading] = useState(false)
 
-    return <Spin spinning={startLoading} tip={"正在订阅模组"}>
+    return <Spin spinning={startLoading} tip={t('mod.subscribing')}>
         <Card className='mod' style={{margin: ' 0 0 16px', backgroundColor: props?.mod?.update?"#583D23":""}}>
             <Row onClick={() => {
                 props.changeMod(props?.mod)
@@ -80,7 +81,7 @@ const ModItem = (props) => {
                             </div>
                             <div>
                                 {props?.mod?.update && <Badge count={1}>
-                                    <Switch checkedChildren={t('open')} unCheckedChildren={t('close')}
+                                    <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
                                             defaultChecked={props?.mod?.enable}
                                             onChange={() => {
                                                 props.changeEnable(props?.mod?.modid)
@@ -88,7 +89,7 @@ const ModItem = (props) => {
                                     />
                                 </Badge>}
                                 {!props?.mod?.update &&
-                                <Switch checkedChildren={t('open')} unCheckedChildren={t('close')}
+                                <Switch checkedChildren={t('switch.open')} unCheckedChildren={t('switch.close')}
                                         defaultChecked={props?.mod?.enable}
                                         onChange={() => {
                                             props.changeEnable(props?.mod?.modid)
@@ -96,14 +97,14 @@ const ModItem = (props) => {
                                 />}
                                 {props?.mod?.modid !== "client_mods_disabled" &&<>
                                     <Popconfirm
-                                        title={t('delete this mod')}
-                                        okText="Yes"
-                                        cancelText="No"
+                                        title={t('mod.delete.title')}
+                                        okText={t('panel.y')}
+                                        cancelText={t('panel.n')}
                                         onConfirm={() => {
                                             deleteModInfo(cluster, mod.modid)
                                                 .then(resp => {
                                                     if (resp.code === 200) {
-                                                        message.success("删除模组成功")
+                                                        message.success(t('mod.delete.ok'))
                                                         removeMod(mod.modid)
                                                     }
                                                 })
@@ -112,7 +113,7 @@ const ModItem = (props) => {
                                         <Button type="text" danger onClick={() => {
                                             setMod(props.mod)
                                         }}>
-                                            {t('Delete')}
+                                            {t('mod.delete')}
                                         </Button>
                                     </Popconfirm>
                                 </> }
@@ -124,7 +125,7 @@ const ModItem = (props) => {
                                     编辑
                                 </Button>
                                 */}
-                                {props?.mod?.update && <span>{t('update this mod')}</span>}
+                                {props?.mod?.update && <span>{t('mod.update.confirm.title')}</span>}
                             </div>
                         </div>
                     </div>
@@ -151,9 +152,9 @@ const ModItem = (props) => {
                             <Col span={24}>
 
                                 <Popconfirm
-                                    title={t('install this mod')}
-                                    okText="Yes"
-                                    cancelText="No"
+                                    title={t('mod.install.confirm.title')}
+                                    okText={t('panel.y')}
+                                    cancelText={t('panel.n')}
                                     onConfirm={() => {
                                         subscribeMod(props?.mod?.modid, modList, setModList, setStartLoading)
                                     }}
@@ -161,7 +162,7 @@ const ModItem = (props) => {
                                     <Button type="primary" onClick={() => {
                                         setMod(props.mod)
                                     }}>
-                                        {t('install')}
+                                        {t('mod.install')}
                                     </Button>
                                 </Popconfirm>
                             </Col>

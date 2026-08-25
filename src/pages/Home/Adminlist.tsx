@@ -11,7 +11,7 @@ const Adminlist: React.FC = () => {
             title={t('cluster.adminlist')}
             getApi={getAdminlistApi}
             saveApi={saveAdminlistApi}
-            tips={'管理员可以在游戏内拥有管理权限，包括踢出玩家、封禁玩家、回档、使用控制台执行指令等'}
+            tips={t('cluster.adminlist.tips')}
         />
     </>)
 }

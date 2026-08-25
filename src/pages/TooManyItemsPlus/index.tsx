@@ -1,7 +1,9 @@
 import {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import ItemsManager from "./ItemsManager";
 
 export default function TooManyItemsPlus() {
+    const {t} = useTranslation();
     const [data, setData] = useState<Record<string, Record<string, string>>>({});
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -38,7 +40,7 @@ export default function TooManyItemsPlus() {
                 "itemlist_ruins",
                 "itemlist_building"
             ]}
-            warningMessage="只适用于可以被储存在物品栏的背包和物品。其他物品会炸档"
+            warningMessage={t('tooManyItems.warningMessage')}
         />
     );
 }

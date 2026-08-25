@@ -11,8 +11,7 @@ const Register = (props) => {
 
     return (
         <ProCard>
-            <h3>初始化账号</h3>
-            <h3>init account</h3>
+            <h3>{t('begin.register.title')}</h3>
             <br />
             <Form
                 // eslint-disable-next-line react/prop-types
@@ -31,11 +30,11 @@ const Register = (props) => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your Username!',
+                            message: t('init.username.required'),
                         },
                     ]}
                 >
-                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="用户名/username" />
+                    <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder={t('init.username.placeholder')} />
                 </Form.Item>
                 <Form.Item
                     label={t('init.password')}
@@ -43,11 +42,11 @@ const Register = (props) => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your Password!',
+                            message: t('init.password.required'),
                         },
                     ]}
                 >
-                    <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder="密码/password" maxLength={20} />
+                    <Input.Password prefix={<LockOutlined className="site-form-item-icon" />} placeholder={t('init.password.placeholder')} maxLength={20} />
                 </Form.Item>
 
                 <Form.Item
@@ -56,11 +55,11 @@ const Register = (props) => {
                     rules={[
                         {
                             required: true,
-                            message: 'Please input your displayName!',
+                            message: t('init.displayName.required'),
                         },
                     ]}
                 >
-                    <Input  placeholder="显示名称/displayName" />
+                    <Input  placeholder={t('init.displayName.placeholder')} />
                 </Form.Item>
                 <Form.Item
                     label={t('init.photoURL')}
@@ -68,17 +67,17 @@ const Register = (props) => {
                     rules={[
                         {
                             required: false,
-                            message: 'Please input your photoURL!',
+                            message: t('init.photoURL.required'),
                         },
                     ]}
                 >
-                    <Input placeholder="头像url/photoURL" />
+                    <Input placeholder={t('init.photoURL.placeholder')} />
                 </Form.Item>
 
                 <Form.Item>
-                <Tooltip placement="top" title={"可以在dst-admin-go目录下的password文件直接修改"}>
+                <Tooltip placement="top" title={t('init.forgotPassword.tooltip')}>
                     <Button type="link">
-                        不记得密码了
+                        {t('login.forgotPassword.button')}
                     </Button>
                 </Tooltip>
                 </Form.Item>

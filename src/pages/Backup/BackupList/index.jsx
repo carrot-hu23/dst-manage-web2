@@ -37,7 +37,7 @@ const MyUploadFile = ({reload}) => {
             .then(response => {
                 console.log(response.data);
                 if (response?.data?.code === 200) {
-                    message.success("上传成功")
+                    message.success(t('backup.upload.ok'))
                 }
                 setFileList([]);
                 setUploading(false);
@@ -141,7 +141,7 @@ const Backup = ({showStatistic}) => {
     const deleteSelectBackup = () => {
         const {length} = selectBackup
         if (length < 1) {
-            message.warning("请选择存档")
+            message.warning(t('backup.select.empty'))
             return
         }
         const fileNames = selectBackup.map(item => item.fileName)
@@ -251,8 +251,8 @@ const Backup = ({showStatistic}) => {
                                     <CreateBackUpBtn/>
                                 </div>
                             ),
-                            okText: 'Yes',
-                            cancelText: 'No',
+                            okText: t('panel.y'),
+                            cancelText: t('panel.n'),
                             onOk: () => restoreArchive(record.fileName),
                         });
                     }}>
@@ -349,7 +349,7 @@ const Backup = ({showStatistic}) => {
             <div style={{
                 paddingBottom: 12
             }}>
-                <Alert message={`Tips: ${t('backup.tips1')}`} type="info" showIcon/>
+                <Alert message={t('backup.tips1')} type="info" showIcon/>
             </div>
 
             {showStatistic && <BackupStatistic size={backupData.length} data={backupDataSize}/>}

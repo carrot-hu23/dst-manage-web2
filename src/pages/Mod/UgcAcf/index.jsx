@@ -43,7 +43,7 @@ export default () => {
         if (UgcModAcfResp.code === 200) {
             setAcfworkshops(UgcModAcfResp.data)
         } else {
-            message.error("获取数据失败")
+            message.error(t('mod.fetch.error'))
         }
         setLoading(false)
     }
@@ -55,7 +55,7 @@ export default () => {
                 if (resp.code === 200) {
                     setAcfworkshops(resp.data)
                 } else {
-                    message.error("获取失败")
+                    message.error(t('mod.fetch.error'))
                 }
                 setSpin(false)
             })
@@ -72,18 +72,18 @@ export default () => {
 
     const columns = [
         {
-            title: '模组图片',
+            title: t('mod.ugc.image'),
             dataIndex: 'img',
             key: 'img',
             render:  (_, record) => (<Image preview={false} width={48} src={record.img} />),
         },
         {
-            title: '模组名称',
+            title: t('mod.ugc.name'),
             dataIndex: 'name',
             key: 'name',
         },
         {
-            title: '模组id',
+            title: t('mod.ugc.workshopId'),
             dataIndex: 'workshopId',
             key: 'workshopId',
             render: (_, record) => (
@@ -97,7 +97,7 @@ export default () => {
             )
         },
         {
-            title: '最后更新时间',
+            title: t('mod.ugc.timeUpdated'),
             dataIndex: 'timeupdated',
             key: 'timeupdated',
             render: (_, record)=>(
@@ -105,7 +105,7 @@ export default () => {
             )
         },
         {
-            title: '最新时间',
+            title: t('mod.ugc.timeLast'),
             dataIndex: 'timelast',
             key: 'timelast',
             render: (_, record)=>(
@@ -113,47 +113,47 @@ export default () => {
             )
         },
         {
-            title: '是否需要更新',
+            title: t('mod.ugc.needUpdate'),
             key: 'tags',
             dataIndex: 'tags',
             render: (_,  record) => (
                 <>
                     {record.timelast > record.timeupdated && (
                         <Tag color={'red'}>
-                            <span>是</span>
+                            <span>{t('panel.y')}</span>
                         </Tag>
                     )}
                     {record.timelast <= record.timeupdated && (
                         <Tag >
-                            <span>否</span>
+                            <span>{t('panel.n')}</span>
                         </Tag>
                     )}
                 </>
             ),
         },
         {
-            title: 'Action',
+            title: t('panel.action'),
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
                     <Popconfirm
-                        title="删除模组文件"
-                        description="确定要删除这个模组文件吗？"
+                        title={t('mod.ugc.delete.title')}
+                        description={t('mod.ugc.delete.desc')}
                         onConfirm={()=>{
                             deleteUgcModAcfFileApi(cluster, levelName, record.workshopId)
                                 .then(resp=>{
                                     if (resp.code === 200) {
-                                        message.success("删除成功，请重启世界")
+                                        message.success(t('mod.ugc.delete.success'))
                                     } else {
-                                        message.warning("删除失败")
+                                        message.warning(t('mod.delete.error'))
                                     }
                                 })
                         }}
                         onCancel={()=>{}}
-                        okText="Yes"
-                        cancelText="No"
+                        okText={t('panel.y')}
+                        cancelText={t('panel.n')}
                     >
-                        <Button type="link">删除模组文件</Button>
+                        <Button type="link">{t('mod.ugc.delete.title')}</Button>
                     </Popconfirm>
                 </Space>
             ),
@@ -165,7 +165,7 @@ export default () => {
             <Skeleton loading={loading}>
 
                 {notHasLevels && (
-                    <span>当前暂无世界</span>
+                    <span>{t('mod.ugc.no.levels')}</span>
                 ) }
 
                 {!notHasLevels && (
@@ -173,10 +173,10 @@ export default () => {
                         <Skeleton loading={loading} active>
                             <Alert style={{
                                 marginBottom: '4px'
-                            }} message={`删除旧模组后，请重启世界来下载新模组`} type="info" showIcon closable />
+                            }} message={t('mod.ugc.restart.tips')} type="info" showIcon closable />
                             <br/>
                             <Space size={8}>
-                                <span>{t('level')}</span>
+                                <span>{t('mod.ugc.level')}</span>
                                 <Select
                                     style={{
                                         width: 120,
@@ -188,7 +188,7 @@ export default () => {
                                             label: level.levelName,
                                         }))}
                                 />
-                                <Button type={'primary'} onClick={() => queryAcf()}>{t('query')}</Button>
+                                <Button type={'primary'} onClick={() => queryAcf()}>{t('panel.query')}</Button>
                             </Space>
                             <br/><br/>
                             <Table scroll={{x: 500}} columns={columns} dataSource={acfworkshops} />

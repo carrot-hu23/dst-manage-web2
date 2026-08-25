@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { message } from 'antd';
 import { http } from '../utils/http';
+import i18next from '../locales/i18n.tsx';
 
 export interface User {
     displayName: string;
@@ -43,7 +44,7 @@ export const useUserStore = create<UserState>((set) => ({
             // 401 会被 http 拦截器处理，自动跳转登录页
             // 这里只处理 500 错误
             if (status === 500) {
-                message.warning('获取用户信息失败');
+                message.warning(i18next.t('error.fetchUserFailed'));
             }
 
             set({ user: null, loading: false, initialized: true });

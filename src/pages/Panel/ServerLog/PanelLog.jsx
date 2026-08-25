@@ -58,7 +58,7 @@ export default ()=>{
         <>
             <Space.Compact style={{width: '100%'}}>
                 <Input defaultValue="100" ref={inputRef}/>
-                <Button type="primary" onClick={() => pullLog()}>拉取</Button>
+                <Button type="primary" onClick={() => pullLog()}>{t('panel.pull')}</Button>
             </Space.Compact>
             <br/><br/>
             <MonacoEditor
@@ -76,7 +76,7 @@ export default ()=>{
             <Button onClick={()=>{
                 window.location.href = `/api/game/dst-admin-go/log/download`
             }} icon={<DownloadOutlined />} type={'link'}>
-                {t('Download Log')}
+                {t('panel.download.log')}
             </Button>
         </>
     )

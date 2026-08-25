@@ -113,14 +113,14 @@ export default {
     appList: [
         {
             // icon: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-            title: '饥荒查房dstserverlist',
-            desc: '饥荒查房网站',
+            title: 'menu.appList.dstserverlist.title',
+            desc: 'menu.appList.dstserverlist.desc',
             url: 'https://dstserverlist.top/',
             target: '_blank',
         },
         {
             // icon: 'https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg',
-            title: '饥荒ip中转',
+            title: 'menu.appList.ipRelay.title',
             desc: 'https://server.dstapi.com/server/',
             url: 'https://server.dstapi.com/server/',
             target: '_blank',

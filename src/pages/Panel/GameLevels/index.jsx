@@ -76,7 +76,7 @@ export default () => {
                 })
                 .catch(error => {
                     console.log(error)
-                    message.error('刷新世界状态失败')
+                    message.error(t('panel.refreshLevelStatus.error'))
                     return []
                 })
     }
@@ -127,7 +127,7 @@ export default () => {
         try {
             const resp = await startLevelApi(cluster || "", uuid, checked)
             if (resp.code !== 200) {
-                message.error(`${prefix} ${levelName}失败 ${resp.msg || ''}`)
+                message.error(`${prefix} ${levelName}${t('panel.failed')} ${resp.msg || ''}`)
                 await refreshLevelStatus()
                 return
             }
@@ -136,11 +136,11 @@ export default () => {
             if (ok) {
                 message.success(`${prefix} ${levelName}`)
             } else {
-                message.error(`${prefix} ${levelName}失败：进程状态未确认`)
+                message.error(`${prefix} ${levelName}${t('panel.failed')}：${t('panel.processStatusUnconfirmed')}`)
             }
         } catch (error) {
             console.log(error)
-            message.error(`${prefix} ${levelName}失败`)
+            message.error(`${prefix} ${levelName}${t('panel.failed')}`)
             await refreshLevelStatus()
         } finally {
             setLevelPending(uuid, null)
@@ -159,13 +159,13 @@ export default () => {
                              title={(<div>
                                  <div>
                                      <Space size={8}>
-                                         <span>{`内存: ${formatData((record.Ps !== undefined ? record.Ps.RSS : 0) / 1024, 2)}MB`}</span>
-                                         <span>{`虚拟内存: ${formatData((record.Ps !== undefined ? record.Ps.VSZ : 0) / 1024, 2)}MB`}</span>
+                                         <span>{`${t('panel.mem')}: ${formatData((record.Ps !== undefined ? record.Ps.RSS : 0) / 1024, 2)}MB`}</span>
+                                         <span>{t('panel.virtualMem', {n: formatData((record.Ps !== undefined ? record.Ps.VSZ : 0) / 1024, 2)})}</span>
                                      </Space>
                                      <Progress percent={roundTo(record.Ps.memUage, 1)} size={'small'}/>
                                  </div>
                                  <div>
-                                     cpu: <Progress type="circle" percent={roundTo(record.Ps.cpuUage, 1)} size={40}/>
+                                     {t('panel.cpuUsage')}: <Progress type="circle" percent={roundTo(record.Ps.cpuUage, 1)} size={40}/>
                                  </div>
                              </div>)}>
                         {record.status && <Tag color={'green'}>{text}</Tag>}
@@ -191,29 +191,29 @@ export default () => {
             render: (_, record) => (
                 <Space size="middle" wrap>
                     <Popconfirm
-                        title={`清理 ${record.levelName} 世界`}
-                        description="将会删除 save session 文件等内容，请自行做好备份"
+                        title={t('panel.clearLevel.confirm.title', {levelName: record.levelName})}
+                        description={t('panel.clearLevel.confirm.desc')}
                         onConfirm={() => {
                             const levels = []
                             levels.push(record.uuid)
                             cleanLevelApi(cluster, levels)
                                 .then(resp => {
                                     if (resp.code === 200) {
-                                        message.success("清理成功")
+                                        message.success(t('panel.clear.success'))
                                     } else {
-                                        message.error("清理失败")
+                                        message.error(t('panel.clear.error'))
                                     }
                                 })
                                 .catch(error => {
                                     console.log(error)
-                                    message.error("清理失败")
+                                    message.error(t('panel.clear.error'))
                                 })
                         }}
                         onCancel={() => {
 
                         }}
-                        okText="Yes"
-                        cancelText="No"
+                        okText={t('panel.y')}
+                        cancelText={t('panel.n')}
                     >
                         <Button icon={<ClearOutlined/>} danger size={'small'}>{t('panel.clear')}</Button>
                     </Popconfirm>
@@ -221,8 +221,8 @@ export default () => {
                     <Switch checked={pendingActions[record.uuid] === 'starting' ? true : pendingActions[record.uuid] === 'stopping' ? false : record.status}
                             loading={Boolean(pendingActions[record.uuid])}
                             disabled={Boolean(pendingActions[record.uuid])}
-                            checkedChildren={pendingActions[record.uuid] === 'starting' ? '启动中' : t('panel.run')}
-                            unCheckedChildren={pendingActions[record.uuid] === 'stopping' ? '停止中' : t('panel.stop')}
+                            checkedChildren={pendingActions[record.uuid] === 'starting' ? t('panel.starting') : t('panel.run')}
+                            unCheckedChildren={pendingActions[record.uuid] === 'stopping' ? t('panel.stopping') : t('panel.stop')}
                             onClick={(checked, event) => {
                                 statusOnClick(checked, event, record.levelName, record.uuid)
                             }}
@@ -286,7 +286,7 @@ export default () => {
     }
 
     return (
-        <ProCard title={'世界列表'}
+        <ProCard title={t('panel.levelList')}
                  extra={<Space wrap>
                      <Popconfirm
                          title={t('panel.start.all')}
@@ -295,24 +295,24 @@ export default () => {
                              startAllLevelApi("", true)
                                  .then(resp => {
                                      if (resp.code === 200) {
-                                         message.success("启动成功")
+                                         message.success(t('panel.startAll.success'))
                                      } else {
-                                         message.error("启动失败")
+                                         message.error(t('panel.startAll.error'))
                                      }
                                      setSpin(false)
                                      setTimeout(refreshLevelStatus, 800)
                                  })
                                  .catch(error => {
                                      console.log(error)
-                                     message.error("启动失败")
+                                     message.error(t('panel.startAll.error'))
                                      setSpin(false)
                                      setTimeout(refreshLevelStatus, 800)
                                  })
                          }}
                          onCancel={() => {
                          }}
-                         okText="Yes"
-                         cancelText="No"
+                         okText={t('panel.y')}
+                         cancelText={t('panel.n')}
                      >
                          <Button
                              type="primary"
@@ -329,24 +329,24 @@ export default () => {
                              startAllLevelApi("", false)
                                  .then(resp => {
                                      if (resp.code === 200) {
-                                         message.success("关闭成功")
+                                         message.success(t('panel.stopAll.success'))
                                      } else {
-                                         message.error("关闭失败")
+                                         message.error(t('panel.stopAll.error'))
                                      }
                                      setSpin(false)
                                      setTimeout(refreshLevelStatus, 800)
                                  })
                                  .catch(error => {
                                      console.log(error)
-                                     message.error("关闭失败")
+                                     message.error(t('panel.stopAll.error'))
                                      setSpin(false)
                                      setTimeout(refreshLevelStatus, 800)
                                  })
                          }}
                          onCancel={() => {
                          }}
-                         okText="Yes"
-                         cancelText="No"
+                         okText={t('panel.y')}
+                         cancelText={t('panel.n')}
                      >
                          <Button
                              type="primary"
@@ -380,14 +380,14 @@ export default () => {
                                                              title={(<div>
                                                                  <div>
                                                                      <Space size={8}>
-                                                                         <span>{`内存: ${formatData((record.Ps !== undefined ? record.Ps.RSS : 0) / 1024, 2)}MB`}</span>
-                                                                         <span>{`虚拟内存: ${formatData((record.Ps !== undefined ? record.Ps.VSZ : 0) / 1024, 2)}MB`}</span>
+                                                                         <span>{`${t('panel.mem')}: ${formatData((record.Ps !== undefined ? record.Ps.RSS : 0) / 1024, 2)}MB`}</span>
+                                                                         <span>{t('panel.virtualMem', {n: formatData((record.Ps !== undefined ? record.Ps.VSZ : 0) / 1024, 2)})}</span>
                                                                      </Space>
                                                                      <Progress percent={record.Ps.memUage}
                                                                                size={'small'}/>
                                                                  </div>
                                                                  <div>
-                                                                     cpu: <Progress type="circle"
+                                                                     {t('panel.cpuUsage')}: <Progress type="circle"
                                                                                     percent={record.Ps.cpuUage}
                                                                                     size={40}/>
                                                                  </div>
@@ -409,29 +409,29 @@ export default () => {
                                         <div>
                                             <Space size="middle" wrap>
                                                 <Popconfirm
-                                                    title={`清理 ${record.levelName} 世界`}
-                                                    description="将会删除 save session 文件等内容，请自行做好备份"
+                                                    title={t('panel.clearLevel.confirm.title', {levelName: record.levelName})}
+                                                    description={t('panel.clearLevel.confirm.desc')}
                                                     onConfirm={() => {
                                                         const levels = []
                                                         levels.push(record.uuid)
                                                         cleanLevelApi(cluster, levels)
                                                             .then(resp => {
                                                                 if (resp.code === 200) {
-                                                                    message.success("清理成功")
+                                                                    message.success(t('panel.clear.success'))
                                                                 } else {
-                                                                    message.error("清理失败")
+                                                                    message.error(t('panel.clear.error'))
                                                                 }
                                                             })
                                                             .catch(error => {
                                                                 console.log(error)
-                                                                message.error("清理失败")
+                                                                message.error(t('panel.clear.error'))
                                                             })
                                                     }}
                                                     onCancel={() => {
 
                                                     }}
-                                                    okText="Yes"
-                                                    cancelText="No"
+                                                    okText={t('panel.y')}
+                                                    cancelText={t('panel.n')}
                                                 >
                                                     <Button icon={<ClearOutlined/>} danger
                                                             type={'text'}>{t('panel.clear')}</Button>
@@ -440,8 +440,8 @@ export default () => {
                                                 <Switch checked={pendingActions[record.uuid] === 'starting' ? true : pendingActions[record.uuid] === 'stopping' ? false : record.status}
                                                         loading={Boolean(pendingActions[record.uuid])}
                                                         disabled={Boolean(pendingActions[record.uuid])}
-                                                        checkedChildren={pendingActions[record.uuid] === 'starting' ? '启动中' : t('panel.run')}
-                                                        unCheckedChildren={pendingActions[record.uuid] === 'stopping' ? '停止中' : t('panel.stop')}
+                                                        checkedChildren={pendingActions[record.uuid] === 'starting' ? t('panel.starting') : t('panel.run')}
+                                                        unCheckedChildren={pendingActions[record.uuid] === 'stopping' ? t('panel.stopping') : t('panel.stop')}
                                                         onClick={(checked, event) => {
                                                             statusOnClick(checked, event, record.levelName, record.uuid)
                                                         }}

@@ -62,12 +62,12 @@ const Panel = () => {
         },
         {
             key: '5',
-            label: '自定义指令',
+            label: t('panel.customCommands'),
             children: <RenderCustomCommands />,
         },
         {
             key: '6',
-            label: '自定义指令-编辑',
+            label: t('panel.customCommandsEdit'),
             children: <CustomCommands />,
         },
     ];

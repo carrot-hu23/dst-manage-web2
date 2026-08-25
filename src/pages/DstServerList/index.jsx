@@ -2,12 +2,11 @@
 
 import React, {useState} from 'react';
 
-import {ProTable} from '@ant-design/pro-components';
+import {ProConfigProvider, ProTable} from '@ant-design/pro-components';
 import {Button, Modal, Image, Skeleton, message, ConfigProvider} from 'antd';
 
 import i18n from "i18next";
-import zhCN from "antd/es/locale/zh_CN";
-import enUS from "antd/es/locale/en_US";
+import {useTranslation} from "react-i18next";
 
 
 import {dstHomeListApi, dstHomeDetailApi} from '../../api/dstApi.jsx';
@@ -15,61 +14,55 @@ import {dstHomeListApi, dstHomeDetailApi} from '../../api/dstApi.jsx';
 import HomeDetail from './home/index.jsx';
 
 import style from "./index.module.css"
+import {getAntdLocale, getProIntl} from "../../locales/antdLocale";
 
-
-const SortWayEnum = {
-
-    1: "降序",
-    2: "升序",
-}
-
-const SortTypeEnum = {
-    connected: "按照人数",
-    name: "服务器名称",
-    maxconnections: "人数上限",
-    v: "游戏版本",
-}
-
-const PasswordEnum = {
-    '-1': "任意",
-    0: "不需要",
-    1: "需要",
-}
-
-const WordEnum = {
-    '-1': "任意",
-    1: "单层",
-    2: "双层",
-    3: "多层",
-}
 
 const PlayerPercentEnum = {
     ">0": ">0",
     "<1": "<1",
 }
 
-const SeasonsEnum = {
-    spring: "春天",
-    summer: "夏天",
-    autumn: "秋天",
-    winter: "冬天",
-}
-
-const GameModEnum = {
-    relaxed: "轻松",
-    endless: "无尽",
-    survival: "标准",
-    wilderness: "荒野",
-    lightsout: "永夜",
-    lavaarena: "熔炉",
-    quagmire: "暴食",
-    OceanFishing: "海钓",
-    starvingfloor: "闯关"
-}
-
 const DstServerList = () => {
+    const {t} = useTranslation()
 
-    const currentLocale = i18n.language.startsWith('zh') ? zhCN : enUS;
+    const currentLocale = getAntdLocale(i18n.resolvedLanguage);
+
+    const SortWayEnum = {
+        1: t('dstServerList.sort.desc'),
+        2: t('dstServerList.sort.asc'),
+    }
+
+    const SortTypeEnum = {
+        connected: t('dstServerList.sortType.byPlayers'),
+        name: t('dstServerList.sortType.byName'),
+        maxconnections: t('dstServerList.sortType.byMaxPlayers'),
+        v: t('dstServerList.sortType.byVersion'),
+    }
+
+    const PasswordEnum = {
+        '-1': t('dstServerList.password.any'),
+        0: t('dstServerList.password.notRequired'),
+        1: t('dstServerList.password.required'),
+    }
+
+    const SeasonsEnum = {
+        spring: t('dstServerList.season.spring'),
+        summer: t('dstServerList.season.summer'),
+        autumn: t('dstServerList.season.autumn'),
+        winter: t('dstServerList.season.winter'),
+    }
+
+    const GameModEnum = {
+        relaxed: t('dstServerList.mode.relaxed'),
+        endless: t('dstServerList.mode.endless'),
+        survival: t('dstServerList.mode.survival'),
+        wilderness: t('dstServerList.mode.wilderness'),
+        lightsout: t('dstServerList.mode.lightsout'),
+        lavaarena: t('dstServerList.mode.lavaarena'),
+        quagmire: t('dstServerList.mode.quagmire'),
+        OceanFishing: t('dstServerList.mode.oceanFishing'),
+        starvingfloor: t('dstServerList.mode.starvingFloor')
+    }
 
     const [selectedRowKeys, setSelectedRowKeys] = useState([]);
     const onSelectChange = (newSelectedRowKeys) => {
@@ -114,7 +107,7 @@ const DstServerList = () => {
             if (success) {
                 setHomeInfo(responseData)
             } else {
-                message.warning("请求Klei服务器超时")
+                message.warning(t('dstServerList.kleiTimeout'))
                 setIsModalOpen(false)
             }
 
@@ -123,7 +116,7 @@ const DstServerList = () => {
 
     const columns = [
         {
-            title: '房间名',
+            title: t('dstServerList.column.name'),
             dataIndex: 'name',
             key: 'name',
             copyable: true,
@@ -134,7 +127,7 @@ const DstServerList = () => {
             }
         },
         {
-            title: '当前人数',
+            title: t('dstServerList.column.players'),
             key: 'maxconnections',
             valueEnum: PlayerPercentEnum,
             // eslint-disable-next-line no-unused-vars
@@ -152,7 +145,7 @@ const DstServerList = () => {
             align: 'right '
         },
         {
-            title: '排序',
+            title: t('dstServerList.column.sortWay'),
             key: 'sort_way',
             dataIndex: 'sort_way',
             valueEnum: SortWayEnum,
@@ -160,7 +153,7 @@ const DstServerList = () => {
             render: null,
         },
         {
-            title: '排序方式',
+            title: t('dstServerList.column.sortType'),
             key: 'sort_type',
             dataIndex: 'sort_type',
             valueEnum: SortTypeEnum,
@@ -168,14 +161,14 @@ const DstServerList = () => {
             render: null,
         },
         {
-            title: '游戏模式',
+            title: t('dstServerList.column.mode'),
             key: 'mode',
             valueEnum: GameModEnum,
             // eslint-disable-next-line no-unused-vars
             render: (text, record, _, action) => (<div>{record.mode}</div>),
         },
         {
-            title: '季节',
+            title: t('dstServerList.column.season'),
             key: 'season',
             dataIndex: 'season',
             valueEnum: SeasonsEnum,
@@ -218,7 +211,7 @@ const DstServerList = () => {
         },
         {
             disable: true,
-            title: '密码',
+            title: t('dstServerList.column.password'),
             key: 'password',
             dataIndex: 'password',
             filters: true,
@@ -240,7 +233,7 @@ const DstServerList = () => {
         },
         {
             disable: true,
-            title: '模组',
+            title: t('dstServerList.column.mods'),
             key: 'mod',
             dataIndex: 'mods',
             filters: true,
@@ -250,17 +243,17 @@ const DstServerList = () => {
             valueEnum: {
                 "": {
                     key: '1115',
-                    text: '任意',
+                    text: t('dstServerList.mods.any'),
                     status: -1,
                 },
                 "0": {
                     key: '1113',
-                    text: '无模组',
+                    text: t('dstServerList.mods.no'),
                     status: 0,
                 },
                 "1": {
                     key: '1114',
-                    text: '有模组',
+                    text: t('dstServerList.mods.yes'),
                     status: 1,
                 },
 
@@ -279,7 +272,7 @@ const DstServerList = () => {
             </div>),
         },
         {
-            title: '操作',
+            title: t('dstServerList.column.action'),
             valueType: 'option',
             key: 'option',
             render: (_, record) => [
@@ -287,7 +280,7 @@ const DstServerList = () => {
                 (<div>
                     <Button type="link" onClick={() => {
                         viewHomeDetail(record)
-                    }} key={record.__rowId}>查看详情</Button>
+                    }} key={record.__rowId}>{t('dstServerList.viewDetail')}</Button>
 
                 </div>)
             ],
@@ -297,6 +290,7 @@ const DstServerList = () => {
 
     return (
         <ConfigProvider locale={currentLocale}>
+        <ProConfigProvider intl={getProIntl(i18n.resolvedLanguage)}>
             <>
                 <Modal
                     getContainer={false}
@@ -335,7 +329,7 @@ const DstServerList = () => {
                         pageSize: 10,
                         onChange: (page) => console.log(page),
                     }}
-                    headerTitle="饥荒服务器列表"
+                    headerTitle={t('dstServerList.title')}
                     // toolBarRender={() => [
                     //     <Button key="button" type="primary" disabled={!hasSelected > 0}>
                     //         导出配置
@@ -348,6 +342,7 @@ const DstServerList = () => {
                     tableAlertRender={({selectedRowKeys, selectedRows, onCleanSelected}) => false}
                 />
             </>
+        </ProConfigProvider>
         </ConfigProvider>
     );
 

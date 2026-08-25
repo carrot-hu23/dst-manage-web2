@@ -11,7 +11,7 @@ const Whitelist: React.FC = () => {
             title={t('cluster.whitelist')}
             getApi={getWhitelistApi}
             saveApi={saveWhitelistApi}
-            tips={`加入白名单的玩家将可以使用保留栏位的位置,避免其他玩家过多导致不能进入服务器。`}
+            tips={t('cluster.whitelist.tips')}
         />
     </>)
 }

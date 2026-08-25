@@ -1,11 +1,14 @@
 import {Form, Space, Typography} from 'antd';
+import {useTranslation} from "react-i18next";
 
 import style from "../index.module.css"
 
 const {Paragraph} = Typography;
 
 // eslint-disable-next-line react/prop-types
-const HomeOverView = ({home}) => (
+const HomeOverView = ({home}) => {
+    const {t} = useTranslation()
+    return (
     <>
         <div style={{
             height: '50vh',
@@ -18,36 +21,36 @@ const HomeOverView = ({home}) => (
             <Form>
                 <Space>
                     <div>
-                        <Form.Item label="世界直连">
+                        <Form.Item label={t('dstServerList.overview.directConnect')}>
                             <Paragraph style={{
                                 color: '#4096ff'
                             }} copyable>{`c_connect("${home.__addr}", ${home.port})`}</Paragraph>
                         </Form.Item>
 
-                        <Form.Item label="版本">
+                        <Form.Item label={t('dstServerList.overview.version')}>
                             <span>{home.v}</span>
                         </Form.Item>
 
-                        <Form.Item label="天数">
+                        <Form.Item label={t('dstServerList.overview.days')}>
                             <span>{home?.data?.day}</span>
                         </Form.Item>
 
-                        <Form.Item label="季节">
+                        <Form.Item label={t('dstServerList.overview.season')}>
                             <span>{home.season}{`(${home?.data?.dayselapsedinseason + 1}/${home?.data?.dayselapsedinseason + home?.data?.daysleftinseason})`}</span>
                         </Form.Item>
                     </div>
                     <div>
-                        <Form.Item label="服主">
+                        <Form.Item label={t('dstServerList.overview.host')}>
                             <span>{home.host}</span>
                         </Form.Item>
-                        <Form.Item label="模式">
+                        <Form.Item label={t('dstServerList.overview.mode')}>
                             <span>{home.intent}</span>
                         </Form.Item>
-                        <Form.Item label="加入">
-                            <span>{home.allownewplayers ? <span>允许加入</span> : <span>不允许加入</span>}</span>
+                        <Form.Item label={t('dstServerList.overview.join')}>
+                            <span>{home.allownewplayers ? <span>{t('dstServerList.overview.allowJoin')}</span> : <span>{t('dstServerList.overview.notAllowJoin')}</span>}</span>
                         </Form.Item>
-                        <Form.Item label="公网">
-                            <span>{home.lanonly ? <span>lan</span> : <span>位与公网</span>}</span>
+                        <Form.Item label={t('dstServerList.overview.network')}>
+                            <span>{home.lanonly ? <span>{t('dstServerList.overview.lan')}</span> : <span>{t('dstServerList.overview.public')}</span>}</span>
                         </Form.Item>
                     </div>
                 </Space>
@@ -55,5 +58,6 @@ const HomeOverView = ({home}) => (
 
         </div>
     </>
-)
+    )
+}
 export default HomeOverView;

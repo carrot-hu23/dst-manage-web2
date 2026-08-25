@@ -42,7 +42,7 @@ const System = () => {
         },
         {
             key: '6',
-            label: '主题设置',
+            label: t('setting.theme'),
             children: <ThemeSetting />,
         },
     ];

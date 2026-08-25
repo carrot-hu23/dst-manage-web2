@@ -3,6 +3,7 @@ import { Spin, message, Popconfirm } from 'antd';
 
 import { useState, useEffect } from 'react';
 import { getGameDashboardApi } from '../../../api/gameDashboardApi';
+import { useTranslation } from "react-i18next";
 
 
 const antIcon = (
@@ -15,18 +16,19 @@ const antIcon = (
 );
 
 const Environment = () => {
+    const { t } = useTranslation();
     const [host, setHost] = useState({})
     const [checkLoading, setCheckLoading] = useState(true)
     const [intsalling, setIntsalling] = useState(false)
 
     const confirm = (e) => {
         console.log(e);
-        message.success('Click on Yes');
+        message.success(t('begin.environment.confirm.success'));
         setIntsalling(true)
     };
     const cancel = (e) => {
         console.log(e);
-        message.error('Click on No');
+        message.error(t('begin.environment.confirm.cancel'));
     };
 
     useEffect(() => {
@@ -44,7 +46,7 @@ const Environment = () => {
 
             {checkLoading && (
                 <div>
-                    <h3>正在检测当前服务器</h3>
+                    <h3>{t('begin.environment.checking')}</h3>
                     <Spin indicator={antIcon} />
                 </div>
             )
@@ -52,28 +54,28 @@ const Environment = () => {
 
             {!checkLoading && (
                 <div>
-                    <span>操作系统: {host.os}</span><br /><br />
-                    <span>主机: {host.hostname}</span><br /><br />
-                    <span>内核: {host.kernelArch}</span><br /><br />
-                    <span>平台: {host.platform}</span><br /><br />
+                    <span>{t('begin.environment.os', {value: host.os})}</span><br /><br />
+                    <span>{t('begin.environment.hostname', {value: host.hostname})}</span><br /><br />
+                    <span>{t('begin.environment.kernelArch', {value: host.kernelArch})}</span><br /><br />
+                    <span>{t('begin.environment.platform', {value: host.platform})}</span><br /><br />
                 </div>
             )
             }
 
             <Popconfirm
-                title="安装centos 依赖"
-                description="是否建立libcurl-gnutls.so.4软连接"
+                title={t('begin.environment.installDeps.title')}
+                description={t('begin.environment.installDeps.description')}
                 onConfirm={confirm}
                 onCancel={cancel}
-                okText="Yes"
-                cancelText="No"
+                okText={t('panel.y')}
+                cancelText={t('panel.n')}
             >
-                <a href="#">CentOS需要建立libcurl-gnutls.so.4软连接</a>
+                <a href="#">{t('begin.environment.installDeps.link')}</a>
             </Popconfirm>
 
             {intsalling && (
                 <div>
-                    <h4>正在安装</h4>
+                    <h4>{t('begin.environment.installing')}</h4>
                     <Spin indicator={antIcon} />
 
                     {/* <div>

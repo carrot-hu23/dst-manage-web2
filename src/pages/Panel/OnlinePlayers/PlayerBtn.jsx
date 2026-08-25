@@ -24,9 +24,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`${player.name} success`)
+                    message.success(t('panel.command.success', {name: player.name}))
                 } else {
-                    message.error(`${player.name} error`)
+                    message.error(t('panel.command.error', {name: player.name}))
                 }
             })
     }
@@ -36,9 +36,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`${player.name} success`)
+                    message.success(t('panel.command.success', {name: player.name}))
                 } else {
-                    message.error(`${player.name} error`)
+                    message.error(t('panel.command.error', {name: player.name}))
                 }
             })
     }
@@ -59,9 +59,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`踢出 ${player.name} success`)
+                    message.success(t('panel.kickPlayer.success', {name: player.name}))
                 } else {
-                    message.error(`踢出 ${player.name} error`)
+                    message.error(t('panel.kickPlayer.error', {name: player.name}))
                 }
             })
     }
@@ -70,9 +70,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`kill ${player.name} success`)
+                    message.success(t('panel.killPlayer.success', {name: player.name}))
                 } else {
-                    message.error(`kill ${player.name} error`)
+                    message.error(t('panel.killPlayer.error', {name: player.name}))
                 }
             })
     }
@@ -82,9 +82,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`复活 ${player.name} success`)
+                    message.success(t('panel.respawnPlayer.success', {name: player.name}))
                 } else {
-                    message.error(`复活 ${player.name} error`)
+                    message.error(t('panel.respawnPlayer.error', {name: player.name}))
                 }
             })
     }
@@ -99,9 +99,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`${player.name} success`)
+                    message.success(t('panel.command.success', {name: player.name}))
                 } else {
-                    message.error(`${player.name} error`)
+                    message.error(t('panel.command.error', {name: player.name}))
                 }
             })
     }
@@ -111,9 +111,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`重选 ${player.name} success`)
+                    message.success(t('panel.despawnPlayer.success', {name: player.name}))
                 } else {
-                    message.error(`重选 ${player.name} error`)
+                    message.error(t('panel.despawnPlayer.error', {name: player.name}))
                 }
             })
     }
@@ -123,9 +123,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`${player.name} success`)
+                    message.success(t('panel.command.success', {name: player.name}))
                 } else {
-                    message.error(`${player.name} error`)
+                    message.error(t('panel.command.error', {name: player.name}))
                 }
             })
     }
@@ -135,9 +135,9 @@ export default ({player, levelName}) => {
         sendCommandApi(cluster, levelName, command)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success(`${player.name} success`)
+                    message.success(t('panel.command.success', {name: player.name}))
                 } else {
-                    message.error(`${player.name} error`)
+                    message.error(t('panel.command.error', {name: player.name}))
                 }
             })
     }
@@ -146,7 +146,7 @@ export default ({player, levelName}) => {
     return (
         <>
             <Button type="primary" size={'small'} onClick={showModal}>
-                操作
+                {t('panel.action')}
             </Button>
             <Drawer
                 closable={{ placement: 'end' }}
@@ -162,7 +162,7 @@ export default ({player, levelName}) => {
                             <span>KuId:{player.kuId}</span>
                         </div>
                         <div>
-                            <span>天数: {player.day}</span>
+                            <span>{t('panel.day')}: {player.day}</span>
                         </div>
                     </Space>
                 )}
@@ -173,11 +173,11 @@ export default ({player, levelName}) => {
                 onCancel={handleCancel}
                 footer={null}
             >
-                <Card title={'玩家操作'}>
+                <Card title={t('panel.playerOperations')}>
                     <Space size={[8, 16]} wrap>
                         <Button color="purple" variant="solid" danger onClick={() => {
                             killPlayer(player)
-                        }}>K I L L</Button>
+                        }}>{t('panel.killPlayer')}</Button>
                         <Button color="green" variant="solid" onClick={() => {
                             respawnPlayer(player)
                         }}>{t('panel.respawn')}</Button>
@@ -188,30 +188,30 @@ export default ({player, levelName}) => {
                     <Divider/>
                     <Space size={[8, 16]} wrap>
                         <Button type="primary" onClick={() => despawnPlayer(player)}>{t('panel.despawn')}</Button>
-                        <Button type="primary" onClick={() => execPlayerCommand(player, "c_sethealth", 1)}>满血</Button>
+                        <Button type="primary" onClick={() => execPlayerCommand(player, "c_sethealth", 1)}>{t('panel.fullHealth')}</Button>
                         <Button type="primary"
-                                onClick={() => execPlayerCommand(player, "c_sethunger", 1)}>满饥饿值</Button>
+                                onClick={() => execPlayerCommand(player, "c_sethunger", 1)}>{t('panel.fullHunger')}</Button>
                         <Button type="primary"
-                                onClick={() => execPlayerCommand(player, "c_setsanity", 1)}>满理智值</Button>
+                                onClick={() => execPlayerCommand(player, "c_setsanity", 1)}>{t('panel.fullSanity')}</Button>
                         <Button type="primary"
-                                onClick={() => execPlayerCommand(player, "c_setmoisture", -1)}>清除湿度</Button>
+                                onClick={() => execPlayerCommand(player, "c_setmoisture", -1)}>{t('panel.clearMoisture')}</Button>
                         <Button type="primary"
-                                onClick={() => execPlayerCommand(player, "c_settemperature", 25)}>25温度</Button>
+                                onClick={() => execPlayerCommand(player, "c_settemperature", 25)}>{t('panel.setTemperature25')}</Button>
 
                         <Button type="primary"
-                                onClick={() => execPlayerCommand(player, "c_godmode", null)}>开启上帝模式</Button>
+                                onClick={() => execPlayerCommand(player, "c_godmode", null)}>{t('panel.godModeOn')}</Button>
                         <Button type="primary"
-                                onClick={() => execPlayerCommand(player, "c_godmode", null)}>关闭上帝模式</Button>
+                                onClick={() => execPlayerCommand(player, "c_godmode", null)}>{t('panel.godModeOff')}</Button>
                         <Button type="primary"
-                                onClick={() => resetskilltree(player)}>重置技能树点</Button>
+                                onClick={() => resetskilltree(player)}>{t('panel.resetSkillTree')}</Button>
                         <Button type="primary"
-                                onClick={() => dropEverything(player)}>掉落所有物品</Button>
+                                onClick={() => dropEverything(player)}>{t('panel.dropAllItems')}</Button>
                     </Space>
                 </Card>
                 <br/>
-                <Card title={'传送玩家'}>
+                <Card title={t('panel.teleportPlayer')}>
                     <Space size={8} wrap>
-                        <span>传送到玩家</span>
+                        <span>{t('panel.teleportToPlayer')}</span>
                         <Select
                             style={{
                                 width: 300,
@@ -225,62 +225,62 @@ export default ({player, levelName}) => {
                         />
                         <Button type={'primary'} onClick={() => {
                             gotoPlayer(player, playerMate)
-                        }}>传送</Button>
+                        }}>{t('panel.teleport')}</Button>
                     </Space>
                 </Card>
                 <br/>
-                <Card title={'森林操作'}>
+                <Card title={t('panel.forestOperations')}>
                     <Space size={[8, 16]} wrap>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'pigking')}>传送猪王</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'dragonfly')}>龙蝇</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'pigking')}>{t('panel.gotoPigKing')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'dragonfly')}>{t('panel.gotoDragonfly')}</Button>
 
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'malbatross')}>邪天翁</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'beequeenhivegrown')}>蜂王</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'crabking')}>帝王蟹</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'klaus_sack')}>赃物袋</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'malbatross')}>{t('panel.gotoMalbatross')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'beequeenhivegrown')}>{t('panel.gotoBeeQueen')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'crabking')}>{t('panel.gotoCrabKing')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'klaus_sack')}>{t('panel.gotoKlausSack')}</Button>
 
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'moonbase')}>月亮石</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'critterlab')}>岩石巢穴</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'stagehand')}>舞台之手</Button>
-
-                        <Button type={'primary'}
-                                onClick={() => gotoNext(player, 'multiplayer_portal')}>绚丽之门</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'oasislake')}>湖泊</Button>
-
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'lava_pond')}>岩浆池</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'moon_fissure')}>天体裂隙</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'hermitcrab')}>寄居蟹隐士</Button>
-
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'wormhole')}>虫洞</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'statueglommer')}>格罗门雕像</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'walrus_camp')}>海象窝</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'beequeenhive')}>蜂蜜地块</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'chester_eyebone')}>眼骨</Button>
-
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'lightninggoat')}>伏特羊</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'beefalo')}>牛</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'moonbase')}>{t('panel.gotoMoonBase')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'critterlab')}>{t('panel.gotoCritterLab')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'stagehand')}>{t('panel.gotoStagehand')}</Button>
 
                         <Button type={'primary'}
-                                onClick={() => gotoNext(player, 'sculpture_bishophead')}>可疑的大理石</Button>
+                                onClick={() => gotoNext(player, 'multiplayer_portal')}>{t('panel.gotoMultiplayerPortal')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'oasislake')}>{t('panel.gotoOasisLake')}</Button>
+
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'lava_pond')}>{t('panel.gotoLavaPond')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'moon_fissure')}>{t('panel.gotoMoonFissure')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'hermitcrab')}>{t('panel.gotoHermitCrab')}</Button>
+
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'wormhole')}>{t('panel.gotoWormhole')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'statueglommer')}>{t('panel.gotoStatueGlommer')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'walrus_camp')}>{t('panel.gotoWalrusCamp')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'beequeenhive')}>{t('panel.gotoBeeQueenHive')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'chester_eyebone')}>{t('panel.gotoChesterEyebone')}</Button>
+
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'lightninggoat')}>{t('panel.gotoLightningGoat')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'beefalo')}>{t('panel.gotoBeefalo')}</Button>
+
                         <Button type={'primary'}
-                                onClick={() => gotoNext(player, 'sculpture_knighthead')}>可疑的大理石</Button>
+                                onClick={() => gotoNext(player, 'sculpture_bishophead')}>{t('panel.gotoSculptureBishop')}</Button>
                         <Button type={'primary'}
-                                onClick={() => gotoNext(player, 'sculpture_rooknose')}>可疑的大理石</Button>
+                                onClick={() => gotoNext(player, 'sculpture_knighthead')}>{t('panel.gotoSculptureKnight')}</Button>
+                        <Button type={'primary'}
+                                onClick={() => gotoNext(player, 'sculpture_rooknose')}>{t('panel.gotoSculptureRook')}</Button>
 
                     </Space>
                 </Card>
                 <br/>
-                <Card title={'洞穴操作'}>
+                <Card title={t('panel.caveOperations')}>
                     <Space size={[8, 16]} wrap>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'toadstool_cap')}>毒菌蟾蜍</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'atrium_gate')}>远古大门</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'minotaur')}>远古守护者</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'hutch_fishbowl')}>星空</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'toadstool_cap')}>{t('panel.gotoToadstool')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'atrium_gate')}>{t('panel.gotoAtriumGate')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'minotaur')}>{t('panel.gotoMinotaur')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'hutch_fishbowl')}>{t('panel.gotoHutchFishbowl')}</Button>
                         <Button type={'primary'}
-                                onClick={() => gotoNext(player, 'archive_security_desk')}>远古哨所</Button>
+                                onClick={() => gotoNext(player, 'archive_security_desk')}>{t('panel.gotoArchiveSecurityDesk')}</Button>
                         <Button type={'primary'}
-                                onClick={() => gotoNext(player, 'ancient_altar_broken')}>损坏的远古伪科学站</Button>
-                        <Button type={'primary'} onClick={() => gotoNext(player, 'ancient_altar')}>远古伪科学站</Button>
+                                onClick={() => gotoNext(player, 'ancient_altar_broken')}>{t('panel.gotoAncientAltarBroken')}</Button>
+                        <Button type={'primary'} onClick={() => gotoNext(player, 'ancient_altar')}>{t('panel.gotoAncientAltar')}</Button>
                     </Space>
                 </Card>
             </Drawer>

@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react';
 import {Form, Input, Button, message, Space, Card, Empty, Dropdown} from 'antd';
 import {PlusOutlined, MinusCircleOutlined, UploadOutlined, ExportOutlined, DownOutlined} from '@ant-design/icons';
+import {useTranslation} from 'react-i18next';
 import {getKv, saveKv} from '../../api/clusterApi';
 import {ProCard} from "@ant-design/pro-components";
 import RemoteImportModal from '../../components/RemoteImportModal';
 
 export default function CustomCommands() {
+    const {t} = useTranslation();
     const [form] = Form.useForm();
     const [loading, setLoading] = useState<boolean>(false);
     const [remoteImportOpen, setRemoteImportOpen] = useState<boolean>(false);
@@ -44,7 +46,7 @@ export default function CustomCommands() {
         } catch (error) {
             console.error('Error loading custom commands:', error);
             if (!(error instanceof SyntaxError)) {
-                message.error('加载数据失败');
+                message.error(t('customCommands.load.error'));
             }
         } finally {
             setLoading(false);
@@ -77,10 +79,10 @@ export default function CustomCommands() {
                 key: 'custom-commands',
                 value: JSON.stringify(savedData)
             });
-            message.success('保存成功');
+            message.success(t('customCommands.save.ok'));
         } catch (error) {
             console.error('Error saving custom commands:', error);
-            message.error('保存失败');
+            message.error(t('customCommands.save.error'));
         }
     };
 
@@ -94,7 +96,7 @@ export default function CustomCommands() {
                 handleMergeImportData(importedData);
             } catch (error) {
                 console.error('Error parsing JSON:', error);
-                message.error('JSON格式错误，导入失败');
+                message.error(t('customCommands.import.jsonError'));
             }
         };
         reader.readAsText(file);
@@ -120,7 +122,7 @@ export default function CustomCommands() {
             });
 
         form.setFieldValue('categories', [...currentCategories, ...newCategories]);
-        message.success('导入成功');
+        message.success(t('customCommands.import.ok'));
     };
 
     const handleExportJson = async () => {
@@ -150,25 +152,25 @@ export default function CustomCommands() {
             link.click();
             document.body.removeChild(link);
             URL.revokeObjectURL(url);
-            message.success('导出成功');
+            message.success(t('customCommands.export.ok'));
         } catch (error) {
             console.error('Error exporting JSON:', error);
-            message.error('导出失败');
+            message.error(t('customCommands.export.error'));
         }
     };
 
     return (
         <div>
-            <ProCard title="自定义命令管理" loading={loading}>
+            <ProCard title={t('customCommands.title')} loading={loading}>
                 <Form form={form} layout="vertical">
-                    <Form.Item name="tips" label="提示信息">
-                        <Input.TextArea placeholder="请输入提示信息（可选）" rows={2}/>
+                    <Form.Item name="tips" label={t('customCommands.tips.label')}>
+                        <Input.TextArea placeholder={t('customCommands.tips.placeholder')} rows={2}/>
                     </Form.Item>
 
                     <Form.List name="categories" initialValue={[]}>
                         {(fields, {add, remove}) => (
                             <>
-                                {fields.length === 0 && <Empty description="暂无自定义命令"/>}
+                                {fields.length === 0 && <Empty description={t('customCommands.empty')}/>}
 
                                 {fields.map(({key, name, ...restField}) => (
                                     <Card
@@ -182,20 +184,20 @@ export default function CustomCommands() {
                                                 icon={<MinusCircleOutlined/>}
                                                 onClick={() => remove(name)}
                                             >
-                                                删除分类
+                                                {t('customCommands.category.delete')}
                                             </Button>
                                         }
                                     >
                                         <Form.Item
                                             {...restField}
                                             name={[name, 'key']}
-                                            label="分类Key"
-                                            rules={[{required: true, message: '请输入分类Key'}]}
+                                            label={t('customCommands.category.key.label')}
+                                            rules={[{required: true, message: t('customCommands.category.key.required')}]}
                                         >
-                                            <Input placeholder="例如: itemlist_custom"/>
+                                            <Input placeholder={t('customCommands.category.key.placeholder')}/>
                                         </Form.Item>
 
-                                        <Form.Item label="物品列表">
+                                        <Form.Item label={t('customCommands.items.label')}>
                                             <Form.List name={[name, 'items']} initialValue={[]}>
                                                 {(itemFields, {add: addItem, remove: removeItem}) => (
                                                     <div style={{marginLeft: '16px'}}>
@@ -209,10 +211,10 @@ export default function CustomCommands() {
                                                                 <Form.Item
                                                                     {...restItemField}
                                                                     name={[itemName, 'key']}
-                                                                    rules={[{required: true, message: '请输入物品Key'}]}
+                                                                    rules={[{required: true, message: t('customCommands.item.key.required')}]}
                                                                     style={{marginBottom: 0}}
                                                                 >
-                                                                    <Input placeholder="物品Key"
+                                                                    <Input placeholder={t('customCommands.item.key.placeholder')}
                                                                            style={{width: '200px'}}/>
                                                                 </Form.Item>
 
@@ -221,11 +223,11 @@ export default function CustomCommands() {
                                                                     name={[itemName, 'name']}
                                                                     rules={[{
                                                                         required: true,
-                                                                        message: '请输入物品名称'
+                                                                        message: t('customCommands.item.name.required')
                                                                     }]}
                                                                     style={{marginBottom: 0}}
                                                                 >
-                                                                    <Input placeholder="物品名称"
+                                                                    <Input placeholder={t('customCommands.item.name.placeholder')}
                                                                            style={{width: '200px'}}/>
                                                                 </Form.Item>
 
@@ -245,7 +247,7 @@ export default function CustomCommands() {
                                                             icon={<PlusOutlined/>}
                                                             style={{marginBottom: '16px'}}
                                                         >
-                                                            添加物品
+                                                            {t('customCommands.item.add')}
                                                         </Button>
                                                     </div>
                                                 )}
@@ -261,7 +263,7 @@ export default function CustomCommands() {
                                     icon={<PlusOutlined/>}
                                     style={{marginBottom: '24px'}}
                                 >
-                                    添加分类
+                                    {t('customCommands.category.add')}
                                 </Button>
                             </>
                         )}
@@ -269,11 +271,11 @@ export default function CustomCommands() {
 
                     <Space wrap>
                         <Button type="primary" onClick={saveData}>
-                            保存
+                            {t('cluster.save')}
                         </Button>
 
                         <Button icon={<ExportOutlined/>} onClick={handleExportJson}>
-                            导出JSON
+                            {t('customCommands.export.button')}
                         </Button>
 
                         <Dropdown
@@ -281,7 +283,7 @@ export default function CustomCommands() {
                                 items: [
                                     {
                                         key: 'local',
-                                        label: '导入本地JSON',
+                                        label: t('customCommands.import.local'),
                                         onClick: () => {
                                             const input = document.createElement('input');
                                             input.type = 'file';
@@ -298,14 +300,14 @@ export default function CustomCommands() {
                                     },
                                     {
                                         key: 'remote',
-                                        label: '选择远程模板',
+                                        label: t('customCommands.import.remote'),
                                         onClick: () => setRemoteImportOpen(true)
                                     }
                                 ]
                             }}
                         >
                             <Button icon={<UploadOutlined/>}>
-                                导入 <DownOutlined/>
+                                {t('customCommands.import.button')} <DownOutlined/>
                             </Button>
                         </Dropdown>
                     </Space>

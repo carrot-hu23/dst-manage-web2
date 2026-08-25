@@ -6,8 +6,7 @@ const Welcome = () => {
     const { t } = useTranslation()
     return(
         <>
-            <Title level={2}>欢迎使用饥荒管理面板</Title>
-            <Title level={2}>Welcome to dst-admin-web management platform</Title>
+            <Title level={2}>{t('begin.welcome.title')}</Title>
             <div>
                 <img src="/assets/pig.gif" alt="login" />
             </div>

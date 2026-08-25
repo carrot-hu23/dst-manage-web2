@@ -12,18 +12,15 @@ import {dstRolesMap} from "../../utils/dst.js";
 import {Col, ConfigProvider, DatePicker, Row, Segmented, Space, Timeline} from "antd";
 import {ProCard} from "@ant-design/pro-components";
 
-import zhCN from "antd/es/locale/zh_CN";
-import enUS from "antd/es/locale/en_US";
-import 'dayjs/locale/zh-cn';
 import TopNPlayerChart from "./TopNPlayerChart.jsx";
+import {getAntdLocale} from "../../locales/antdLocale";
 
-dayjs.locale('zh-cn');
 const {RangePicker} = DatePicker;
 
 export default () => {
 
     const {t} = useTranslation()
-    const currentLocale = i18n.language.startsWith('zh') ? zhCN : enUS;
+    const currentLocale = getAntdLocale(i18n.resolvedLanguage);
     const {cluster} = useParams()
 
     const today = dayjs();

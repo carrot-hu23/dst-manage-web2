@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react";
 import {useParams} from "react-router-dom";
+import {useTranslation} from "react-i18next";
 import {ProCard} from "@ant-design/pro-components";
 import {Col, Row, Tag} from "antd";
 import {getSystemInfoApi} from "../../api/systeminfoApi";
@@ -31,6 +32,7 @@ interface SystemInfo {
 }
 
 const ServerMetrics = () => {
+    const {t} = useTranslation();
     const {cluster} = useParams<{ cluster?: string }>();
     const [systemInfo, setSystemInfo] = useState<SystemInfo>({});
 
@@ -87,7 +89,7 @@ const ServerMetrics = () => {
                 <ProCard
                     // style={{borderRadius: 12}}
                     // bordered
-                    title="面板"
+                    title={t('panel.panel')}
                     extra={<Tag color="green">{panelMemUsage}</Tag>}
                 >
                     <h3>{panelMemUsage}</h3>
@@ -98,33 +100,33 @@ const ServerMetrics = () => {
                 <ProCard
                     // style={{borderRadius: 12}}
                     // bordered
-                    title="🧠 内存"
+                    title={`🧠 ${t('panel.memoryUsage')}`}
                     extra={<Tag color="blue">{memUsedPercent}</Tag>}
                 >
                     <h3>{memUsed}</h3>
-                    <span>内存: {memTotal}</span>
+                    <span>{t('panel.memoryUsage')}: {memTotal}</span>
                 </ProCard>
             </Col>
             <Col xs={12} sm={12} md={12} lg={6} xl={6}>
                 <ProCard
                     // style={{borderRadius: 12}}
                     // bordered
-                    title="⚡ CPU"
+                    title={`⚡ ${t('panel.cpuUsage')}`}
                     extra={<Tag color="blue">{cpuUsage}</Tag>}
                 >
                     <h3>{cpuUsage}</h3>
-                    <span>CPU核数: {cpuCores}</span>
+                    <span>{t('panel.cpuCores')}: {cpuCores}</span>
                 </ProCard>
             </Col>
             <Col xs={12} sm={12} md={12} lg={6} xl={6}>
                 <ProCard
                     // style={{borderRadius: 12}}
                     // bordered
-                    title="💾 磁盘"
+                    title={`💾 ${t('panel.disk')}`}
                     extra={<Tag color="orange">{`${diskUsage}%`}</Tag>}
                 >
                     <h3>{diskFree?.toFixed(2)} GB</h3>
-                    <span>总磁盘: {diskTotal?.toFixed(2)} GB</span>
+                    <span>{t('panel.totalDisk')}: {diskTotal?.toFixed(2)} GB</span>
                 </ProCard>
             </Col>
         </Row>

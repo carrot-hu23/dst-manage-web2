@@ -72,7 +72,7 @@ const Online = () => {
 
     return (
         <ProCard
-            title={'玩家列表'}
+            title={t('panel.playerList')}
             extra={<Space size={8}>
                 <Select
                     style={{
@@ -94,7 +94,7 @@ const Online = () => {
                 <Tag color={'green'}>{playerList.length}</Tag>
             </Space>}>
             {notHasLevels && (
-                <span>当前暂无世界</span>
+                <span>{t('panel.noLevelsAvailable')}</span>
             )}
 
             {!notHasLevels && (
@@ -125,11 +125,11 @@ const Online = () => {
                                                 </span>
                                         </div>
                                     </Space>
-                                    <div>{item.day}{t('day')}</div>
+                                    <div>{item.day}{t('panel.day')}</div>
                                     <Space>
                                         <PlayerBtn player={item} levelName={levelName}/>
                                         <Button type="default" size="small" onClick={() => setDetailPlayer(item)}>
-                                            详情
+                                            {t('panel.playerDetails')}
                                         </Button>
                                     </Space>
 

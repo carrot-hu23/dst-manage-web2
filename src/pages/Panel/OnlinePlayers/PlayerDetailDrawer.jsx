@@ -1,4 +1,5 @@
 import {Card, Descriptions, Divider, Drawer, Image, List, Progress, Skeleton, Space, Tag} from 'antd';
+import {useTranslation} from "react-i18next";
 import {dstRoles} from '../../../utils/dst';
 import style from '../../DstServerList/index.module.css';
 import {useEffect, useState} from "react";
@@ -116,6 +117,7 @@ function extractPlayerData(logArray, targetUuid) {
 
 export default ({player, visible, onClose, levelName}) => {
     if (!player) return null;
+    const {t} = useTranslation();
     const {cluster} = useParams();
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -180,7 +182,7 @@ export default ({player, visible, onClose, levelName}) => {
                     <Image preview={false} width={48} src={dstRoles[player.role] || dstRoles.mod}/>
                     <span className={style.icon}>{player.name}</span>
                     <Tag>KuId: {player.kuId}</Tag>
-                    <Tag color="blue">天数: {player.day}</Tag>
+                    <Tag color="blue">{t('panel.day')}: {player.day}</Tag>
                 </Space>
             )}
             width={800}
@@ -191,23 +193,23 @@ export default ({player, visible, onClose, levelName}) => {
             {data ? (
                 <>
                     {/* 三维状态 */}
-                    <Card title="三维状态" size="small" loading={loading}>
+                    <Card title={t('panel.playerStats')} size="small" loading={loading}>
                         <Space direction="vertical" style={{width: '100%'}} size="middle">
                             <div>
                                 <div style={{marginBottom: 8}}>
-                                    <Tag color="#ff4d4f">生命</Tag> {data.health.current.toFixed(1)}/{data.health.max}
+                                    <Tag color="#ff4d4f">{t('panel.health')}</Tag> {data.health.current.toFixed(1)}/{data.health.max}
                                 </div>
                                 <Progress percent={data.health.percent} strokeColor="#ff4d4f" showInfo={false}/>
                             </div>
                             <div>
                                 <div style={{marginBottom: 8}}>
-                                    <Tag color="#faad14">饥饿</Tag> {data.hunger.current.toFixed(1)}/{data.hunger.max}
+                                    <Tag color="#faad14">{t('panel.hunger')}</Tag> {data.hunger.current.toFixed(1)}/{data.hunger.max}
                                 </div>
                                 <Progress percent={data.hunger.percent} strokeColor="#faad14" showInfo={false}/>
                             </div>
                             <div>
                                 <div style={{marginBottom: 8}}>
-                                    <Tag color="#722ed1">理智</Tag> {data.sanity.current.toFixed(1)}/{data.sanity.max}
+                                    <Tag color="#722ed1">{t('panel.sanity')}</Tag> {data.sanity.current.toFixed(1)}/{data.sanity.max}
                                 </div>
                                 <Progress percent={data.sanity.percent} strokeColor="#722ed1" showInfo={false}/>
                             </div>
@@ -217,66 +219,66 @@ export default ({player, visible, onClose, levelName}) => {
                     <Divider/>
 
                     {/* 环境状态 */}
-                    <Card title="环境状态" size="small" loading={loading}>
+                    <Card title={t('panel.environmentStatus')} size="small" loading={loading}>
                         <Descriptions bordered size="small" column={2}>
-                            <Descriptions.Item label="温度">{data.temperature}°C</Descriptions.Item>
-                            <Descriptions.Item label="湿度">{data.moisture}%</Descriptions.Item>
+                            <Descriptions.Item label={t('panel.temperature')}>{data.temperature}°C</Descriptions.Item>
+                            <Descriptions.Item label={t('panel.moisture')}>{data.moisture}%</Descriptions.Item>
                         </Descriptions>
                     </Card>
 
                     <Divider/>
 
                     {/* 装备 */}
-                    <Card title="装备" size="small" loading={loading}>
+                    <Card title={t('panel.equipment')} size="small" loading={loading}>
                         <Descriptions bordered size="small" column={3}>
-                            <Descriptions.Item label="头部">{data.head_equipment?.name || '无'}</Descriptions.Item>
-                            <Descriptions.Item label="手部">{data.hand_equipment?.name || '无'}</Descriptions.Item>
-                            <Descriptions.Item label="身体">{data.body_equipment?.name || '无'}</Descriptions.Item>
+                            <Descriptions.Item label={t('panel.headEquipment')}>{data.head_equipment?.name || t('panel.none')}</Descriptions.Item>
+                            <Descriptions.Item label={t('panel.handEquipment')}>{data.hand_equipment?.name || t('panel.none')}</Descriptions.Item>
+                            <Descriptions.Item label={t('panel.bodyEquipment')}>{data.body_equipment?.name || t('panel.none')}</Descriptions.Item>
                         </Descriptions>
                     </Card>
 
                     <Divider/>
 
                     {/* 背包物品 */}
-                    <Card title="背包物品" size="small" style={{marginBottom: 16}} loading={loading} extra={<Tag color="blue">数量: {data.stats.backpack_count}</Tag>}>
+                    <Card title={t('panel.backpackItems')} size="small" style={{marginBottom: 16}} loading={loading} extra={<Tag color="blue">{t('panel.quantity')}: {data.stats.backpack_count}</Tag>}>
                         {data.backpack_items.length > 0 ? (
                             <List
                                 size="small"
                                 dataSource={data.backpack_items}
                                 renderItem={item => (
                                     <List.Item>
-                                        <Tag>槽位 {item.slot}</Tag>
+                                        <Tag>{t('panel.slot', {n: item.slot})}</Tag>
                                         <span style={{flex: 1, marginLeft: 8}}>{item.name}</span>
                                         <Tag color="blue">x{item.count}</Tag>
-                                        <Tag color="green">新鲜度: {item.freshness}%</Tag>
+                                        <Tag color="green">{t('panel.freshness', {n: item.freshness})}</Tag>
                                     </List.Item>
                                 )}
                             />
                         ) : (
                             <div style={{textAlign: 'center', color: '#999', padding: '20px 0'}}>
-                                背包为空
+                                {t('panel.backpackEmpty')}
                             </div>
                         )}
                     </Card>
 
                     {/* 物品栏 */}
-                    <Card title="物品栏" size="small" loading={loading} extra={<Tag color="orange">数量: {data.stats.inventory_count}</Tag>}>
+                    <Card title={t('panel.inventory')} size="small" loading={loading} extra={<Tag color="orange">{t('panel.quantity')}: {data.stats.inventory_count}</Tag>}>
                         {data.inventory_items.length > 0 ? (
                             <List
                                 size="small"
                                 dataSource={data.inventory_items}
                                 renderItem={item => (
                                     <List.Item>
-                                        <Tag>槽位 {item.slot}</Tag>
+                                        <Tag>{t('panel.slot', {n: item.slot})}</Tag>
                                         <span style={{flex: 1, marginLeft: 8}}>{item.name}</span>
                                         <Tag color="blue">x{item.count}</Tag>
-                                        <Tag color="green">新鲜度: {item.freshness}%</Tag>
+                                        <Tag color="green">{t('panel.freshness', {n: item.freshness})}</Tag>
                                     </List.Item>
                                 )}
                             />
                         ) : (
                             <div style={{textAlign: 'center', color: '#999', padding: '20px 0'}}>
-                                物品栏为空
+                                {t('panel.inventoryEmpty')}
                             </div>
                         )}
                     </Card>

@@ -1,9 +1,11 @@
 import {Button, Form, Input, message, Modal, Popconfirm, Space, Table} from "antd";
 import React, {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
 import {addWebLinkApi, deleteWebLinkApi, getWebLinkListApi} from "../../../api/WebLinkApi.jsx";
 
 
 export default () => {
+    const {t} = useTranslation()
     const [currentPage, setCurrentPage] = useState(1);
     const [pageSize, setPageSize] = useState(10);
     const [data, setData] = useState([]);
@@ -26,41 +28,41 @@ export default () => {
 
     const columns = [
         {
-            title: 'title',
+            title: t('setting.webLinkSetting.field.title'),
             dataIndex: 'title',
             key: 'title',
         },
         {
-            title: 'url',
+            title: t('setting.webLinkSetting.field.url'),
             dataIndex: 'url',
             key: 'url',
         },
         {
-            title: 'width',
+            title: t('setting.webLinkSetting.field.width'),
             dataIndex: 'width',
             key: 'width',
         },
         {
-            title: 'height',
+            title: t('setting.webLinkSetting.field.height'),
             dataIndex: 'height',
             key: 'height',
         },
         {
-            title: '操作',
+            title: t('panel.action'),
             key: 'action',
             render: (_, record) => (
                 <Space size="middle">
 
                     <Popconfirm
-                        title="删除链接"
-                        description="确定要删除这个链接吗？"
+                        title={t('setting.webLinkSetting.delete.title')}
+                        description={t('setting.webLinkSetting.delete.desc')}
                         onConfirm={() => {
                             deleteWebLinkApi("", record.ID)
                                 .then(resp => {
                                     if (resp.code !== 200) {
-                                        message.error("删除链接失败")
+                                        message.error(t('setting.webLinkSetting.delete.error'))
                                     } else {
-                                        message.success("删除链接成功")
+                                        message.success(t('setting.webLinkSetting.delete.ok'))
                                         getJobTaskList()
                                     }
                                 })
@@ -68,10 +70,10 @@ export default () => {
                         onCancel={() => {
 
                         }}
-                        okText="Yes"
-                        cancelText="No"
+                        okText={t('panel.y')}
+                        cancelText={t('panel.n')}
                     >
-                        <Button type="link" danger>删除</Button>
+                        <Button type="link" danger>{t('backup.delete')}</Button>
                     </Popconfirm>
                 </Space>
             ),
@@ -91,15 +93,15 @@ export default () => {
             const data = form.getFieldsValue()
             addWebLinkApi("", data).then((response => {
                 if (response.code !== 200) {
-                    message.error("创建web链接失败")
+                    message.error(t('setting.webLinkSetting.create.error'))
                 }
                 getJobTaskList()
-                message.success("创建web链接成功")
+                message.success(t('setting.webLinkSetting.create.ok'))
             })).catch(err => console.log(err))
         };
 
         return (
-            <Modal title={"创建链接"} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
+            <Modal title={t('setting.webLinkSetting.create.title')} open={isModalOpen} onOk={handleOk} onCancel={() => setIsModalOpen(false)}>
                 <Form
                     form={form}
                     layout="horizontal"
@@ -108,36 +110,36 @@ export default () => {
                     }}
                 >
                     <Form.Item
-                        label={"标题"}
+                        label={t('setting.webLinkSetting.field.title')}
                         name='title'
-                        rules={[{required: true, message: '请输入标题',},]}
+                        rules={[{required: true, message: t('setting.webLinkSetting.form.title.required'),},]}
                     >
-                        <Input placeholder="请输入标题"
+                        <Input placeholder={t('setting.webLinkSetting.form.title.required')}
                         />
                     </Form.Item>
 
                     <Form.Item
-                        label={"url"}
+                        label={t('setting.webLinkSetting.field.url')}
                         name='url'
-                        rules={[{required: true, message: '请输入url',},]}
+                        rules={[{required: true, message: t('setting.webLinkSetting.form.url.required'),},]}
                     >
-                        <Input placeholder="请输入url"
+                        <Input placeholder={t('setting.webLinkSetting.form.url.required')}
                         />
                     </Form.Item>
                     <Form.Item
-                        label={"width"}
+                        label={t('setting.webLinkSetting.field.width')}
                         name='width'
-                        rules={[{required: true, message: '请输入width',},]}
+                        rules={[{required: true, message: t('setting.webLinkSetting.form.width.required'),},]}
                     >
-                        <Input placeholder="请输入width"
+                        <Input placeholder={t('setting.webLinkSetting.form.width.required')}
                         />
                     </Form.Item>
                     <Form.Item
-                        label={"height"}
+                        label={t('setting.webLinkSetting.field.height')}
                         name='height'
-                        rules={[{required: true, message: '请输入height',},]}
+                        rules={[{required: true, message: t('setting.webLinkSetting.form.height.required'),},]}
                     >
-                        <Input placeholder="请输入height"
+                        <Input placeholder={t('setting.webLinkSetting.form.height.required')}
                         />
                     </Form.Item>
 
@@ -152,7 +154,7 @@ export default () => {
                         <Button type="primary" onClick={() => {
                             setIsOpenAddJobTask(true)
                         }}>
-                            添加外部链接网站
+                            {t('setting.webLinkSetting.add')}
                         </Button>
                     </Space>
                 </div>

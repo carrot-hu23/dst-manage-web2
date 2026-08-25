@@ -119,8 +119,7 @@ const OptionSelect = ({mod, root, setRoot, defaultValues, defaultValuesMap, setD
                                     if (item.label === '') {
                                         return ""
                                     }
-                                    return <Divider key={generateUUID()} ><span style={{fontSize: "14px", fontWeight: "600"}}>{item.label} 配置</span></Divider>
-                                    // return <h4 key={item.label}>{item.label} 配置</h4>;
+                                    return <Divider key={generateUUID()} ><span style={{fontSize: "14px", fontWeight: "600"}}>{item.label} {i18n.t('mod.config.title')}</span></Divider>
                                 }
 
                                 let defaultValue
@@ -175,7 +174,7 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
                     })
                     setMod(newMod)
                     setSpinning(false)
-                    message.success("更新成功")
+                    message.success(t('mod.update.ok'))
                 }
             })
     }
@@ -190,7 +189,7 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
             }}
         >
             {mod?.installed && mod?.mod_config !== undefined && mod?.mod_config !== null && <>
-                <Spin spinning={spinning} tip={"正在更新模组"} >
+                <Spin spinning={spinning} tip={t('mod.updating')} >
                 <Space size={16} wrap>
                     <img alt="example" src={mod?.img}/>
                     <div>
@@ -199,14 +198,14 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
                                 fontWeight: 500
                             }}>{mod?.name.slice(0, 20)}</span>
                         <br/>
-                        <span>{t('modid')}:{mod?.modid}</span>
+                        <span>{t('mod.modid')}:{mod?.modid}</span>
                         <br/>
-                        <span>{t('author')}: { mod?.mod_config?.author !== undefined ? mod?.mod_config?.author.slice(0, 20) : ""}</span>
+                        <span>{t('mod.author')}: { mod?.mod_config?.author !== undefined ? mod?.mod_config?.author.slice(0, 20) : ""}</span>
                     </div>
                     <div>
-                        <span>{t('version')}: {mod?.mod_config?.version}</span>
-                        <div>{t('last time')}: {timestampToString(mod.last_time* 1000)}</div>
-                        <span>{mod?.mod_config?.dont_starve_compatible === true && <span>饥荒联机版兼容</span>}</span>
+                        <span>{t('mod.version')}: {mod?.mod_config?.version}</span>
+                        <div>{t('mod.lasttime')}: {timestampToString(mod.last_time* 1000)}</div>
+                        <span>{mod?.mod_config?.dont_starve_compatible === true && <span>{t('mod.dst.compatible')}</span>}</span>
                         <span>{mod?.mod_config?.dont_starve_compatible === false && <span>-</span>}</span>
                     </div>
                 </Space>
@@ -233,7 +232,7 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
 
                 <Modal
                     getContainer={document.body}
-                    title={`${mod?.name} 配置`}
+                    title={`${mod?.name} ${t('mod.config.title')}`}
                     // centered
                     open={open}
                     onOk={() => {
@@ -258,18 +257,16 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
                         {mod?.mod_config?.configuration_options === undefined && mod?.mod_config?.author === undefined &&<>
                             <br/>
                             <br/>
-                            <span>网络问题!!! 下模组失败</span>
+                            <span>{t('mod.download.error.title')}</span>
                             <br/>
-                            <span>点击 更新 按钮重新下载</span>
+                            <span>{t('mod.download.error.retry')}</span>
                             <br/>
-                            <span>如果多次更新依旧没有配置，请先加此mod加入到你的模组配置文件里面</span>
-                            <br/>
-                            <span>然后在启动房间，等待房间mod下载完成后，在点击 更新 按钮就会有配置选项</span>
+                            <span>{t('mod.download.error.tips')}</span>
                         </>}
                         {mod?.mod_config?.configuration_options === undefined && mod?.mod_config?.author !== undefined &&<>
                             <br/>
                             <br/>
-                            <span>{t('this mod dont have configuration options')}</span>
+                            <span>{t('mod.tips4')}</span>
                         </>}
                     </div>
 
@@ -277,29 +274,29 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
                 </Spin>
             </>}
             {!mod.installed && <>
-                <span>{t('none mod')}</span>
+                <span>{t('mod.none')}</span>
             </>}
 
         </div>
             <Space size={16}>
                 <Button type="primary" onClick={() => setOpen(true)}>
-                    {t('options')}
+                    {t('mod.options')}
                 </Button>
                 <Popconfirm
-                    title={t('update mode configuration options')}
-                    okText="Yes"
-                    cancelText="No"
+                    title={t('mod.update.title')}
+                    okText={t('panel.y')}
+                    cancelText={t('panel.n')}
                     onConfirm={()=>updateMod()}
                 >
                     {mod.update && <Badge dot>
                         <Button style={{
                             backgroundColor: "#149b6e"
                         }} type="primary" >
-                            {t('Update Configuration')}
+                            {t('mod.update')}
                         </Button>
                     </Badge>}
                     {!mod.update && <Button type="primary" >
-                        {t('Update Configuration')}
+                        {t('mod.update')}
                     </Button>}
                 </Popconfirm>
                 <Button>
@@ -308,7 +305,7 @@ const ModDetail = ({mod, setMod, setModList, root, setRoot, defaultValues, defau
                         href={`https://steamcommunity.com/sharedfiles/filedetails/?id=${mod.modid}`}
                         rel="noreferrer"
                     >
-                        {t('workshop')}
+                        {t('mod.workshop')}
                     </a>
                 </Button>
             </Space>

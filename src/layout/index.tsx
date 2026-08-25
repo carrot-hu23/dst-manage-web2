@@ -30,6 +30,7 @@ import {useTheme} from "../hooks/useTheme";
 import {useThemeConfigStore} from "../store/useThemeConfigStore";
 import {useUserStore} from "../store/useUserStore";
 import {Ad} from "../pages/Ad";
+import {getAntdLocale, syncDayjsLocale} from "../locales/antdLocale";
 
 const {Link} = Typography;
 
@@ -57,7 +58,11 @@ export default () => {
     }
 
     const navigate = useNavigate()
-    const {t} = useTranslation()
+    const {t, i18n} = useTranslation()
+
+    useEffect(() => {
+        syncDayjsLocale(i18n.resolvedLanguage)
+    }, [i18n.resolvedLanguage])
 
     const user = useUserStore((state) => state.user)
     const loading = useUserStore((state) => state.loading)
@@ -94,6 +99,7 @@ export default () => {
             <Skeleton loading={loading}>
             <ProConfigProvider dark={theme == 'dark'}>
                 <ConfigProvider
+                    locale={getAntdLocale(i18n.resolvedLanguage)}
                     getTargetContainer={() => {
                         return document.getElementById('test-pro-layout') || document.body;
                     }}
@@ -103,6 +109,11 @@ export default () => {
                 >
                     <ProLayout
                         {...defaultProps}
+                        appList={defaultProps.appList?.map(item => ({
+                            ...item,
+                            title: t(item.title as string),
+                            desc: t(item.desc as string),
+                        }))}
                         location={{
                             pathname,
                         }}

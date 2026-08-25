@@ -22,10 +22,10 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
         deleteCluster(server.clusterName)
             .then(resp => {
                 if (resp.code === 200) {
-                    message.success("删除成功")
+                    message.success(t('clusterList.deleteSuccess'))
                     removeServerList(server)
                 } else {
-                    message.error("删除失败")
+                    message.error(t('clusterList.deleteError'))
                 }
             })
     }
@@ -36,15 +36,15 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                 <div>
                     {showAddBtn && (
                         <Popconfirm
-                            title="是否删除房间"
-                            description="请自行做好备份"
-                            okText="Yes"
-                            cancelText="No"
+                            title={t('clusterList.deleteConfirmTitle')}
+                            description={t('clusterList.deleteConfirmDesc')}
+                            okText={t('panel.y')}
+                            cancelText={t('panel.n')}
                             onConfirm={() => {
                                 deleteServer(cluster)
                             }}
                         >
-                            <Button size={"small"} color="danger" variant="filled">删除</Button>
+                            <Button size={"small"} color="danger" variant="filled">{t('clusterList.delete')}</Button>
                         </Popconfirm>
                     )}
                 </div>
@@ -60,7 +60,7 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                     {showAddBtn && (
                         <Button size={"small"} color="primary" variant="filled" onClick={() => {
                             setOpenUpdate(true)
-                        }}>编辑</Button>
+                        }}>{t('clusterList.edit')}</Button>
                     )}
                 </div>
             ),
@@ -70,7 +70,7 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
 
     return (<>
 
-        <Modal width={860} title="更新房间配置" open={openUpdate} onOk={() => setOpenUpdate(false)}
+        <Modal width={860} title={t('clusterList.updateConfigTitle')} open={openUpdate} onOk={() => setOpenUpdate(false)}
                onCancel={() => setOpenUpdate(false)}
                footer={null}>
             <UpdateServer server={cluster}
@@ -90,8 +90,8 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                 {cluster.clusterType !== '本地' && <span>
                                  <Tag color={'blue'} bordered={false}>{cluster.ip}</Tag>
                             </span>}
-                {cluster.status && (<Tag bordered={false} color={'green'}>启动</Tag>)}
-                {!cluster.status && (<Tag bordered={false} color={'red'}>停止</Tag>)}
+                {cluster.status && (<Tag bordered={false} color={'green'}>{t('clusterList.started')}</Tag>)}
+                {!cluster.status && (<Tag bordered={false} color={'red'}>{t('clusterList.stopped')}</Tag>)}
                 <Title
                     level={3}
                     style={{
@@ -116,14 +116,14 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                         editable={false}
                         span={2}
                         valueType="text"
-                        label={t('房间名称')}
+                        label={t('clusterList.field.clusterName')}
                     >
                         {cluster?.gameArchive?.clusterName}
                     </ProDescriptions.Item>
                     <ProDescriptions.Item
                         span={2}
                         valueType="text"
-                        label={t('游戏天数')}
+                        label={t('clusterList.field.gameDays')}
                     >
                                     <span>
                                         {cluster?.gameArchive?.meta?.Clock?.Cycles + 1}天/{dstSegs[cluster?.gameArchive?.meta?.Clock?.Phase]} {getTimeStatus("zh", cluster?.gameArchive?.meta?.Seasons?.ElapsedDaysInSeason, cluster?.gameArchive?.meta?.Seasons?.RemainingDaysInSeason)}{dstSeason[cluster?.gameArchive?.meta?.Seasons?.Season]}({cluster?.gameArchive?.meta?.Seasons?.ElapsedDaysInSeason}/{cluster?.gameArchive?.meta?.Seasons?.ElapsedDaysInSeason + cluster?.gameArchive?.meta?.Seasons?.RemainingDaysInSeason})
@@ -133,7 +133,7 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                         editable={false}
                         span={2}
                         valueType="text"
-                        label={t('模组数量')}
+                        label={t('clusterList.field.modCount')}
                     >
                         {cluster?.gameArchive?.mods}
                     </ProDescriptions.Item>
@@ -141,7 +141,7 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                         editable={false}
                         span={2}
                         valueType="text"
-                        label={t('最大人数')}
+                        label={t('clusterList.field.maxPlayers')}
                     >
                         {cluster?.gameArchive?.maxPlayers}
                     </ProDescriptions.Item>
@@ -149,7 +149,7 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                         editable={false}
                         span={2}
                         valueType="text"
-                        label={t('直连 IP')}
+                        label={t('clusterList.field.directIp')}
                     >
                         <HiddenText text={cluster?.gameArchive?.ipConnect}/>
                     </ProDescriptions.Item>
@@ -157,7 +157,7 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                         editable={false}
                         span={2}
                         valueType="text"
-                        label={t('游戏版本')}
+                        label={t('clusterList.field.version')}
                     >
                         {cluster?.gameArchive?.version} / {cluster?.gameArchive?.lastVersion}
                     </ProDescriptions.Item>
@@ -167,19 +167,19 @@ export default ({cluster, showAddBtn, serverList, updateServerList, removeServer
                 {showAddBtn && (
                     <Button style={{marginRight: 12}} type="primary"  onClick={() => {
                         setOpenUpdate(true)
-                    }}>编辑</Button>
+                    }}>{t('clusterList.edit')}</Button>
                 )}
                 {showAddBtn && (
                     <Popconfirm
-                        title="是否删除房间"
-                        description="请自行做好备份"
-                        okText="Yes"
-                        cancelText="No"
+                        title={t('clusterList.deleteConfirmTitle')}
+                        description={t('clusterList.deleteConfirmDesc')}
+                        okText={t('panel.y')}
+                        cancelText={t('panel.n')}
                         onConfirm={() => {
                             deleteServer(cluster)
                         }}
                     >
-                        <Button type="primary" danger>删除</Button>
+                        <Button type="primary" danger>{t('clusterList.delete')}</Button>
                     </Popconfirm>
                 )}
             </p>

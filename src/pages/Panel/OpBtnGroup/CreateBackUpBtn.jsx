@@ -5,7 +5,7 @@ import {useTranslation} from "react-i18next";
 import {createBackupApi} from "../../../api/backupApi.jsx";
 
 
-export default ({block})=>{
+export default ({block, style})=>{
 
     const {t} = useTranslation()
     const [createBackupStatus, setCreateBackupStatus] = useState(false)
@@ -36,6 +36,7 @@ export default ({block})=>{
                         createBackupOnClick()
                     }}
                     loading={createBackupStatus}
+                    style={style}
             >
                 {t('panel.backup.create')}
             </Button>
