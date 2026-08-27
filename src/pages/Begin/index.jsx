@@ -7,7 +7,6 @@ import {useTranslation} from "react-i18next";
 
 import Welcome from './component/Welcome.jsx';
 import Register from './component/Register.jsx';
-import End from './component/End.jsx';
 
 import {http} from '../../utils/http';
 import {ProCard, ProConfigProvider} from "@ant-design/pro-components";
@@ -40,10 +39,13 @@ const Begin = (props) => {
     const next = () => {
         console.log(form.getFieldValue())
         form.validateFields().then(value => {
-            // 验证通过后进入
-            // const { name, age } = value;
-            // console.log(name, age); // dee 18
-            setCurrent(current + 1);
+            // 验证通过后进入；注册表单是最后一步，直接完成初始化并跳转，
+            // 不再经过一个只有图片、没有任何操作的中间页面
+            if (current === 1) {
+                goIndex()
+            } else {
+                setCurrent(current + 1);
+            }
         }).catch(err => {
             message.error(err.errorFields[0].errors[0])
         })
@@ -112,9 +114,6 @@ const Begin = (props) => {
                 {current === 1 && (
                     <Register form={form}/>
                 )}
-                {current === 2 && (
-                    <End form={form}/>
-                )}
                 <br/>
                 {current > 0 && (
                     <Button
@@ -137,12 +136,7 @@ const Begin = (props) => {
                 )}
                 {current >= 0 && current < 2 && (
                     <Button type="primary" onClick={() => next()}>
-                        {t('init.next')}
-                    </Button>
-                )}
-                {current === 2 && (
-                    <Button type="primary" onClick={goIndex}>
-                        {t('init.go')}
+                        {current === 1 ? t('init.go') : t('init.next')}
                     </Button>
                 )}
             </div>
